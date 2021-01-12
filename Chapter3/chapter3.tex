@@ -1,0 +1,24 @@
+\chapter{Cetacean Detection Using Deep Learning}\label{ch:cetDet}
+
+When building any large-scale project, it is important to break the task down into various subcomponents. In this Chapter we will examine one such subcomponent utilised in the developed automatic photo-id system, the cetacean detector. This component takes images captured during photo-id surveys and detects regions of interest, in our case these are dorsal fins which have breached the waterline. This Chapter will discuss the requirements a detector must meet, how it was trained, how the optimal hyperparameters were found, and how the detector can be utilised to provide a downstream identification system with only the information to requires and filter out any noise. 
+
+\section{Requirements of a Cetacean Detector}\label{ch:cetDet,sec:requirements}
+
+Before a system for automatic cetacean detection can be developed, it is important to first define the problem and understand the requirements of the system. The overall aim of the detector is to be able to take large-scale images as input, fed in one at a time, and process them in order to locate regions of interest. Unlike other automated detection systems common in literature, this system is only required to detect one class of object, \texttt{dolphin}. These detected regions can then be passed further down the system pipeline to the identifier. 
+
+ As such, this detector can be considered a coarse-grain task, and at first glance may seem somewhat trivial. However, due to the nature of the environment in which the class must be detected, this becomes a much more complex problem. First the area in which this system is to be deployed, in open water, is susceptible to adverse weather conditions such as high winds. This in turn leads to sub-optimal conditions for detection which the system must be capable of handling, most notably high amounts of sea swell. Further to this, dolphins, the main data subject of this work, are communal and travel in pods. Thus, the system must be capable of differentiating between overlapping individuals. Even if not all of the overlapping individuals are suitable for identification down the line, the system must still be able to separate them into individual detections to prevent further misclassification downstream; for example, lets assume an image is inputted to the detector containing three overlapping individuals where one of these has markings clear enough for a human to identify the individual. For our system to also be able to do this, the detector must be able to separate the overlapping animals into the individual components. This allows for the identifier to be provided with three images, one of which is the individual that is identifiable. If all overlapping individuals were passed to the identifier as one, the chance of identification will be greatly reduced, and the image may be identified as \texttt{noise}.
+ 
+ Next, the detector must be capable of differentiating between dolphin fins and waves. Again this might sound trivial, but thousands of years of evolution have resulted in fins and waves looking extremely similar to the untrained eye, which artificial ones often start out as. Especially from a distance and in choppy waters, fins and waves often have extremely similar shape and dimensions. Furthermore, the animal's bodies are also similarly coloured to their surroundings. These adaptations allow the animals to be better protected and camouflaged in their environment, but can cause issues with detection systems when classifying. This becomes apparent when thinking about how CNNs \textit{see}. As described in Chapter \ref{ch:Background,sec:DLforCV}, CNNs see input images as a matrix of pixel values. When training an object detection system, the CNN is also told which parts of this matrix are related to a class, any without a class label are considered background. If fins and areas of background contain similar pixel values, and these pixel values are clustered in the same ways, this can result in issues when training a model to detect instances of a class without misclassifying the background. 
+ 
+ 
+
+
+%%%%%%%%%%%%%%%%%%%
+\nomenclature[z-CNN]{CNN}{Convolutional Neural Networks}
+\nomenclature[z-CV]{CV}{Computer Vision}
+\nomenclature[z-CPU]{CPU}{Central Processing Unit}
+\nomenclature[z-GPU]{GPU}{Graphical Processing Unit}
+\nomenclature[z-SGD]{SGD}{Stochastic Gradient Descent}
+\nomenclature[z-ReLU]{ReLU}{Rectified Linear Unit}
+\nomenclature[z-FCN]{FCN}{Fully Convolutional Network}
+\nomenclature[z-RPN]{RPN}{Region Proposal Network}
