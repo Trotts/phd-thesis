@@ -58,7 +58,37 @@ In contrast, Mask-RCNN utilises a multi-stage architecture (described in more de
 
 Another factor which must be decided upon when starting developing a deep learning system is the language and framework to be used for development. With regards to language this was a fairly simple decision; the vast majority of deep learning research and development is written in Python. The language benefits from an efficient and lightweight syntax as well as having a host of different deep learning packages available to aid in development. Further to this, both of the major deep learning frameworks, Google's Tensorflow \cite{abadi_tensorflow:_2016} and Facebook's Torch (of which PyTorch is the most actively developed) \cite{paszke_automatic_2017}, both provide full Python support and have active communities for the language. Thanks to this, the vast majority of deep learning development is performed using Python in one of these two frameworks. By utilising these technologies, this project's code is easily reproducible and understood, as well as extendable in the future.
 
-Of the two main frameworks, the use of Tensorflow was decided for this project. Whilst this decision was made somewhat due to personal preference, Tensorflow was (at least at the time of starting this project) the primary framework for development of deep learning systems outside of academia. Rather than developing a custom Mask-RCNN in Tensorflow for this project, Matterport's Mask R-CNN implementation \cite{waleed_mask_2017} has been adapted. Whilst this implementation does require the use of an old version of Tensorflow (1.14), this version is also stable unlike the most recent versions (>= 2.0).
+Of the two main frameworks, the use of Tensorflow was decided for this project. Whilst this decision was made somewhat due to personal preference, Tensorflow was (at least at the time of starting this project) the primary framework for development of deep learning systems outside of academia. Rather than developing a custom Mask-RCNN in Tensorflow for this project, Matterport's Mask R-CNN implementation \cite{waleed_mask_2017} has been adapted. Whilst this does require the use of an old version of Tensorflow (1.14), this version is also stable and has a large library of available support unlike the most recent versions (>= 2.0).
+
+\section{Initial Testing of Mask-RCNN}\label{ch:cetDet,sec:initialTesting}
+
+In order to build a Mask-RCNN detector which fulfilled the requirements as laid out in Section \ref{ch:cetDet,sec:requirements} an understanding of the framework needed to be achieved. Thankfully, the downloaded repository also includes some tutorial notebooks, most notably an example on balloon segmentation which proved invaluable for learning the basics of how Mask-RCNN operates both on a fundamental code level and at a higher level, understanding how the code can be adapted for other use-cases. In order to progress onto cetacean detection however, a dataset of cetaceans would be needed. 
+
+Exploration of available open-source datasets to find cetaceans in conditions this detector would be operating in proved unfruitful. Many standard benchmarking datasets contain animal classes, and thus an exploration of these was conducted. Of the more generalised benchmark datasets, those such as ImageNet \cite{deng_imagenet:_2009} which contain a large corpus of varied classes, only CIFAR-100 \cite{krizhevsky_learning_2009} contains a \texttt{dolphin} class. However, images in CIFAR-100 are only 32x32 pixels in size, too small to be useful for the task at hand. 
+
+Moving the search away from generalised datasets and towards those which are targetted at conservation efforts or the natural environment also proved fruitless. A large portion of these datasets focus on camera traps or land-based fauna, such as iWildCam \cite{beery_iwildcam_2019}, for reasons discussed in more detail in Section \ref{ch:Background,sec:conTech}. The iNaturalist dataset CHECK WHEN DOWNLOADED.
+
+\subsection{The Zanzibar Dataset}\label{ch:cetDet,sec:initialTesting,sub:zanzibar}
+
+Due to the lack of open-source and published datasets to aid in the development of this cetacean detector, one was required to be created. As the focus of this project as a whole was the utilisation of the developed system to aid in conservation efforts of resident cetacean populations off the Northumberland coastline, ideally the created dataset would come from this area. At the time of initial testing however this was not possible due to a lack of available data from the survey area.
+
+As such, alternative data was provided by the Marine MEGAfauna Lab, obtained during a 2015 conservation effort undertaken in Zanzibar, Tanzania. The catalogue provided consisted of 1021 images of size 5184x3456, and was supplied in a format suitable for manual photo-identification rather than for the training of a neural network. Work was then undertaken to convert this conservation catalogue into a machine learning dataset. 
+
+In order to convert this catalogue into a machine learning dataset, the provided images must first be labelled. This was achieved using the VGG Image Annotator software, known as VIA \cite{dutta_via_2019}. Other labelling software such as LabelImg \cite{tzutalin_labelimg_2021} were examined, however VIA was deemed the best choice for the task at hand. This software was chosen for multiple reasons; first, the software is noticeably easy to use and allows for efficient labelling on a per-pixel basis as required by Mask-RCNN. Second, the tutorial data provided by the Mask-RCNN Github repository was labelled in VIA format, showing that this code implementation would accept data labelled in this format. Furthermore, use cases of VIA being utilised for labelling of marine-oriented data are available in literature \cite{nita_cnn-based_2020}, providing evidence of suitability of the labelling software for research purposes and data representing similar conditions.
+
+Before labelling the Tanzania data, some curation was performed. Each image labelled by VIA is required to contain at least one non-background class. As such, any images provided which did not contain an example of a \texttt{dolphin} class were discarded. Other images where the class examples were unsuitable for training a Mask-RCNN model, such as those which contained only an extremely small section of the photographed dolphin or were deemed too blurry, were also removed. This left 312 images which were suitable for training a Mask-RCNN model once labelled.
+
+The process for labelling the data with VIA was rather straightforward. The software runs locally through a web browser, with each image labelled sequentially. Each image is shown on-screen and the user is then able to select co-ordinate points on the image. This point and click method allows the user to trace around a class example present in the image. Once the example has been traced it can then be provided some class attributes, in the case of the Tanzania data this was the class label \texttt{fin}, denoting the class example as a fin above the waterline. These labels are stored in a corresponding JSON file, which is fed to the Mask-CNN model along with the images during training. An example of a labelled image and it's resulting JSON element can be seen in Figure 
+
+ \begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.25]{Chapter3/figs/via-json-example.png}
+	\end{center}
+	\caption{Left: An example of the labelling process in VIA. Right: The resulting JSON entry created for the labelled image. 
+	}
+	\label{fig:via-json-example}
+\end{figure}
+
 
 
 %%%%%%%%%%%%%%%%%%%
