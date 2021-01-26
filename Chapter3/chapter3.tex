@@ -44,11 +44,72 @@ Before a system for automatic cetacean detection can be developed, it is importa
  
  Because this trade off must be made, before deploying a deep learning model it is important to decide where the system will be utilised. As photo-id surveys are performed on small vessels such as RIBs, space is severely limited on board. Because of this, it is not appropriate to add additional hardware to the vessel to perform this analysis during the survey. Furthermore, the current methodology of cetacean researchers is to perform identification once back on land, even when utilising photo-id aides. As the system proposed in this project is intended to fit into existing procedures rather than replace researchers, it is appropriate for the system to also be land based rather than on the vessel. Thinking about the current procedure further, this project's proposed system could be, for example, left running overnight performing identifications whilst the researchers are away or during the day whilst they are on surveys, being left to work through the last day's worth of images captured. As such, there is no need for the system to operate in real time to fit in with the current workflow of cetacean researchers, provided the system completes its task within a reasonable time frame. Further to this, as the output of the detection model will be passed to an identification module, it is imperative that as much noise is removed as possible during the detection. In order to do this, the accuracy of the detection must be as high as possible, furthering the case for an accurate system over a fast one.
  
- This idea of reducing as much noise as possible can be used to further narrow down the requirements of the detection system. As discussed in Section \ref{ch:Background,sec:DLforCV}, the output of detection systems can be provided in different formats. In bounding box detection systems the detected objects are denoted by a set of at least two pixel coordinates denoting the top-left and bottom-right extremes of the object. These detections are often more cost-effective to perform computationally, however as we will only know the area of the image a detected object is present in, this does not remove all of the background noise, only that which is outside of the object's extreme points. If we utilise pixel wise mappings however, then each pixel is given a classification. This allows the system to be more discrete with its detection, telling us exactly where the object is in the image. These pixel locations can then be used to removed all background. As such, the use of pixel-wise mappings is more appropriate for our detector to use. Both semantic and instance segmentation methods will allow the detector to utilise pixel-wise mappings to remove background noise. However, utilising our requirement defined earlier in Section \ref{ch:cetDet,sec:requirements,sub:environmental} that the detector must be capable of reducing an overlapping pod to its individual component animals, it makes sense to require the detector to utilise instance segmentation.
+  This idea of reducing as much noise as possible can be used to further narrow down the requirements of the detection system. As discussed in Section \ref{ch:Background,sec:DLforCV}, the output of detection systems can be provided in different formats. In bounding box detection systems the detected objects are denoted by a set of at least two pixel coordinates denoting the top-left and bottom-right extremes of the object. These detections are often more cost-effective, both from a labelling perspective requiring less person-hours to complete, and to perform computationally. However, a model trained on bounding boxes will produce outputs which will only partially remove noise deemed to be outside of the detection's extreme points.
+ 
+ If we utilise pixel wise mappings however, then each pixel is given a classification. This allows the system to be more discrete with its detection, telling us exactly where the object is in the image. These pixel locations can then be used to removed all background. Pixel wise labelling is far more labour intensive however, and thus more financially costly to produce. Both semantic and instance segmentation methods will allow the detector to utilise pixel-wise mappings to remove background noise. However, utilising our requirement defined earlier in Section \ref{ch:cetDet,sec:requirements,sub:environmental} that the detector must be capable of reducing an overlapping pod to its individual component animals, requiring the use of instance segmentation in any pixel-wise detections would be preferred. 
+ 
+ As such, this requirement reveals a further trade-off the system must make. The amount of noise removed by the detector is proportional to the cost and labour needed to create data to train the system; this was required to be explored in more detail before it could be decided if bounding boxes or instance segmentation masks would be more appropriate for use with the detector. This is discussed in more detail in Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation}.
  
 \section{Deciding on Architecture and Framework}\label{ch:cetDet,sec:deciding}
 
-Based on the requirements outlined in Section \ref{ch:cetDet,sec:requirements}, it is possible to begin deciding on how the cetacean detector is to be developed. One of the major decisions that must be made here is which model architecture should be utilised in order to provide the required pixel-level detections. As this project is devoted to improving existing procedures and introducing deep learning to a novel space, it is far more advantageous to utilise existing model architectures rather than develop a custom one. The development of a custom architecture for this stage of the project would be extremely time consuming, taking away time from more novel parts of the project (notably the identification of the individual animals). Further, as this project is introducing deep learning methods to a novel space, the project needs to be able to convince researchers in this space that the system is reliable; this is more easily achieved using a pre-existing architecture where use cases already exist in literature and business. 
+Based on the requirements outlined in Section \ref{ch:cetDet,sec:requirements}, it is possible to begin deciding on how the cetacean detector is to be developed. One of the most important factors in the overall approach taken in the detector's development would be its use of either bounding boxes or pixel-wise mappings during training. As mentioned previously, the use of pixel-wise mappings would allow for a greater removal of background noise, but is extremely costly and labour intensive to produce. In contrast, bounding box labels are easier and cheaper to produce but will lead to less background noise removal. 
+
+\subsection{An Investigation into Bounding Boxes}\label{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation}
+
+Due to their relative cheapness and ease to produce, the use of bounding boxes in this project would be extremely beneficial. However, if the use of bounding boxes at this stage would hinder the accuracy of individual identification downstream, then this would outweigh the cost of pixel-wise mappings. 
+
+As such, an investigation was undertaken to decide whether bounding boxes would be a viable option, and if their use would hinder downstream identification. To begin, a small amount of data was provided by the Marine MEGAfauna Lab, discussed in more detail in Section \ref{ch:cetDet,sec:initialTesting,sub:zanzibar}, which contained images captured during a previous cetacean survey. A subset of this data was manually cropped to simulate the output of a bounding box detector, an example of which can be seen in Figure \ref{fig:manual-crop-example}. This manually cropped data included some background but ensured the region of interest, the dorsal fin, was centred and prominent, representing an optimal output from a bounding box detector. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-example.png}
+	\end{center}
+	\caption{An example manual crop utilised in bounding box suitability testing.
+	}
+	\label{fig:manual-crop-example}
+\end{figure}
+
+\subsubsection{Feature Extraction with SIFT}\label{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SIFT}
+
+To begin, processing of the cropped images focussed on the use of feature extractors such as Scale-Invariant Feature Transform, also known as SIFT \cite{lowe_object_1999}. As the name suggests, SIFT is invariant to scale, a major advantage for use with cetacean survey data where the region of interest's size may change depending on when the image of the dorsal fin breaching the water is captured. If SIFT was capable of producing feature descriptors of the dorsal fins with only partial background removal, this would show potential for individual identification where some background is present, possibly through the use of the feature descriptors. 
+
+First SIFT was performed on the entire cropped image, however this proved unfruitful, picking out very few features in areas of the image which contained the animal's dorsal fin and instead focussing on the feature heavy areas present in the sea, even in images containing relatively calm water. This result indicated that further refinement was required, potentially reducing the area SIFT was allowed to explore. 
+
+Reduction of the search space available to SIFT was achieved through the use of colour thresholding. Here, a mask was created programmatically for each image based on bounded RGB colour values found in the dorsal fins, giving an upper threshold of (14, 16, 26) and a lower threshold of (54, 51, 66). As such, SIFT would only be performed in areas of the image where pixel values fell within this range. An example result of SIFT after colour thresholding can be see in Figure \ref{fig:manual-crop-sift-colour-thresholding-example}, with coloured circles surrounding an extracted feature. As can be seen, colour thresholding helps in removing a large amount of background water from the computation. However, issues arise where areas of water are also within this thresholding. Because of this, colour thresholding before SIFT only reduces the amount of features extracted from the water, it does not remove them, which may result in misidentification downstream.
+
+Further to this, it can be seen that SIFT is incapable of extracting relevant features used in the photo-id process. For example, in Figure \ref{fig:manual-crop-example}, a notch is clearly present on the dorsal fin which would be a good marker for individual identification. However, when performing SIFT on this dorsal as seen in Figure \ref{fig:manual-crop-sift-colour-thresholding-example}, note how this feature has not been detected by SIFT, which has instead detected an area above the notch which contains no identifiable information. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-sift-colour-thresholding.png}
+	\end{center}
+	\caption{An example manual crop showing the result of SIFT feature extraction when thresholded based on RGB colour values.
+	}
+	\label{fig:manual-crop-sift-colour-thresholding-example}
+\end{figure}
+
+Feature extraction methods such as SIFT are also incapable of extracting other identifiable markers such as fin shape. As such, the use of SIFT was deemed improper for this use case. It is important to note here that the use of SIFT may be appropriate for cetacean species other than this project's data subjects of bottlenose and white-beaked dolphins. For example, the use of SIFT has been shown to be appropriate to aid in identification of individual Risso's dolphins \cite{reno_sift-based_2019}.
+
+\subsubsection{Background Removal with GrabCut}\label{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:GrabCut}
+
+Testing the suitability of SIFT as described in Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SIFT} highlighted the need for complete background removal before identification would be possible with bottlenose and white-beaked dolphins. In order for bounding boxes to be a viable option in this scenario, a robust background removal process would need to be created. Further, the process would need to be capable of operating under unseen conditions in an unsupervised manner without labelled segmented  data to train on. If the background removal process required training data to operate, this would increase the overall cost and labour required to use bounding boxes, and as such reduces the suitability of them compared to utilising pixel-wise mappings from the beginning. 
+
+The current state of the art in this area is GrabCut, proposed by Microsoft Research \cite{rother_grabcut_2004}. This algorithm allows for the segmentation of foreground objects from the background with minimal or no human interaction. As GrabCut would be utilised in a fully automated setting, GrabCut would be required to perform background removal with no human interaction. Testing of the suitability for GrabCut was performed using the same cropped images as those used for SIFT testing. Again, issues arose when performing GrabCut on the cropped image data. The algorithm struggled to understand which parts of the image were classed as background and foreground, which resulted in imperfect segmentations. This was especially an issue where the dorsal fin was present in rough water, where splash would be in-front of the dorsal fin when captured by the camera. The use of GrabCut on Figure \ref{fig:manual-crop-example} can be seen in Figure \ref{fig:grabcut-example}.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.6]{Chapter3/figs/grabcut-example.png}
+	\end{center}
+	\caption{An example manual crop showing the result of GrabCut background removal.
+	}
+	\label{fig:grabcut-example}
+\end{figure}
+
+As can be seen, the use of GrabCut as a background removal tool does not perform as expected on data the detector is required to operate on. Because of this, as well as the unsuitability of feature extraction as seen in Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SIFT}, the use of bounding boxes in the cetacean detector stage was deemed not to be possible. As such, the focus of testing moved to the use of pixel-wise mappings and instance segmentation.  
+
+\subsection{Instance Segmentation Architectures}\label{ch:cetDet,sec:deciding,sub:instanceSegArchitectures}
+
+One of the major decisions that must be made here is which model architecture should be utilised in order to provide the required pixel-level detections. As this project is devoted to improving existing procedures and introducing deep learning to a novel space, it is far more advantageous to utilise existing model architectures rather than develop a custom one. The development of a custom architecture for this stage of the project would be extremely time consuming, taking away time from more novel parts of the project (notably the identification of the individual animals). Further, as this project is introducing deep learning methods to a novel space, the project needs to be able to convince researchers in this space that the system is reliable; this is more easily achieved using a pre-existing architecture where use cases already exist in literature and business. 
 
 To this end there are two main model architectures that can be chosen for this task; U-Net \cite{ronneberger_u-net_2015} and Mask-RCNN \cite{he_mask_2017}. Both of these architectures work in different ways. Vuola \textit{et al.} provide a more detailed comparison between the two models \cite{vuola_mask-rcnn_2019}, however the main focus for this project is their resultant output mask structure. 
 
@@ -121,10 +182,10 @@ The second augmenter was more complex, performing the following perturbations in
 The use of two augmenters allowed for evaluation on whether a simple or more complex augmentation strategy would be appropriate for this use case. By using multiple augmenters we can treat them as a hyper-parameter of model training, allowing the augmenter chosen to be added to the search space. 
 
 
--Scheduler
--Mask-RCNN detection hyper-parameters (e.g min confidence)
-- Model training hyper-parameters
 
+
+-Mask-RCNN detection hyper-parameters (e.g min confidence)
+- Model training hyper-parameters (Scheduler)
 - Evaluation of the models (metrics used, graphs, deciding on best model)
 
 %%%%%%%%%%%%%%%%%%%
