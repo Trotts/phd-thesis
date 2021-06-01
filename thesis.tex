@@ -3,6 +3,7 @@
 % Please have a look at the README.md file for info on how to use the template
 
 \documentclass[a4paper,21pt,times,numbered,print,index,customargin]{Classes/PhDThesisPSnPDF}
+\usepackage{longtable}
 
 % ********************************** Preamble **********************************
 % Preamble: Contains packages and user-defined commands and settings
@@ -61,11 +62,11 @@
 \include{Chapter2/chapter2}
 \include{Chapter3/chapter3}
 
-
-
 % ********************************** Back Matter *******************************
 % Backmatter should be commented out, if you are using appendices after References
 \backmatter
+
+\include{Appendix/appendix}
 
 % ********************************** Bibliography ******************************
 \begin{spacing}{0.9}
