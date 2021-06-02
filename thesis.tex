@@ -4,6 +4,9 @@
 
 \documentclass[a4paper,21pt,times,numbered,print,index,customargin]{Classes/PhDThesisPSnPDF}
 \usepackage{longtable}
+\usepackage{titlesec}
+\usepackage{adjustbox}
+\usepackage{fixltx2e} 
 
 % ********************************** Preamble **********************************
 % Preamble: Contains packages and user-defined commands and settings
@@ -53,7 +56,7 @@
 
 % \printnomenclature[space] space can be set as 2.5cm between symbol and
 % description
-\printnomenclature[2cm]
+\printnomenclature[2.5cm]
 
 % ******************************** Main Matter *********************************
 \mainmatter
@@ -66,7 +69,13 @@
 % Backmatter should be commented out, if you are using appendices after References
 \backmatter
 
-\include{Appendix/appendix}
+% ********************************** Appendices ********************************
+
+\begin{appendices} % Using appendices environment for more functunality
+	
+	\include{Appendix/appendix}
+
+\end{appendices}
 
 % ********************************** Bibliography ******************************
 \begin{spacing}{0.9}
@@ -90,14 +99,7 @@
 
 \end{spacing}
 
-% ********************************** Appendices ********************************
 
-\begin{appendices} % Using appendices environment for more functunality
-
-%\include{Appendix/appendix}
-
-
-\end{appendices}
 
 % *************************************** Index ********************************
 %\printthesisindex % If index is present

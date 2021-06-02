@@ -1,10 +1,22 @@
 % ******************************* Thesis Appendix A ********************************
-\chapter{Appendix} 
+\renewcommand{\thesubsection}{\Alph{subsection}} % Make subsections alpha for appendix
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge} % Recreate the default Chapter sizing and spacing so we can edit it and put the Mask-RCNN table on the same page
 
-\section*{Mask-RCNN Grid Search Hyperparameter Combinations}
+% this alters "before" spacing (the second length argument) to 0, "after" to 20pt
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+\chapter{Appendix} 
+% this changes "before" spacing back to its default of 50pt
+\titlespacing*{\chapter}{0pt}{50pt}{40pt}
+
+\setcounter{subsection}{0} % Force a reset of the appendix subsection lettering
+
+\subsection{Mask-RCNN Grid Search Hyperparameter Combinations} \label{app:MaskRCNNHyperparamTuningGridSearch}
 
 \begin{table}[!ht]
-		\begin{tabular}{llllll}
+	\tiny
+	\begin{adjustbox}{width=\columnwidth, center}
+		\begin{tabular}{cccccc}
 			\toprule
 			Model Name & Weight Decay &        RPN Anchor Scales & Optimiser & Augmentation Strategy & Pre-trained on MSCOCO? \\
 			\midrule
@@ -60,4 +72,6 @@
 			20191104T0450 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  False \\
 			\bottomrule
 		\end{tabular}
+	\end{adjustbox}
+\caption{Hyperparameter values used for each grid search run when training the Mask-RCNN model on the Zanzibar data, see Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning}.}
 \end{table}
