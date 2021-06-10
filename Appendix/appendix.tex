@@ -11,67 +11,6 @@
 
 \setcounter{subsection}{0} % Force a reset of the appendix subsection lettering
 
-\subsection{Mask-RCNN Grid Search Hyperparameter Combinations} \label{app:MaskRCNNHyperparamTuningGridSearch}
+\subsection{}
 
-\begin{table}[!ht]
-	\tiny
-	\begin{adjustbox}{width=\columnwidth, center}
-		\begin{tabular}{cccccc}
-			\toprule
-			Model Name & Weight Decay &        RPN Anchor Scales & Optimiser & Augmentation Strategy & Pre-trained on MSCOCO? \\
-			\midrule
-			20190829T1458 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  False \\
-			20190829T2020 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                  False \\
-			20190830T0145 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  False \\
-			20190830T0714 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   True \\
-			20190830T1443 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
-			20190830T2019 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   True \\
-			20190902T0946 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  False \\
-			20190904T2004 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  False \\
-			20190905T1813 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  False \\
-			20190905T1826 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  False \\
-			20190905T2202 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  False \\
-			20190905T2336 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  False \\
-			20190906T0332 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  False \\
-			20190906T0851 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  False \\
-			20190907T0932 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  False \\
-			20190907T0933 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   True \\
-			20190907T0934 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  False \\
-			20190907T1451 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  False \\
-			20190907T1500 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                   True \\
-			20190907T1545 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   True \\
-			20190907T2026 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  False \\
-			20190907T2126 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   True \\
-			20190907T2215 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  False \\
-			20190908T0202 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  False \\
-			20190908T0352 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  False \\
-			20190908T0417 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  False \\
-			20190908T0957 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                   True \\
-			20190908T1102 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  False \\
-			20190908T1204 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  False \\
-			20190908T1939 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
-			20190908T2043 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  False \\
-			20190908T2139 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   True \\
-			20190909T0723 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   True \\
-			20190911T1922 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
-			20190912T0045 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
-			20190912T0608 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  False \\
-			20191101T1633 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  False \\
-			20191101T2104 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  False \\
-			20191102T0140 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  False \\
-			20191102T0615 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  False \\
-			20191102T1051 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  False \\
-			20191102T1528 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  False \\
-			20191102T2006 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  False \\
-			20191103T0044 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  False \\
-			20191103T0520 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  False \\
-			20191103T0959 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  False \\
-			20191103T1441 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  False \\
-			20191103T1921 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  False \\
-			20191104T0011 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  False \\
-			20191104T0450 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  False \\
-			\bottomrule
-		\end{tabular}
-	\end{adjustbox}
-\caption{Hyperparameter values used for each grid search run when training the Mask-RCNN model on the Zanzibar data, see Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning}.}
-\end{table}
+

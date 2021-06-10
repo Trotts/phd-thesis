@@ -230,7 +230,91 @@ As discussed in Section \ref{ch:Background,sec:objectDetection,sub:RPN}, Region 
 
 Although only a few hyperparameters have been chosen to tune, the size of the possible search space to evaluate is still extremely large. As mentioned previously, it is not feasible both from a time and resource perspective to evaluate the entire space and find the truly optimal value for each hyperparameter. Instead the search space is discretised using a grid search, for each hyperparameter a subset of possible values is selected. Each combination of possible hyperparameter values is then evaluated to determine which set of values produces a satisfactory model. 
 
-The list of possible hyperparameter combinations and model name, determined by the datetime value at the start of the model's first training run, can be seen in Appendix \ref{app:MaskRCNNHyperparamTuningGridSearch}. This reduced hyperparameter tuning run still required significant amount of time and resources, running over three NC12 Microsoft Azure VMs, each with two Tesla K80 GPUs, taking approximately one week to complete the grid search and producing a total of 50 models. Model runs were split between the VMs based on augmentation strategy with one VM running only \textit{aug1}, the other \textit{aug2}, and the final with no augmentation strategy. It should be noted here that this computational and time expense would most likely be reduced should the images used to train the Mask-RCNN not be so large, although the reasons for this decision are discussed in Section \ref{ch:cetDet,sec:requirements,sub:technical}.
+The list of possible hyperparameter combinations and model name, determined by the datetime value at the start of the model's first training run, can be seen in Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}. This reduced hyperparameter tuning run still required significant amount of time and resources, running over three NC12 Microsoft Azure VMs, each with two Tesla K80 GPUs, taking approximately one week to complete the grid search and producing a total of 50 models. Model runs were split between the VMs based on augmentation strategy with one VM running only \textit{aug1}, the other \textit{aug2}, and the final with no augmentation strategy. It should be noted here that this computational and time expense would most likely be reduced should the images used to train the Mask-RCNN not be so large, although the reasons for this decision are discussed in Section \ref{ch:cetDet,sec:requirements,sub:technical}.
+
+\begin{table}[!ht]
+	\tiny
+	\begin{adjustbox}{width=\columnwidth, center}
+		\begin{tabular}{cccccc}
+			\toprule
+			Model Name & Weight Decay &        RPN Anchor Scales & Optimiser & Augmentation Strategy & Pre-trained on MSCOCO? \\
+			\midrule
+			20190829T1458 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  False \\
+			20190829T2020 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                  False \\
+			20190830T0145 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  False \\
+			20190830T0714 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   True \\
+			20190830T1443 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
+			20190830T2019 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   True \\
+			20190902T0946 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  False \\
+			20190904T2004 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  False \\
+			20190905T1813 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  False \\
+			20190905T1826 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  False \\
+			20190905T2202 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  False \\
+			20190905T2336 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  False \\
+			20190906T0332 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  False \\
+			20190906T0851 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  False \\
+			20190907T0932 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  False \\
+			20190907T0933 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   True \\
+			20190907T0934 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  False \\
+			20190907T1451 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  False \\
+			20190907T1500 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                   True \\
+			20190907T1545 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   True \\
+			20190907T2026 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  False \\
+			20190907T2126 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   True \\
+			20190907T2215 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  False \\
+			20190908T0202 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  False \\
+			20190908T0352 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  False \\
+			20190908T0417 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  False \\
+			20190908T0957 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                   True \\
+			20190908T1102 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  False \\
+			20190908T1204 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  False \\
+			20190908T1939 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
+			20190908T2043 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  False \\
+			20190908T2139 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   True \\
+			20190909T0723 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   True \\
+			20190911T1922 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
+			20190912T0045 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   True \\
+			20190912T0608 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  False \\
+			20191101T1633 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  False \\
+			20191101T2104 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  False \\
+			20191102T0140 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  False \\
+			20191102T0615 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  False \\
+			20191102T1051 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  False \\
+			20191102T1528 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  False \\
+			20191102T2006 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  False \\
+			20191103T0044 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  False \\
+			20191103T0520 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  False \\
+			20191103T0959 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  False \\
+			20191103T1441 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  False \\
+			20191103T1921 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  False \\
+			20191104T0011 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  False \\
+			20191104T0450 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  False \\
+			\bottomrule
+		\end{tabular}
+	\end{adjustbox}
+	\caption{Hyperparameter values used for each grid search run when training the Mask-RCNN model on the Zanzibar data.}\label{tab:MaskRCNNHyperparamTuningGridSearch}
+\end{table}
+
+\subsection{Model Selection Based on Grid Search}\label{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch}
+
+Once a grid search has been performed, the results can then be evaluated to determine if a suitable model had been found using a test set. All models trained were evaluated using MSCOCO's Mean Average Precision metric\footnote{COCO mAP Definition: \href{https://cocodataset.org/\#detection-eval}{cocodataset.org/\#detection-eval}}, a commonly used metric for detection tasks, even those which do not use the MSCOCO dataset. This metric, commonly written as mAP@IOU[0.5:0.95], calculates precision-recall graphs for each dataset class at incremental IOU levels, from 0.5 to 0.95 in 0.05 steps. Once each class' precision-recall graph for a given IOU threshold has been calculated, the mean of the values is derived giving an overall mean average precision score for all classes at a given IOU threshold; these thresholds are explained in more detail in Section \ref{ch:Background,sec:semanticSegmentation}.
+
+By evaluating over multiple thresholds the models can then be compared and their performance more easily understood and ranked, as well as allow for the determination of an acceptable loss in IOU overlap. For example if all models were evaluated using IOU[0.5] only, it may be the case that all models achieve a similar score, making it difficult to determine which model will be best for the task. However if a high threshold is used, for example IOU[0.95], it is unlikely that any model will achieve a high score as this would require a near pixel perfect detection. 
+
+Figure \ref{fig:mAP-graph} shows the mAP@IOU[0.5:0.95] for all models trained in the grid search. At mAP@IOU[0.5] there is a large gap in model performance with model 20190830T1443 having the lowest mAP@IOU[0.5] of 0.73 and model 20190905T1813 having the highest at 0.94. This shows that the combination of hyperparameter values provided to the model before training have a significant effect on the model's overall performance. At mAP@IOU[0.75], at which detections would overlap with 75\% of pixels in the ground truth mask, the minimum model performance has dropped significantly with model 20190830T071 achieving a score of 0.49. The highest score at this threshold is model 20191102T0140 with a score of 0.81; this model achieved an map@IOU[0.5] score of 0.92, only two percentage points behind the best model at that threshold. This again shows the need for hyperparameter tuning when selecting models, as they are shown here to have a significant effect on how well the models perform at higher thresholds.
+
+This effect is even greater when comparing map@IOU[0.85] scores, with the worst performing model, 20190830T0714,  achieving a score of just 0.17 whilst the best model, 20190902T0946, achieves a score of 0.50, a difference of 33\%. Model performance drops significantly at the highest threshold with four models achieving an mAP@IOU[0.95] score of 0.016, with most models achieving a score of 0.0. This is to be expected however as it would be highly unlikely that any model, regardless of hyperparameters, would be able to perform near perfect pixel level detections on the test set data. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.33]{Chapter3/figs/comparison_graph_all_diff_colours.png}
+	\end{center}
+	\caption{mAP@IOU[0.5:0.95] scores for all models train in the Mask-RCNN Zanzibar dataset grid search. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
+	\label{fig:mAP-graph}
+\end{figure}
+
+- Discuss graph then go into the stacked bar chart. All model mAPs to a table in Appendix?
+
 
 
 - Evaluation of the models (metrics used, graphs, deciding on best model)
