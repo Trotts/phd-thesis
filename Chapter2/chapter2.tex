@@ -389,17 +389,17 @@ Whilst all of these systems perform their intended task well, they are mostly st
 
 It is the work undertaken by the aforementioned solutions which motivates this thesis. A fully automated photo-id system must be capable of the following:
 
-\textbf{Operating with no data preprocessing:} Researchers should not need to process data from fieldwork cameras before it can be handled by the system. 
+\textbf{Operating with no data preprocessing}: Researchers should not need to process data from fieldwork cameras before it can be handled by the system. 
 
-\textbf{Detection:} The system must be capable of detecting dorsal fins present in input images. This allows researchers to pass the system all images taken in the field to reduce human workload and allow the system to operate on data which has not been pre-processed. The system must be capable of detecting multiple fins in the same image.
+\textbf{Detection}: The system must be capable of detecting dorsal fins present in input images. This allows researchers to pass the system all images taken in the field to reduce human workload and allow the system to operate on data which has not been pre-processed. The system must be capable of detecting multiple fins in the same image.
 
-\textbf{Segmentation:} Once fins have been detected, it must be possible to segment them from the image. This aides the photo-id process by removing other fins, which may contain prominent markings, as well as background such as the sea, which may be feature heavy due to waves.
+\textbf{Segmentation}: Once fins have been detected, it must be possible to segment them from the image. This aides the photo-id process by removing other fins, which may contain prominent markings, as well as background such as the sea, which may be feature heavy due to waves.
 
-\textbf{Photo-ID:} The system must be capable of identifying individuals based on the segmented fin.
+\textbf{Photo-ID}: The system must be capable of identifying individuals based on the segmented fin.
 
-\textbf{Handle unseen individuals:} The system must be capable of handling individuals which have never been seen before, and are thus not in the existing catalogue. 
+\textbf{Handle unseen individuals}: The system must be capable of handling individuals which have never been seen before, and are thus not in the existing catalogue. 
 
-\textbf{Locally deployable:} It must be possible to deploy the system on local hardware, allowing researchers to keep full ownership of their catalogue.
+\textbf{Locally deployable}: It must be possible to deploy the system on local hardware, allowing researchers to keep full ownership of their catalogue.
 
 An overview of how current photo-id aides meet these requirements can be seen in Table \ref{tab:Photo-IDAidesComparison}. Only Maglietta \textit{et al.} propose a fully automated photo-id aid which can be locally ran, requires no data preprocessing, and is capable of handling unseen individuals. However as previously stated this solution utilises SURF \cite{bay_speeded-up_2008}. This algorithm, like its predecessor SIFT \cite{lowe_object_1999}, excel at detecting well defined features in images. This is appropriate for Maglietta \textit{et al.}'s data subjects, Risso's dolphins, due to the well defined scarring patterns present on their dorsal fins \cite{mariani_analysis_2016}. The algorithm would fail when used on other cetacean species however due to a lack of well defined features on the fin, where even prominent markings used for photo-id fail to be extracted. See Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SIFT} for an investigation into the use of feature extraction algorithms on bottlenose dolphin dorsal fins. Furthermore, both SURF and SIFT are patented algorithms. As such this may increase the cost of developing or using a system based around these algorithms, an open source solution should be utilised if possible.
 
