@@ -212,9 +212,15 @@ When training a Mask-RCNN model there are a large range of hyperparameters, or u
 
 \subsection{Detection Hyperparameters}\label{ch:cetDet,sec:ModelSelection,sub:DetectionHyperparameters}
  
- With regards to the detection hyperparameters, only the minimum confidence of the model was changed from the default of 0.7 to 0.9. This was changed as during initial trials it was found models trained on the Zanzibar data would often produce a high number of false positives (for example detecting a wave as a fin) or create duplicate detections (one fin detected twice). By increasing the minimum confidence of the model to 0.9, we increase the threshold at which the model returns a detection to 90\%, or in other words for every detection the model must be 90\% sure that the detection is actually a fin before notifying the user. This reduced both the false positive rate and duplicate detection rate of the model.
+ With regards to the detection hyperparameters, only the minimum confidence of the model was changed from the default of 0.7 to 0.9. This was changed as during initial trials it was found models trained on the Zanzibar data would often produce a high number of false positives (for example detecting a wave as a fin) or create duplicate detections (one fin detected twice). By increasing the minimum confidence of the model to 0.9, we increase the threshold at which the model returns a detection to 90\%, or in other words for every detection the model must be 90\% sure that the detection is actually a fin before notifying the user. This reduced both the false positive rate and duplicate detection rate of the model. As example of this can be seen in Figure \ref{fig:min-conf}. Note how in the left image more detections are present than in the right image, however the extra detections are either part of an existing detection (yellow) or do not contain enough fin to identify the individual (red).
  
- TODO: One image example, min conf 0.9 and min conf 0.7 in side by side comparison of model output.
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.55]{Chapter3/figs/min-conf-eg.png}
+	\end{center}
+	\caption{An example image showing the effect of minimum detection confidence thresholding in Mask-RCNN detections. Left: A threshold of 0.7. Right: A threshold of 0.9.}
+	\label{fig:min-conf}
+\end{figure}
  
  
 \subsection{Training Hyperparameters}\label{ch:cetDet,sec:ModelSelection,sub:TrainingHyperparameters}
