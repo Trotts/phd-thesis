@@ -351,6 +351,8 @@ Similarly to FinScan, FinBase is a photo-id database management system developed
 
 Alongside both of these, DARWIN \cite{hale_unsupervised_2012} provides automated identification of new images based on those already in the attached database. Like FinScan, users of DARWIN trace around the leading and trailing edges of the fin they wish to identify. These edges are stored in a database as a set of evenly spaced points approximating the outline of the fin which is then used for identification.
 
+CatRlog \cite{keen_catrlog_2021} is an R Shiny based catalogue management system which allows for photo-identification of individual cetaceans. Researchers enter descriptions manually for unique markings located on either the dorsal fin or fluke of the individual. One of catRlog's main advantages is the ability to be hosted locally on machines via RStudio whilst also being capable of handling catalogues hosted on cloud-based storage solutions. This allows for efficient id verification, as multiple experts can id images at the same time each uploading results to the central catalogue. If any discrepancies arise, such as an individual given a different id by multiple experts, this centralised approach allows for the catalogue manager to easily determine the final id and disseminate this to other catalogue users. CatRlog is also capable of automated print-friendly photo-id catalogue creation. 
+
 \subsubsection{Non-Deep Learning Systems}\label{ch:Background,sec:conTech,sub:photoIDAides,subsub:nonDL}
 
 Multiple systems which utilise non-deep learning computer vision are also available to aid cetacean researchers. Karnowski \textit{et al.} propose using Robust PCA to subtract background from underwater images to help detect captive bottlenose dolphins and track their movements through multiple distinct areas \cite{karnowski_dolphin_2015}. CurvRank is an algorithm developed by Weideman \textit{et al.} \cite{weideman_integral_2017} which automatically identifies the trailing edge of the fin and represents this as a set of ordered coordinates. Each coordinate point then has a circle of radius $r$ placed upon it, before being transformed horizontally. The curvature at this point for a given $r$ value is then defined as the ratio of the area under the curve against the area of a square around the curve of length $2r$. This allows for the definition of the trailing edge of the fin to be rotation invariant. Whilst initially developed for cetaceans, CurvRank has also found use in land-based photo-id surveys due to its robustness. For example, Kulits \textit{et al}. \cite{kulits_elephantbook_2021} utilise CurvRank and SEEK \cite{bedetti_system_2020} as the basis for a human-in-the-loop system for African elephant (\textit{Loxodonta africana}) photo-id. 
@@ -395,7 +397,7 @@ It is the work undertaken by the aforementioned solutions which motivates this t
 
 \textbf{Segmentation}: Once fins have been detected, it must be possible to segment them from the image. This aides the photo-id process by removing other fins, which may contain prominent markings, as well as background such as the sea, which may be feature heavy due to waves.
 
-\textbf{Photo-ID}: The system must be capable of identifying individuals based on the segmented fin.
+\textbf{Photo-ID}: The system must be capable of identifying individuals.
 
 \textbf{Handle unseen individuals}: The system must be capable of handling individuals which have never been seen before, and are thus not in the existing catalogue. 
 
@@ -413,6 +415,7 @@ An overview of how current photo-id aides meet these requirements can be seen in
 			FinScan \cite{hillman_finscan_2002} & \cmark & \xmark & \xmark & \cmark & \cmark & \cmark \\
 			FinBase \cite{fisheries_finbase_2018} & \cmark & \xmark & \xmark & \cmark & \cmark & \cmark \\
 			DARWIN \cite{hale_unsupervised_2012}  &  \cmark & \xmark & \xmark & \cmark & \cmark & \cmark \\
+			catRlog \cite{keen_catrlog_2021} & \cmark & \xmark & \xmark & \cmark & \cmark & \cmark \\
 			CurvRank \cite{weideman_integral_2017} & \cmark & \xmark & \xmark & \cmark & ? & \cmark \\
 			Karnowski \textit{et al.} \cite{karnowski_dolphin_2015} & \xmark & \cmark & \cmark & \xmark & \textthreequartersemdash & \cmark \\
 			Photo-ID Ninja\textsuperscript{\ref{footnote:photo-idNinja}} & \xmark & \cmark & \xmark & \xmark & \textthreequartersemdash & \xmark \\
