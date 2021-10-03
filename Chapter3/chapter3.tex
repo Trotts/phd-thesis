@@ -188,7 +188,7 @@ As well as transfer learning the use of data augmentation was also explored to h
 	\begin{center}
 		\includegraphics[scale=0.45]{Chapter3/figs/data-augs.png}
 	\end{center}
-	\caption{Examples of data augmentations found in literature.}{Examples of data augmentations found in literature. Left: Randomly erasing parts of images, from Zhong \textit{et al}. \cite{zhong_random_2017}. Right: Augmentations to simulate screenshot capture. Defocus blur (top), motion blur (bottom) from Atapour-Abarghouei \textit{et al}. \cite{atapour-abarghouei_kings_2019}.}
+	\caption{Examples of data augmentations found in literature.}{Left: Randomly erasing parts of images, from Zhong \textit{et al}. \cite{zhong_random_2017}. Right: Augmentations to simulate screenshot capture. Defocus blur (top), motion blur (bottom) from Atapour-Abarghouei \textit{et al}. \cite{atapour-abarghouei_kings_2019}.}
 	\label{fig:data-aug-examples}
 \end{figure}
 
@@ -357,7 +357,7 @@ An interesting point to note here is that 20190902T0946 did not achieve the high
 
 \subsection{An Evaluation of Optimal Model Hyperparameters}\label{ch:cetDet,sec:ModelSelection,sub:OptimalHyperparameters}
 
-As discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch} a filter of the trained Mask-RCNN models was performed to determine the best model hyperparameters for the task of cetacean instance segmentation, with model 20190902T0946 being selected. This model's hyperparameters, along with those of the other nine best performing models, can be seen in Table \ref{tab:best-mask-rcnn-models}.
+As discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch} a filtering of the trained Mask-RCNN models was performed to determine the best model hyperparameters for the task of cetacean instance segmentation, with model 20190902T0946 ultimately being selected for future use. This model's hyperparameters, along with those of the other nine best performing models, can be seen in Table \ref{tab:best-mask-rcnn-models}.
 
 \begin{table}[!ht]
 	\tiny
@@ -387,10 +387,17 @@ The hyperparameters of the best performing models provide an interesting insight
 
 Half of the best models utilise the \textit{aug1} data augmentation strategy, defined in Section \ref{ch:cetDet,sec:initialTesting,sub:dataaugmentation}. The smallest RPN Anchor Scale, (8, 16, 32, 64, 128), has not been utilised by any of the best models, and the value of the weight decay hyperparameter is split between the three possible values. These splits highlight the need for a robust and in-depth hyperparameter search, as with the majority of hyperparameters searched no clear trend can be identified.
 
+\subsection{Limitations of the Best Performing Model}\label{ch:cetDet,sec:ModelSelection,sub:LimitationsOfBest}
+
+% Find examples of the model performing poorly e.g bouys etc. Highlights the need for post-processing in Ch 4. 
+
 \subsection{Summary}\label{ch:cetDet,sec:ModelSelection,sub:Summary}
 
-%Summary of the Chapter. It is possible to create an instance segmentation model which is capable of handling the technical and environmental challenges of cetacean detection. Through the use of transfer learning and a dataset that is extremely different to the target domain, as well as hyperparameter tuning, it is possible to create a Mask-RCNN based detector which achieves high mAP. This removes unneeded background from the images, and removes images outright which do not contain a dolphin. Discuss the need to test the system on bottlenose and white-beaked datasets, as well as the need to utilise the pixel level detections to segment the fin from the image for photo-id.
+This Chapter discusses the project's need for a model capable of cetacean detection, both from a technical and environmental perspective. The key reasons behind the use of instance segmentation masks rather than the relatively less computational and time expensive bounding boxes is explained, with evidence showing how the difficulty of the task influenced this move. Once the system requirements and underlying model architecture have been identified, the Chapter then examines the use of model hyperparameter optimisation to train a model capable of cetacean detection via instance segmentation masks. The use of model pretraining is also explored, and highlights the benefits of this approach even when using a pretraining dataset who's domain and distribution are vastly different to the final model's goal. 
 
+The final result of this Chapter is a Mask-RCNN model capable of high mAP even at large IoU thresholds. The model's accurate detections can be coupled with a post-processing algorithm capable of greatly reducing the amount of, and improving the quality of, data which subcomponents further into the pipeline are required to operate on. This allows for greater computational efficiency downstream as well as ultimately more accurate and confident individual identifications. Chapter \ref{ch:postProcessing} discusses the post-processing algorithm utilised in more detail. 
+
+It is also of great importance that the trained model is capable of detecting cetaceans in photo-id data which has been gathered in different geo-spatial and temporal areas. Most notably, as the overall system is to be primarily deployed for individual identification in the North Sea, it is important that the detector is capable of similarly high levels of accuracy without re-training on data from that geographic area. This is explored further in Chapter \ref{ch:NDD}.
 
 
 %%%%%%%%%%%%%%%%%%%
