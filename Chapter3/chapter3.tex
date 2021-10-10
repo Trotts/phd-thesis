@@ -387,15 +387,50 @@ The hyperparameters of the best performing models provide an interesting insight
 
 Half of the best models utilise the \textit{aug1} data augmentation strategy, defined in Section \ref{ch:cetDet,sec:initialTesting,sub:dataaugmentation}. The smallest RPN Anchor Scale, (8, 16, 32, 64, 128), has not been utilised by any of the best models, and the value of the weight decay hyperparameter is split between the three possible values. These splits highlight the need for a robust and in-depth hyperparameter search, as with the majority of hyperparameters searched no clear trend can be identified.
 
-\subsection{Limitations of the Best Performing Model}\label{ch:cetDet,sec:ModelSelection,sub:LimitationsOfBest}
+\subsection{Limitations of the Model}\label{ch:cetDet,sec:ModelSelection,sub:LimitationsOfBest}
 
-% Find examples of the model performing poorly e.g bouys etc. Highlights the need for post-processing in Ch 4. 
+As with any neural network trained on real world data, the best performing model, 20190902T0946, is not perfect. As can be seen through the mAP scores in Figure \ref{fig:mAP-best-models-bar-chart}, the model still fails to correctly detect in some instances. This section examines under what conditions 20190902T0946 fails for the purposes of model transparency. 
 
-\subsection{Summary}\label{ch:cetDet,sec:ModelSelection,sub:Summary}
+Sometimes there are instances where the detection fails to capture all of the individual. This seems to occur when parts of the animal are poorly lit or void of unique markings leading to a consistent matt dark colour scheme. An example of this behaviour can be seen in Figure \ref{fig:model-fail-bad-detection-and-split-individual}'s green detection. Here, the model has correctly detected the part of the animal's body which is above the waterline, but has failed to fully detect the matt dark dorsal fin. This poor detection may also be influenced by the undetected individual close behind the detected animal. 
+
+Figure \ref{fig:model-fail-bad-detection-and-split-individual} also shows another good example of environmental conditions which cause the model to fail to correctly detect an individual. Due to the splash covering a part of the right-most animal's body, the model has split this individual into two separate detections, the blue detection containing the dorsal fin with the red detection consisting of the body and head. 
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter3/figs/model-fail-bad-detection-and-split-individual.png}
+	\end{center}
+	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the green detection has failed to fully detect all of the individual, and another individual is split into two masks, red and blue.}
+	\label{fig:model-fail-bad-detection-and-split-individual}
+\end{figure}
+ 
+The model also struggles in cases where the image contains an animal under the waterline but due to the clarity of the water is partly visible in the image. In this case the model often detects the individual under the waterline. Due to these individuals not being useful for identification purposes however, they were not labelled in the dataset and thus are deemed to be misclassifications when evaluating the model. Figure \ref{fig:model-fail-underwater} shows an example of this issue occurring.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter3/figs/model-fail-underwater.png}
+	\end{center}
+	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the red detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
+	\label{fig:model-fail-underwater}
+\end{figure}
+
+The Zanzibar dataset contains a large number of images which contain other vessels as well as dolphins. This is due to the large marine eco-tourism industry within Zanzibar \cite{sharpe_indian_2019-1, berggren_sustainable_2007}. Whilst this issue may not be present in other survey areas where this model may be deployed, it still denotes an example of the model failing. In this case, often parts of the boat, or a combination of the boat and the humans on the boat, may cause the model to incorrectly identify a grouping of pixels as a dolphin. An example of this can be seen in Figure \ref{fig:model-fail-boat}.
+ 
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter3/figs/model-fail-boat.png}
+	\end{center}
+	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the red detection is a misclassification. The model believes a section of the boat's hull and the leg of the human to be a dolphin.}
+	\label{fig:model-fail-boat}
+\end{figure}
+
+All of these mis-detections have an impact of the overall evaluation score of the model. These mis-detections will then be passed further down the system pipeline to be classified as individuals. To prevent this from happening, a robust post-processing technique must be developed. This is discussed in detail in Chapter \ref{ch:postProcessing}.
+ 
+
+\section{Summary}\label{ch:cetDet,sec:Summary}
 
 This Chapter discusses the project's need for a model capable of cetacean detection, both from a technical and environmental perspective. The key reasons behind the use of instance segmentation masks rather than the relatively less computational and time expensive bounding boxes is explained, with evidence showing how the difficulty of the task influenced this move. Once the system requirements and underlying model architecture have been identified, the Chapter then examines the use of model hyperparameter optimisation to train a model capable of cetacean detection via instance segmentation masks. The use of model pretraining is also explored, and highlights the benefits of this approach even when using a pretraining dataset who's domain and distribution are vastly different to the final model's goal. 
 
-The final result of this Chapter is a Mask-RCNN model capable of high mAP even at large IoU thresholds. The model's accurate detections can be coupled with a post-processing algorithm capable of greatly reducing the amount of, and improving the quality of, data which subcomponents further into the pipeline are required to operate on. This allows for greater computational efficiency downstream as well as ultimately more accurate and confident individual identifications. Chapter \ref{ch:postProcessing} discusses the post-processing algorithm utilised in more detail. 
+The final result of this Chapter is a Mask-RCNN model capable of high mAP even at large IoU thresholds. The model's resulting detections can be coupled with a post-processing algorithm capable of greatly reducing the amount, and improving the quality of, data which subcomponents further into the pipeline are required to operate on. This allows for greater computational efficiency downstream as well as ultimately more accurate and confident individual identifications. Chapter \ref{ch:postProcessing} discusses the post-processing algorithm utilised in more detail. 
 
 It is also of great importance that the trained model is capable of detecting cetaceans in photo-id data which has been gathered in different geo-spatial and temporal areas. Most notably, as the overall system is to be primarily deployed for individual identification in the North Sea, it is important that the detector is capable of similarly high levels of accuracy without re-training on data from that geographic area. This is explored further in Chapter \ref{ch:NDD}.
 
