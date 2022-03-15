@@ -1,15 +1,15 @@
 \chapter{Post-Processing Techniques for Instance Segmentation Masks}\label{ch:postProcessing}
 
-At this stage, the system is capable of detecting cetaceans at an individual pixel level. Before these detections can be passed to the identification module, some post processing of the output must be performed to allow for both the reduction in computational expense of operating on the detector's output as well as ensuring that no potentially important information which will assist in an identification is lost. 
+At this stage, the system is capable of detecting cetaceans at an individual pixel level. Before these detections can be passed to the identification module, some post-processing of the output must be performed to allow for both a reduction in the computational expense of operating on the detector's output as well as ensuring that no potentially important information which will assist in an identification is lost. 
 
 
 \section{Background Subtraction \& Cropping}\label{ch:postProcessing,sec:bgExtraction}
 
 One of the main components of the post-processing pipeline is the background subtraction module. This is an extremely important step in ensuring an accurate individual classification based on the detected fin. By removing the surrounding background from around the fin, this reduces the amount of noise the identifier will be required to deal with. Thanks to the segmentation masks produced by the Mask-RCNN detector \cite{he_mask_2017} in Chapter \ref{ch:cetDet}, the pixels which are likely background have been identified.
 
-As such, it is possible to utilise this mask to perform background subtraction. As both the input image and its resultant mask can be represented as matrices, these can be manipulated such that if pixel$_{i, j}$ in the input image is denoted as background in the mask, the values of pixel$_{i, j}$ can be set to [255, 255, 255] (white). This has the effect of whiting out any pixels not detected as part of the fin in the image, removing noise. 
+As both the input image and its resultant mask can be represented as matrices, these can be manipulated utilising a \textit{bitwise and} operation such that if pixel$_{i, j}$ in the input image is denoted as background in the mask, the values of pixel$_{i, j}$ can be set to [255, 255, 255] (white). This has the effect of whiting out any pixels not detected as part of the fin in the image, removing noise. 
 
-Once the background subtraction has been achieved the input image can then be cropped to reduce the image down as much as possible. By using the top, bottom, left, and right-most non-white pixels in the image as bounding box coordinates for the fin, the input image can be reduced down greatly, often to only a few hundred pixels in both height and width. This greatly reduces the computational expense of further operations downstream by reducing the size of subsequent input images passed to other components. 
+Once the background subtraction has been achieved the input image can then be cropped to reduce file size. By using the top, bottom, left, and right-most non-white pixels in the image as bounding box coordinates for the fin, the input image can be vastly reduced, often to only a few hundred pixels in both height and width. This greatly reduces the computational expense of further operations downstream by reducing the size of subsequent input images passed to other components. 
 
 Figure \ref{fig:fin-extraction-clean} shows the effect of performing background subtraction on an input image, with the detected \texttt{dolphin} pixels from the Mask-RCNN highlighted in red. As can be seen, the background subtraction and cropping has resulted in a clean image of the animal's dorsal fin. Identifying information is present, with minimal levels of noise. 
 
@@ -21,7 +21,7 @@ Figure \ref{fig:fin-extraction-clean} shows the effect of performing background 
 	\label{fig:fin-extraction-clean}
 \end{figure}
 
-Whilst the background subtraction module aims to reduce as much noise as possible entering the identification module, which can be achieved thanks to the high accuracy of the detector, it will not be possible to remove all noise. It may be the case, such as in Figure \ref{fig:fin-extraction-unclean}, whereby some background has been mislabelled as \texttt{dolphin}. As a result, the background subtraction module is unable to remove the mislabelled background pixels which may effect the accuracy of the identification downstream. 
+Whilst the background subtraction module aims to reduce as much noise as possible entering the identification module, which can be achieved thanks to the high accuracy of the detector, it will not be possible to remove all noise. It may be the case, such as in Figure \ref{fig:fin-extraction-unclean}, whereby some background has been mislabelled as \texttt{dolphin}. As a result, the background subtraction module is unable to remove the mislabelled background pixels which may effect the accuracy of the identification downstream unless the system is robust enough to deal with this.
 
 \begin{figure}[h]
 	\begin{center}
@@ -31,8 +31,21 @@ Whilst the background subtraction module aims to reduce as much noise as possibl
 	\label{fig:fin-extraction-unclean}
 \end{figure}
 
-%% FInd image of pod, show multiple crops.
+As cetaceans often travel in pods containing multiple individuals, any post-processing methodology must be capable of handling this. To account for this, if the background subtraction module is passed multiple masks for an image it operates on each mask independently. This results in potentially multiple output images per input, one for each detection. An example of this behaviour can be seen in Figure \ref{fig:fin-extraction-pod-with-flag}.
 
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter4/figs/fin-extraction-pod-with-flag.png}
+	\end{center}
+	\caption{The result of background subtraction and cropping where the detector is passed multiple masks for an input image, right. Detections and confidence scores are overlaid onto the input image, left.}
+	\label{fig:fin-extraction-pod-with-flag}
+\end{figure}
+
+As the Mask-RCNN has detected four \texttt{dolphin} objects in the image, the background subtraction and cropping module has produced four output images. However it can be seen that two of the detections have been misclassified - they are actually of a flag denoting the location of a lobster pot and thus should be background. Further post-processing of the detection outputs is required to ensure the minimal amount of erroneous detections are passed downstream without stopping correct classifications. 
+
+\section{Morphological Transformations}\label{ch:postProcessing,sec:morphologicalTransformations}
+
+%Write about opening and closing etc. Image which shows effect in figs for Ch 4.
 
 
 %%%%%%%%%%%%%%%%%%%
