@@ -45,7 +45,24 @@ As the Mask-RCNN has detected four \texttt{dolphin} objects in the image, the ba
 
 \section{Morphological Transformations}\label{ch:postProcessing,sec:morphologicalTransformations}
 
-%Write about opening and closing etc. Image which shows effect in figs for Ch 4.
+Before the \textit{bitwise and} operation described in Section \ref{ch:postProcessing,sec:bgExtraction}, a further post-processing technique known as morphological transformations can be performed. These are a set of operations which allow for the automated manipulation of the internal structure of an in a binary image. 
+
+The two fundamental morphological transformations are called erosion, which erodes away the boundaries of the masked object, and dilation, which increases the size of the object by pushing the boundary out into the background space. These two operations can be utilised in various combinations to perform other useful transformations.
+
+In some situations, the detector may produce a mask which contains an unwanted internal hole. As the pixels inside this hole would be considered background they are removed by the background subtraction module, resulting in potentially lost identifying individual information. To prevent this from occurring, each detected mask is \textit{closed} - dilated then eroded. This has the effect of removing any holes present inside the mask. If no holes exist, the operation is still performed however the mask remains unchanged. By performing closing, the system ensures that no potentially identifiable information is lost at this stage. 
+
+An example closing operation can be seen in Figure \ref{fig:before-and-after-morphing}. The top row shows the mask for an input image, with \texttt{dolphin} highlighted in white, as well as the resultant output image after background subtraction. Note the hole in the mask and resultant output image. The bottom row shows the same mask and output image after closing has been applied. Note the hole has now been filled in the mask, and the information which would have been lost has now been preserved in the output.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter4/figs/before-and-after-morphing-masks.png}
+	\end{center}
+	\caption{Top: Detected mask output with \texttt{dolphin} highlighted in white and the resultant output image without closing. Bottom: The same mask and output image but closing has been applied.}
+	\label{fig:before-and-after-morphing}
+\end{figure}
+
+
+% Rejig this chapter to follow format in Log 16/3
 
 
 %%%%%%%%%%%%%%%%%%%
