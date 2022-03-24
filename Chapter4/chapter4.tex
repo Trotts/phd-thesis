@@ -19,7 +19,7 @@ Thanks to the tendency for cetaceans to travel in pods however, it is unlikely a
 
 \section{Morphological Transformations}\label{ch:postProcessing,sec:morphologicalTransformations}
 
-In some situations a detected mask may contain an area of background inside the detection. This can be thought of as a hole in the detection, as seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Left). Using \textit{a priori} knowledge of cetaceans we know that a hole in the detection is highly unlikely and causes a loss of potentially useful identifying information. As such, any holes which are present in the masks must be removed. 
+In some situations a detected mask may contain an area of background inside the detection. This can be thought of as a hole in the detection, as seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Left). Using \textit{a priori} knowledge of cetaceans, it can be deduced that a hole in the detection is highly unlikely and causes a loss of potentially useful identifying information. As such, any holes which are present in the masks must be removed. 
 
 \begin{figure}[h]
 	\begin{center}
@@ -35,9 +35,32 @@ In order to remove the cluster of background pixels inside of the detection, eac
 
 \section{Background Subtraction}\label{ch:postProcessing,sec:bgExtraction}
 
-Now that the mask has been cleaned using morphological transformations, it is possible to utilise it for background subtraction. This is an extremely important step in ensuring an accurate individual classification based on the detected \texttt{dolphin} object. By removing the background, this ensures each individual identification is only performed on the detected object and is not influenced by pixels not forming a part of the detection. 
+Now that the mask has been cleaned using morphological transformations, it is possible to utilise it to perform background subtraction. This is an extremely important step in ensuring an accurate individual classification based on the detected \texttt{dolphin} object, ensuring no background noise is passed to the identification system which may influence the final classification.
 
-% Bitwise and the mask and the image to get an RGB image wirth the fin and bg as white.
+As both the input image and resultant mask can be represented as matrices, these can be manipulated utilising a \textit{bitwise and} operation such that if pixel$_{i, j}$ in the input image is denoted as background in the mask, the values of pixel$_{i, j}$ can be set to [255, 255, 255] (white). This has the effect of whiting out any pixels not detected as part of the \texttt{dolphin} in the input, whilst keeping the pixels detected as \texttt{dolphin} intact.
+
+An example of background subtraction utilising cleaned masks can be seen in Figure \ref{fig:190730-001-MOLS0360_-bg-subtraction}. Using the same input image as in Figure \ref{fig:190730-001-MOLS0360_-detections}, it can be seen that the \textit{bitwise and} operation whites all pixels in the image except those which have been classified as \texttt{dolphin} for each of the three output masks. Note at this point however that the erroneous classification, shown Bottom Right, still remains. 
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter4/figs/190730-001-MOLS0360_-bg-subtraction.png}
+	\end{center}
+	\caption{Top Left: A visualisation of the three \texttt{dolphin} detections for an input image produced by the Mask-RCNN detector, alongside their confidence scores. Top Right, Bottom: The resultant output images after \textit{bitwise and} operations performed between the input image and the cleaned detection masks. A border has been added for clarity.}
+	\label{fig:190730-001-MOLS0360_-bg-subtraction}
+\end{figure}
+
+% Show that it may not be possible to remove all background pixels if the mask includes them, images below but uncropped. 
+
+Whilst the background subtraction aims to reduce noise passed downstream to the individual identification module, it will not be possible to remove all noise. It may be the case, such as in Figure \ref{fig:fin-extraction-unclean}, whereby some background has been mislabelled as \texttt{dolphin}. As a result, the background subtraction module is unable to remove the mislabelled background pixels which may effect the accuracy of the identification downstream unless the system is robust enough to deal with this.
+
+%% TODO: fin-extraction-unclean input img, or other good example of fin with some bg present.
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{example-image}
+	\end{center}
+	\caption{The result of background subtraction and cropping where the detector has mislabelled some background pixels as \texttt{dolphin}, right. Detected pixels have been highlighted red on the input image, left, with confidence score shown.}
+	\label{fig:fin-extraction-unclean}
+\end{figure}
 
 
 
