@@ -6,7 +6,7 @@ At this stage, the system is capable of detecting cetaceans at an individual pix
 
 When an image is ran through the Mask-RCNN detector \cite{he_mask_2017}, the number of outputs can vary depending on how many detected objects have a confidence score higher than 90\% (as discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:DetectionHyperparameters}). If no detections reach this threshold the image is discarded from further processing. This can occur if, for example, an image is taken by accident capturing the vessel's floor. If a single detection reaches the threshold, the resultant mask is passed downstream. 
 
-Thanks to the tendency for cetaceans to travel in pods however, it is unlikely an image will contain only a single \texttt{dolphin} detection. In these situations the Mask-RCNN will output multiple detections masks, one per object. To handle this, the first stage of the post-processing methodology is to separate multiple detections for a single image. This ensures each \texttt{dolphin} detection is handled independently, mitigating the potential for an identification to be influenced by the others. An example of this behaviour can be seen in Figure \ref{fig:190730-001-MOLS0360_-detections}. Here, an image inputted to the Mask-RCNN detector has produced three detections which are above the threshold. As such, they have been split into three output masks for individual processing. Note that one of the masks, indicated in blue in the Top Left figure, has been incorrectly detected as \texttt{dolphin} with a high confidence. As such a mask has been produced, visualised Bottom Right. The downstream components of the system must thus be capable of handling background which has been incorrectly labelled, ideally via further post processing before the identification stage. 
+Thanks to the tendency for cetaceans to travel in pods however, it is unlikely an image will contain only a single \texttt{dolphin} detection. In these situations the Mask-RCNN will output multiple detection masks, one per object. To handle this, the first stage of the post-processing methodology is to separate multiple detections for a single image. This ensures each \texttt{dolphin} detection is handled independently, mitigating the potential for an identification to be influenced by the others. An example of this behaviour can be seen in Figure \ref{fig:190730-001-MOLS0360_-detections}. Here, an image inputted to the Mask-RCNN detector has produced three detections which are above the threshold. As such, they have been split into three output masks for individual processing. Note that one of the masks, indicated in blue in the Top Left figure, has been incorrectly detected as \texttt{dolphin} with a high confidence. As such a mask has been produced, visualised Bottom Right. Further post-processing must be capable of handling background which has been incorrectly labelled, removing it before individual identification occurs.
 
 \begin{figure}[h]
 	\begin{center}
@@ -19,23 +19,23 @@ Thanks to the tendency for cetaceans to travel in pods however, it is unlikely a
 
 \section{Morphological Transformations}\label{ch:postProcessing,sec:morphologicalTransformations}
 
-In some situations a detected mask may contain an area of background inside the detection. This can be thought of as a hole in the detection, as seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Left). Using \textit{a priori} knowledge of cetaceans, it can be deduced that a hole in the detection is highly unlikely and causes a loss of potentially useful identifying information. As such, any holes which are present in the masks must be removed. 
+In some situations a detected mask may contain an area of background inside the detection. This can be thought of as a hole in the detection, as seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Left). Using \textit{a priori} knowledge of cetaceans, which would rarely if ever be detected with a hole, it can be deduced that a hole in the detection is highly unlikely and may cause a loss of useful identifying information. As such, any holes which are present in the masks must be filled. This is achieved using morphological transformations, a set of operations which allow for the automated manipulation of the internal structure of binary images such as masks. 
 
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter4/figs/before-and-after-morphing-masks-only.png}
 	\end{center}
-	\caption{Left: A detection mask before morphological transformations have been applied. The detected \texttt{dolphin} object is displayed in white. Note the cluster of black background pixels inside. Right: The same detection mask after morphological transformations have been applied. Note the pixels which make up the hole have been converted to \texttt{dolphin}.}
+	\caption{Left: A detection mask before closing has been applied. The detected \texttt{dolphin} object is displayed in white. Note the cluster of black background pixels inside. Right: The same detection mask after closing. Note the pixels which make up the hole have been converted to \texttt{dolphin}.}
 	\label{fig:before-and-after-morphing-masks-only}
 \end{figure}
 
-This is achieved using morphological transformations, a set of operations which allow for the automated manipulation of the internal structure of a binary image such as masks. The two fundamental morphological transformations are called erosion, which erodes away the boundaries of the masked object, and dilation, which increases the size of the object by pushing the boundary out into the background space. These two operations can be utilised in various combinations to perform other useful transformations.
+The two fundamental morphological transformations are erosion, which erodes away the boundaries of the masked object, and dilation, which increases the size of the object by pushing the boundary out into the background space. These two operations can be utilised in various combinations to perform more complex transformations.
 
-In order to remove the cluster of background pixels inside of the detection, each mask is \textit{closed} - dilated then eroded. This has the effect of removing any holes present inside the mask. If no holes exist, the operation is still performed however the mask remains unchanged. By performing closing, the system ensures that no potentially identifiable information is lost as a result of an incomplete detection. This effect can be seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Right).
+In order to remove a cluster of background pixels inside of a detection, each mask is \textit{closed} - dilated then eroded. This has the effect of removing any holes present inside the mask, as can be seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Right). If no holes exist, the operation is still performed however the mask remains unchanged. By performing closing, the system ensures that no potentially identifiable information is lost as a result of an incomplete detection. 
 
 \section{Background Subtraction}\label{ch:postProcessing,sec:bgExtraction}
 
-Now that the mask has been cleaned using morphological transformations, it is possible to utilise it to perform background subtraction. This is an extremely important step in ensuring an accurate individual classification based on the detected \texttt{dolphin} object, ensuring no background noise is passed to the identification system which may influence the final classification.
+Now that the masks have been cleaned using morphological transformations, it is possible to utilise them to perform background subtraction. This is an extremely important step in producing an accurate individual classification based on the detected \texttt{dolphin} object by ensuring a minimal amount of background noise is passed to the identification system.
 
 As both the input image and resultant mask can be represented as matrices, these can be manipulated utilising a \textit{bitwise and} operation such that if pixel$_{i, j}$ in the input image is denoted as background in the mask, the values of pixel$_{i, j}$ can be set to [255, 255, 255] (white). This has the effect of whiting out any pixels not detected as part of the \texttt{dolphin} in the input, whilst keeping the pixels detected as \texttt{dolphin} intact.
 
@@ -49,28 +49,47 @@ An example of background subtraction utilising cleaned masks can be seen in Figu
 	\label{fig:190730-001-MOLS0360_-bg-subtraction}
 \end{figure}
 
-% Show that it may not be possible to remove all background pixels if the mask includes them, images below but uncropped. 
+Whilst the background subtraction aims to reduce noise passed downstream to the individual identification module, it will not be possible to remove all noise. It may be the case, such as in Figure \ref{fig:fin-extraction-unclean}, whereby some background pixels have been mislabelled as \texttt{dolphin} and are connected to those which have been correctly labelled. As a result, morphological transformation and background subtraction are unable to remove the mislabelled pixels. This may effect the accuracy of identification downstream unless the system is robust enough to deal with this.
 
-Whilst the background subtraction aims to reduce noise passed downstream to the individual identification module, it will not be possible to remove all noise. It may be the case, such as in Figure \ref{fig:fin-extraction-unclean}, whereby some background has been mislabelled as \texttt{dolphin}. As a result, the background subtraction module is unable to remove the mislabelled background pixels which may effect the accuracy of the identification downstream unless the system is robust enough to deal with this.
-
-%% TODO: fin-extraction-unclean input img, or other good example of fin with some bg present.
-\begin{figure}[h]
+\begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{example-image}
+		\includegraphics[scale=0.5]{Chapter4/figs/fin-extraction-unclean-uncropped.png}
 	\end{center}
-	\caption{The result of background subtraction and cropping where the detector has mislabelled some background pixels as \texttt{dolphin}, right. Detected pixels have been highlighted red on the input image, left, with confidence score shown.}
+	\caption{Top Left: A visualisation of the \texttt{dolphin} detection for an input image produced by the Mask-RCNN detector, alongside the confidence score. The detector has incorrectly labelled some pixels as \texttt{dolphin}. Top Right: The resultant detection mask after morphological transformation. Bottom: The resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask. Note the mislabelled pixels are present after cleaning and background subtraction. A border has been added for clarity.}
 	\label{fig:fin-extraction-unclean}
 \end{figure}
 
+\section{Colour Thresholding}\label{ch:postProcessing,sec:colourThresholding}
 
+As the Mask-RCNN detector is not perfect, it may sometimes incorrectly classify a cluster of background pixels as \texttt{dolphin}. An example of this can be seen in Figure \ref{fig:190730-001-MOLS0360_-detections}, where a flag denoting the location of a lobster pot has been incorrectly classified as a \texttt{dolphin} object with high confidence. Unlike in Figure \ref{fig:fin-extraction-unclean} where a small amount of incorrectly labelled \texttt{dolphin} pixels could not be removed as they were connected to a large amount of correctly labelled pixels, it is possible to filter out objects composed of majority incorrectly labelled pixels, such as the detected lobster pot flag, using colour thresholding and \textit{a priori} knowledge. This allows the post-processing methodology to remove erroneous detections before they reach the identification stage. 
 
-\section{Colour Thresholding}\label{ch:postProcessing,sec:splittingByComponent}
+Thanks to evolution, the outer layer of cetacean's skin is often coloured in such a way as to camouflage them when in the water, resulting in a consistent grey colouring. This information can be utilised to filter out detected objects during post-processing. By comparing the colour composition of each detected object against a calculated \textit{dolphin-like} threshold, it is possible to discard objects which have been erroneously detected. 
 
-As the Mask-RCNN detector is not perfect, it may sometimes incorrectly classify background as a \texttt{dolphin} object. An example of this can be seen in Figure \ref{fig:190730-001-MOLS0360_-detections}, where a flag denoting the location of a lobster pot has been incorrectly identified as a \texttt{dolphin} object with high confidence rather than as background. As a result, any post-processing methodology must be capable of not only cleaning detections to improve the chance of individual identification, but also remove erroneous detections before they reach the identifier. 
+\subsection{Calculating the Threshold}\label{ch:postProcessing,sec:colourThresholding,subsec:calulating}
 
-% Discuss colour thresholding. 90% global, then for each fin are 50% of the pixels above that.
-% Examples from below
+In order to be able to compare each detected object's composition against a \textit{dolphin-like} colour threshold, the values of the threshold must first be determined. To achieve this, each image in the Zanzibar dataset was ran through the Mask-RCNN detector. Histograms of the three RGB colour channel pixel intensities for each object classification (\texttt{dolphin} or background) were recorded, giving a total of six histograms per image. 
 
+Once complete the histogram groups were combined to give six global pixel intensity distributions, which can be seen in Figure \ref{fig:global-histogram}. From the charts it can be seen that, regardless of colour channel, there is a near inversion of the pixel intensities between those detected as \texttt{dolphin} and those not, strongly suggesting it is possible to determine if a detected object is erroneous based on its colour composition.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.8]{Chapter4/figs/histogram.png}
+	\end{center}
+	\caption{The global range of pixel intensities for each RGB colour channel, split by pixel classification.}\label{fig:global-histogram}
+\end{figure}
+
+Using the distribution histograms, a \textit{dolphin-like} threshold was determined. For objects detected as \texttt{dolphin}, 90\% of the RGB pixel intensities are below [148, 148, 159]. The colour representing this threshold can be seen in Figure \ref{fig:colour-threshold}. By contrast only 50.19\%, 38.24\%, and 36.36\% of the background pixels for each RGB channel respectively are below this threshold.
+ 
+ \begin{figure}
+ 	\begin{center}
+ 		\includegraphics[scale=0.5]{Chapter4/figs/148-148-159.png}
+ 	\end{center}
+ 	\caption{A representation of the RGB threshold for \textit{dolphin-like}, colour [148, 148, 159]. 90\% of pixels detected as \texttt{dolphin} have intensities below this threshold.}\label{fig:colour-threshold}
+ \end{figure}
+
+However, checking to see if 90\% of the pixels in an object are below the threshold determined may exclude \texttt{dolphin} objects which have been correctly detected but fall outside of this range due to lighting conditions and glare. As such, objects were determined to be \textit{dolphin-like} if half of the pixels in the object were below the RGB threshold of  [148, 148, 159]. This leeway is enough to allow for fins which have been over or under exposed as a result of lighting conditions to be kept whilst being high enough to still greatly reduce the amount of erroneous detections. 
+
+% Add in figures showing colout thresholding. Show that by using thresholding the flag is discarded but the other two fins are kept. Find an over/under exposed fin and show that at 90% the fin would be discarded but at 50% the fin is kept. Find noise which is kept even after thresholding. 
 
 \section{Cropping}\label{ch:postProcessing,sec:cropping}
 
