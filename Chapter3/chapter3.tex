@@ -393,13 +393,13 @@ As with any neural network trained on real world data, the best performing model
 
 Sometimes there are instances where the detection fails to capture all of the individual. This seems to occur when parts of the animal are poorly lit or void of unique markings leading to a consistent matt dark colour scheme. An example of this behaviour can be seen in Figure \ref{fig:model-fail-bad-detection-and-split-individual}'s green detection. Here, the model has correctly detected the part of the animal's body which is above the waterline, but has failed to fully detect the matt dark dorsal fin. This poor detection may also be influenced by the undetected individual close behind the detected animal. 
 
-Figure \ref{fig:model-fail-bad-detection-and-split-individual} also shows another good example of environmental conditions which cause the model to fail to correctly detect an individual. Due to the splash covering a part of the right-most animal's body, the model has split this individual into two separate detections, the blue detection containing the dorsal fin with the red detection consisting of the body and head. 
+Figure \ref{fig:model-fail-bad-detection-and-split-individual} also shows another good example of environmental conditions which cause the model to fail to correctly detect an individual. Due to wave movement covering a part of the left animal's body, the model has split this individual into two separate detections.
 
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[scale=0.4]{Chapter3/figs/model-fail-bad-detection-and-split-individual.png}
+		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-split-individual.png}
 	\end{center}
-	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the green detection has failed to fully detect all of the individual, and another individual is split into two masks, red and blue.}
+	\caption{Left: The input image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the cetacean on the left has been split over two masks due to occlusion from a small wave.}
 	\label{fig:model-fail-bad-detection-and-split-individual}
 \end{figure}
  
@@ -407,32 +407,150 @@ The model also struggles in cases where the image contains an animal under the w
 
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[scale=0.4]{Chapter3/figs/model-fail-underwater.png}
+		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-underwater.png}
 	\end{center}
-	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the red detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
+	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the blue detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
 	\label{fig:model-fail-underwater}
 \end{figure}
 
-The Zanzibar dataset contains a large number of images which contain other vessels as well as dolphins. This is due to the large marine eco-tourism industry within Zanzibar \cite{sharpe_indian_2019-1, berggren_sustainable_2007}. Whilst this issue may not be present in other survey areas where this model may be deployed, it still denotes an example of the model failing. In this case, often parts of the boat, or a combination of the boat and the humans on the boat, may cause the model to incorrectly identify a grouping of pixels as a dolphin. An example of this can be seen in Figure \ref{fig:model-fail-boat}.
+The Zanzibar dataset contains a large number of images which contain other vessels as well as dolphins. This is due to the large marine eco-tourism industry within Zanzibar \cite{sharpe_indian_2019-1, berggren_sustainable_2007}. Whilst this issue may not be present in other survey areas where this model may be deployed, it still denotes an example of the model failing. In this case often parts of the boat, or a combination of the boat and the humans on the boat, may cause the model to incorrectly identify a grouping of pixels as a dolphin. An example of this can be seen in Figure \ref{fig:model-fail-boat}.
  
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[scale=0.4]{Chapter3/figs/model-fail-boat.png}
+		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-boat.png}
 	\end{center}
 	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the red detection is a misclassification. The model believes a section of the boat's hull and the leg of the human to be a dolphin.}
 	\label{fig:model-fail-boat}
 \end{figure}
 
-All of these mis-detections have an impact of the overall evaluation score of the model. These mis-detections will then be passed further down the system pipeline to be classified as individuals. To prevent this from happening, a robust post-processing technique must be developed. This is discussed in detail in Chapter \ref{ch:postProcessing}.
- 
+All of these mis-detections have an impact of the overall evaluation score of the model. These mis-detections will then be passed further down the system pipeline to be classified as individuals. To reduce the chances of this happening, a robust post-processing technique was developed.
+
+\section{Mask Post-Processing Techniques}\label{ch:cetDet,sec:postProcessing}
+
+At this stage, the system is capable of detecting cetaceans at an individual pixel level. Before these detections can be passed to the identification module, some post-processing of the output must be performed to allow for both a reduction in the computational expense of operating on the detector's output as well as ensuring that no potentially important information which will assist in an identification is lost. 
+
+\subsection{Handling Multiple Detections}\label{ch:cetDet,sec:postProcessing,sub:handlingMultipleDetections}
+
+When an image is ran through the Mask-RCNN detector, the number of outputs can vary depending on how many detected objects have a confidence score higher than 90\% (as discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:DetectionHyperparameters}). If no detections reach this threshold the image is discarded from further processing. This can occur if, for example, an image is taken by accident capturing the vessel's floor. If a single detection reaches the threshold, the resultant mask is passed downstream. 
+
+Thanks to the tendency for cetaceans to travel in pods however, it is unlikely an image will contain only a single \texttt{dolphin} detection. In these situations the Mask-RCNN will output multiple detection masks, one per object. To handle this, the first stage of the post-processing methodology is to separate multiple detections for a single image. This ensures each \texttt{dolphin} detection is handled independently, mitigating the potential for an identification to be influenced by the others. An example of this behaviour can be seen in Figure \ref{fig:190730-001-MOLS0360_-detections}. Here, an image inputted to the Mask-RCNN detector has produced three detections which are above the threshold. As such, they have been split into three output masks for individual processing. Note that the first detected masks, visualised with a blue overlay on the input image, has been incorrectly detected as \texttt{dolphin} with a high confidence resulting in a binary mask. Further post-processing must be capable of handling background which has been incorrectly labelled, removing it before individual identification occurs.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.45]{Chapter3/figs/190730-001-MOLS0360_-detections.png}
+	\end{center}
+	\caption{A visualisation of the three \texttt{dolphin} detections for an input image produced by the Mask-RCNN detector. The detections are highlighted by the blue, green, and red overlays on the input image, top. The resultant detection masks once split are shown bottom, where a \texttt{dolphin} object is displayed in white.}
+	\label{fig:190730-001-MOLS0360_-detections}
+\end{figure}
+
+
+\subsection{Morphological Transformations}\label{ch:cetDet,sec:postProcessing,sub:morphologicalTransformations}
+
+In some situations a detected mask may contain an area of background inside the detection. This can be thought of as a hole in the detection, as seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Left). Using \textit{a priori} knowledge of cetaceans, which would rarely if ever be captured with a hole, it can be deduced that a hole in the detection is highly unlikely and may cause a loss of useful identifying information. As such, any holes which are present in the masks must be filled.  
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter3/figs/before-and-after-morphing-masks-only.png}
+	\end{center}
+	\caption{Left: A detection mask before closing has been applied. The detected \texttt{dolphin} object is displayed in white. Note the cluster of black background pixels inside. Right: The same detection mask after closing. Note the pixels which make up the hole have been converted to \texttt{dolphin}.}
+	\label{fig:before-and-after-morphing-masks-only}
+\end{figure}
+
+This is achieved using morphological transformations, a set of operations which allow for the automated manipulation of the internal structure of binary images such as masks. The two fundamental morphological transformations are \textit{erosion}, which erodes away the boundaries of the masked object, and \textit{dilation}, which increases the size of the object by pushing the boundary out into the background space. These two operations can be utilised in various combinations to perform more complex transformations.
+
+In order to remove a cluster of background pixels inside of a detection, each mask is \textit{closed} - dilated then eroded. This has the effect of removing any holes present inside the mask, as can be seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Right). If no holes exist, the operation is still performed however the mask remains unchanged. By performing closing, the system ensures that no potentially identifiable information is lost as a result of an incomplete detection. 
+
+\subsection{Background Subtraction}\label{ch:cetDet,sec:postProcessing,sub:bgExtraction}
+
+Now that the masks have been cleaned using morphological transformations, it is possible to utilise them to perform background subtraction. This is an extremely important step in producing an accurate individual classification based on the detected \texttt{dolphin} object by ensuring a minimal amount of background noise is passed to the identification system.
+
+As both the input image and resultant mask can be represented as matrices, these can be manipulated utilising a \textit{bitwise and} operation such that if pixel$_{i, j}$ in the input image is denoted as background in the mask, the values of pixel$_{i, j}$ can be set to [255, 255, 255] (white). This has the effect of whiting out any pixels not detected as part of the \texttt{dolphin} in the input, whilst keeping the pixels detected as \texttt{dolphin} intact.
+
+An example of background subtraction utilising cleaned masks can be seen in Figure \ref{fig:190730-001-MOLS0360_-bg-subtraction}. Using the same input image as in Figure \ref{fig:190730-001-MOLS0360_-detections}, it can be seen that the \textit{bitwise and} operation whites all pixels in the image except those which have been classified as \texttt{dolphin} for each of the three output masks. Note at this point that the erroneous classification still remains. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.45]{Chapter3/figs/190730-001-MOLS0360_-bg-subtraction.png}
+	\end{center}
+	\caption{A visualisation of the three \texttt{dolphin} detections from Figure \ref{fig:190730-001-MOLS0360_-detections} before and after background subtraction.A border has been added to the background subtracted images for clarity.}
+	\label{fig:190730-001-MOLS0360_-bg-subtraction}
+\end{figure}
+
+Whilst the background subtraction aims to reduce noise passed downstream to the individual identification module, it will not be possible to remove all noise. It may be the case, such as in Figure \ref{fig:fin-extraction-unclean}, that some background pixels have been mislabelled as \texttt{dolphin} and are connected to at the edges of the object. As a result, morphological transformation and background subtraction are unable to remove the mislabelled pixels. This may affect the accuracy of identification downstream unless the system is robust enough to deal with this.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter3/figs/fin-extraction-unclean-uncropped.png}
+	\end{center}
+	\caption{Top Left: A visualisation of the \texttt{dolphin} detection for an input image produced by the Mask-RCNN detector, alongside the confidence score. The detector has incorrectly labelled some pixels as \texttt{dolphin}. Top Right: The resultant detection mask after morphological transformation. Bottom: The resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask. Note the mislabelled pixels are present after cleaning and background subtraction. A border has been added for clarity.}
+	\label{fig:fin-extraction-unclean}
+\end{figure}
+
+\subsection{Colour Thresholding Mask Components}\label{ch:cetDet,sec:postProcessing,sub:colourThresholdingMaskComponents}
+
+In some cases a single detection mask may consist of multiple components. This may occur if, for example, an area of splash has been erroneously included as part of a detection. As cetaceans cannot be made up of multiple disjoint components, it is known that some of these must be noise and can be removed. 
+
+The outer layer of a cetacean's skin is often a consistent grey colouring. This information can be utilised to filter out noisy components of the mask during post-processing. By comparing the colour composition of each detected object against a calculated \textit{dolphin-like} threshold, it is possible to discard mask components which have been erroneously detected.
+
+In order to be able to compare each mask component's composition against a \textit{dolphin-like} colour threshold, the values of the threshold must first be determined. To achieve this, each image in the Zanzibar dataset was ran through the Mask-RCNN detector. Histograms of the three RGB colour channel pixel intensities for each object classification (\texttt{dolphin} or background) were recorded, giving a total of six histograms per image. 
+
+Once complete the histogram groups were combined to give six global pixel intensity distributions, which can be seen in Figure \ref{fig:global-histogram}. From the charts it can be seen that, regardless of colour channel, there is a near inversion in the distribution of pixel intensities between those detected as \texttt{dolphin} and those not, strongly suggesting it is possible to determine if a component is erroneous based on its colour composition.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.7]{Chapter3/figs/histogram.png}
+	\end{center}
+	\caption{The global range of pixel intensities for each RGB colour channel, split by pixel classification.}\label{fig:global-histogram}
+\end{figure}
+
+Using the global distribution histograms, a \textit{dolphin-like} threshold was determined. For all masks detected as \texttt{dolphin}, 90\% of the RGB pixel intensities are below [148, 148, 159]. The colour representing this threshold can be seen in Figure \ref{fig:colour-threshold}. In contrast only 50.19\%, 38.24\%, and 36.36\% of the background pixels for each RGB channel respectively are below this threshold. As noise components in the mask are often areas of water or splash, these components will be likely much lighter in composition than cetaceans, and thus can be removed from the mask with confidence. An example of colour thresholding removing noise from a mask can be seen in Figure \ref{fig:190827-001-MOLS0078_-colour-thresholding-splash-removed}.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.3]{Chapter3/figs/148-148-159.png}
+	\end{center}
+	\caption{A representation of the RGB threshold for \textit{dolphin-like}, colour [148, 148, 159]. In the Zanzibar dataset, 90\% of pixels detected as \texttt{dolphin} have intensities below this threshold.}\label{fig:colour-threshold}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter3/figs/190827-001-MOLS0078_-colour-thresholding-splash-removed.png}
+	\end{center}
+	\caption{Workflow detailing colour thresholding to remove an area of disjoint splash which has been detected as part of a \texttt{dolphin} object. The detection mask is split into each component. The resultant background subtracted images are then colour thresholded. As a result, the erroneous splash is discarded. }\label{fig:190827-001-MOLS0078_-colour-thresholding-splash-removed}
+\end{figure}
+
+During testing however it was found that when checking detections at an individual image level rather than globally, considering a mask component to be \textit{dolphin-like} if 90\% of the pixels were below the colour threshold was too restrictive. Utilising such a high percentage bar sometimes rejected valid detections which may have been over-exposed due to lighting conditions. As such, whilst the colour threshold was kept the same, it was found that reducing the percentage check to 50\% provided enough leeway such that over-exposed but valid detections were kept whilst still rejecting a large portion of erroneous ones. Figure \ref{fig:190723-001-MOLS0752_-fin-removed-at-90-kept-at-50} shows an example detection which would be discarded if the 90\% global threshold was used per image, but is retained if this is dropped to a 50\% check.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.7]{Chapter3/figs/190723-001-MOLS0752_-fin-removed-at-90-kept-at-50.png}
+	\end{center}
+	\caption{Workflow showing how utilising the 90\% global threshold may lead to over-exposed detections being erroneously discarded. A \texttt{dolphin} object is detected whose mask consists of multiple components.  One of the components, which contains a valid area of detection, is shown in stage 3 of the workflow. Checking to see if 50\% of the pixels in the component are below the threshold retains the detection, whilst checking at 90\% discards it.}\label{fig:190723-001-MOLS0752_-fin-removed-at-90-kept-at-50}
+\end{figure}
+
+It may be the case that multiple components in an image meet the conditions set by the threshold to be kept. In this case, each component of the mask is split into its own image, in a similar process as outlined in Section \ref{ch:cetDet,sec:postProcessing,sub:handlingMultipleDetections}. If a mask only contains one component, then colour thresholding is not applied. This ensures no detections by the Mask-RCNN are completely ignored due to post-processing, preventing the discarding of a \texttt{dolphin} object mask which contains no disjoint components however is above the threshold, such as in the event of over-exposure. This condition also has the effect however of allowing fully erroneous detections to pass downstream, such as the flag detected in Figures \ref{fig:190730-001-MOLS0360_-detections} and \ref{fig:fin-extraction-unclean}. Any erroneous detections which pass downstream at this stage must now be handled by the identification module.
+
+\subsection{Cropping}\label{ch:cetDet,sec:postProcessing,su:cropping}
+
+At this point outputs from the Mask-RCNN detector have been post-processed to remove as much noise from the detected masks as possible, and these have been utilised to perform background subtraction. This results in an output image containing mostly white pixels surrounding a detected \texttt{dolphin} object. This image is the same size as the one inputted to the detector, which can often be many thousands of pixels, although the vast majority of these are now un-needed.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter3/figs/190627-001-MOLS0028_-crop.png}
+	\end{center}
+	\caption{Left: An input image and overlaid detection mask. Right: The corresponding cropped output image after post-processing. Original image sizes are displayed above each image. Images have been resized for clarity.}\label{fig:190627-001-MOLS0028_-crop}
+\end{figure}
+
+As a result, the images outputted from the background detector are now cropped down to contain just the object of interest. This has the effect of vastly reducing the image file size, which in turn reduces the computational expense of operating on them downstream. In Figure \ref{fig:190627-001-MOLS0028_-crop} for example, the input image to the detector is of size 3456x5184 pixels. After post-processing, the resulting output image is now of size 776x1350px, approximately a 94.2\% reduction in image size whilst still keeping identifying information,  such as the white pigmentation on the dorsal fin, present. This cropping also has the effect of centring the detected \texttt{dolphin} objects in the final output image. 
+
 
 \section{Summary}\label{ch:cetDet,sec:Summary}
 
-This Chapter discusses the project's need for a model capable of cetacean detection, both from a technical and environmental perspective. The key reasons behind the use of instance segmentation masks rather than the relatively less computational and time expensive bounding boxes is explained, with evidence showing how the difficulty of the task influenced this move. Once the system requirements and underlying model architecture have been identified, the Chapter then examines the use of model hyperparameter optimisation to train a model capable of cetacean detection via instance segmentation masks. The use of model pretraining is also explored, and highlights the benefits of this approach even when using a pretraining dataset who's domain and distribution are vastly different to the final model's goal. 
+This Chapter discusses the project's need for a model capable of cetacean detection, both from a technical and environmental perspective. The key reasons behind the use of instance segmentation masks rather than the relatively less computational and time expensive bounding boxes is explained, with evidence showing how the difficulty of the task influenced this move. Once the system requirements and underlying model architecture have been identified, the Chapter then examines the use of model hyperparameter optimisation to train a model capable of cetacean detection via instance segmentation masks. The use of model pretraining is also explored, and highlights the benefits of this approach even when using a pretraining dataset who's domain and distribution are vastly different to the final model's goal. Finally, the Chapter examines the use of post-processing techniques to improve the output of the Mask-RCNN's detections for use in downstream tasks. 
 
-The final result of this Chapter is a Mask-RCNN model capable of high mAP even at large IoU thresholds. The model's resulting detections can be coupled with a post-processing algorithm capable of greatly reducing the amount, and improving the quality of, data which subcomponents further into the pipeline are required to operate on. This allows for greater computational efficiency downstream as well as ultimately more accurate and confident individual identifications. Chapter \ref{ch:postProcessing} discusses the post-processing algorithm utilised in more detail. 
+The final result of this Chapter is a Mask-RCNN model capable of high mAP even at large IoU thresholds. The model's resulting detections are coupled with a post-processing pipeline capable of greatly reducing the amount, and improving the quality of, data which subcomponents further into the pipeline are required to operate on. This allows for greater computational efficiency downstream as well as ultimately more accurate and confident individual identifications.
 
-It is also of great importance that the trained model is capable of detecting cetaceans in photo-id data which has been gathered in different geo-spatial and temporal areas. Most notably, as the overall system is to be primarily deployed for individual identification in the North Sea, it is important that the detector is capable of similarly high levels of accuracy without re-training on data from that geographic area. This is explored further in Chapter \ref{ch:NDD}.
+It is of great importance that the trained Mask-RCNN model is capable of detecting cetaceans in photo-id data which has been gathered in different geospatial and temporal areas. It is also important that the detector is capable of similarly high levels of accuracy without re-training on data from that geographic area. Use of the detector on data collected in a different geospatial and temporal area, as well as the transformation of this data into a useable photo-identification dataset, is explored in Chapter \ref{ch:NDD}.
 
 
 %%%%%%%%%%%%%%%%%%%
