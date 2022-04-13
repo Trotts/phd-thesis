@@ -1,5 +1,20 @@
 \chapter{North Sea Data Collection} \label{ch:NDD}
 
+At this stage, the automatic photo-identification system in development is capable of detecting cetaceans in large panoramic images and post-processing these detections into a form ready for individual identification, as outlined in Chapter \ref{ch:cetDet}. So far, the detector has been trained and tested on data collected by Newcastle University's Marine MEGAfauna Lab whilst researching the abundance of Indo-Pacific bottlenose dolphins (\textit{Tursiops aduncus}) off the coast of Zanzibar, Tanzania \cite{sharpe_indian_2019}. 
+
+Whilst the Marine MEGAfauna Lab research heavily in the Indian Ocean and around Zanzibar \cite{yang_description_2020, temple_life-history_2020, temple_marine_2019, temple_marine_2018, weigmann_revision_2020, barrowclift_social_2017}, this is not the only place they operate \cite{temple_by-catch_2021, yang_classification_2017, yang_influence_2022}. In recent years, their work has begun to include more local waters - the North Sea off the coast of Northumberland, UK \cite{van_bressem_visual_2018, yang_characterization_2021}. These waters are known to host a wide variety of marine mammals, with the Marine MEGAfauna Lab focussing efforts specifically on the bottlenose dolphin (\textit{Tursiops truncatus}) and white-beaked dolphin (\textit{Lagenorhynchus albirostris}) populations. 
+
+Near the end of the Mask-RCNN detection model's completion, the Marine MEGAfauna Lab were preparing to begin a large scale bottlenose and white-beaked abundance estimate and health assessment survey. As such the opportunity arose to validate the detector's generalisability on data which is similar in composition and purpose, however was collected in a different geographic location, at a different time, and containing different species to the data used to train and test the detector.
+
+As a result, this Chapter discusses the collection of abundance estimate data in Northumberland, UK from the perspective of model and technique evaluation as outlined in Chapter \ref{ch:cetDet}. In order to achieve this evaluation, the photo-identification data was curated and transformed from a biological catalogue into a computer vision dataset known as The Northumberland Dolphin Dataset 2020 (NDD20) - the creation of which will also be discussed. 
+
+\section{Data Collection}\label{ch:NDD,sec:dataCollection}
+
+%TODO: Write a little opening paragraph between section header and subsection below.
+
+\subsection{Study Area}\label{ch:NDD,sec:dataCollection,sub:studyArea}
+
+%TODO: MCZ study area overview. Geography, depth, etc. Why chosen (find previous studies in the area)
 
 %%%%%%%%%%%%%%%%%%%
 %\nomenclature[z-CNN]{CNN}{Convolutional Neural Networks}
