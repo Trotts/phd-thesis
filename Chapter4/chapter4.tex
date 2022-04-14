@@ -2,7 +2,7 @@
 
 At this stage, the automatic photo-identification system in development is capable of detecting cetaceans in large panoramic images and post-processing these detections into a form ready for individual identification, as outlined in Chapter \ref{ch:cetDet}. So far, the detector has been trained and tested on data collected by Newcastle University's Marine MEGAfauna Lab whilst researching the abundance of Indo-Pacific bottlenose dolphins (\textit{Tursiops aduncus}) off the coast of Zanzibar, Tanzania \cite{sharpe_indian_2019}. 
 
-Whilst the Marine MEGAfauna Lab research heavily in the Indian Ocean and around Zanzibar \cite{yang_description_2020, temple_life-history_2020, temple_marine_2019, temple_marine_2018, weigmann_revision_2020, barrowclift_social_2017}, this is not the only place they operate \cite{temple_by-catch_2021, yang_classification_2017, yang_influence_2022}. In recent years, their work has begun to include more local waters - the North Sea off the coast of Northumberland, UK \cite{van_bressem_visual_2018, yang_characterization_2021}. These waters are known to host a wide variety of marine mammals, with the Marine MEGAfauna Lab focussing efforts specifically on the bottlenose dolphin (\textit{Tursiops truncatus}) and white-beaked dolphin (\textit{Lagenorhynchus albirostris}) populations. 
+Whilst the Marine MEGAfauna Lab research heavily in the Indian Ocean around Zanzibar \cite{yang_description_2020, temple_life-history_2020, temple_marine_2019, temple_marine_2018, weigmann_revision_2020, barrowclift_social_2017}, this is not the only place they operate \cite{temple_by-catch_2021, yang_classification_2017, yang_influence_2022}. In recent years, their work has begun to include more local waters such as the North Sea off the coast of Northumberland, UK \cite{van_bressem_visual_2018, yang_characterization_2021}. These waters are known to host a wide variety of marine mammals, with the Marine MEGAfauna Lab focussing efforts specifically on the bottlenose dolphin (\textit{Tursiops truncatus}) and white-beaked dolphin (\textit{Lagenorhynchus albirostris}) populations. 
 
 Near the end of the Mask-RCNN detection model's completion, the Marine MEGAfauna Lab were preparing to begin a large scale bottlenose and white-beaked abundance estimate and health assessment survey. As such the opportunity arose to validate the detector's generalisability on data which is similar in composition and purpose, however was collected in a different geographic location, at a different time, and containing different species to the data used to train and test the detector.
 
@@ -10,12 +10,18 @@ As a result, this Chapter discusses the collection of abundance estimate data in
 
 \section{Data Collection}\label{ch:NDD,sec:dataCollection}
 
-%TODO: Write a little opening paragraph between section header and subsection below.
+The following Section provides context for the data collection survey, beginning by briefly outlining the geographic area in which the data was collected and discussion of why the area was chosen. Next the survey effort is discussed in detail, including a run-down of the methodology used, for the purposes of reproducibility. 
 
-\subsection{Study Area}\label{ch:NDD,sec:dataCollection,sub:studyArea}
+\subsection{The Study Area}\label{ch:NDD,sec:dataCollection,sub:studyArea}
 
-%TODO: MCZ study area overview. Geography, depth, etc. Why chosen (find previous studies in the area)
+Data collection was conducted in the Coquet to St. Mary's Marine Conservation Zone (MCZ), located off the coast of Northumberland, UK. The MCZ, established in January 2016 through powers granted by the Marine and Coastal Access Act 2009 \cite{noauthor_marine_2009}, covers approximately 40km of coastline from Almouth in the north to Whitley Bay in the south, extending outwards 7.5km at its greatest to cover an area around 192km$^{2}$. A map of the MCZ and its location with respect to the UK can be seen in Figure XXX.
+
+The area is of high importance, supporting a wide variety of marine life thanks to sections of intertidal and sub-tidal rock and sediment, making it fertile feeding grounds for the bottlenose and white-beaked dolphins which make use of the area. As a result of this fertility, as well as waters up to 30m deep in some places, the MCZ sees high levels of fishing activity - typically for crustaceans using pots \cite{stephenson_spatial_2017}. Whilst these fishing vessels operate from a number of small ports throughout the North East of England, the MCZ itself lies close to the large Port of Blyth. As a result, the MCZ boundary provides a 250m buffer zone around the limits of the port in order to reduce economic damage. 
+
+%TODO:Why chosen for survey (find previous studies in the area)
+
+\subsection{Survey Effort}\label{ch:NDD,sec:dataCollection,sub:surveyArea}
 
 %%%%%%%%%%%%%%%%%%%
-%\nomenclature[z-CNN]{CNN}{Convolutional Neural Networks}
+\nomenclature[z-MCZ]{MCZ}{Marine Conservation Zone}
 
