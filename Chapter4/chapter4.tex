@@ -6,7 +6,7 @@ Whilst the Marine MEGAfauna Lab research heavily in the Indian Ocean around Zanz
 
 Near the end of the Mask-RCNN detection model's completion, the Marine MEGAfauna Lab were preparing to begin a large scale bottlenose and white-beaked abundance estimate and health assessment survey. As such the opportunity arose to validate the detector's generalisability on data which is similar in composition and purpose, however was collected in a different geographic location, at a different time, and containing different species to the data used to train and test the detector.
 
-As a result, this Chapter discusses the collection of abundance estimate data in Northumberland, UK from the perspective of model and technique evaluation as outlined in Chapter \ref{ch:cetDet}. In order to achieve this evaluation, the photo-identification data was curated and transformed from a biological catalogue into a computer vision dataset known as The Northumberland Dolphin Dataset 2020 (NDD20) - the creation of which will also be discussed. 
+As a result, this Chapter discusses the collection of abundance estimate data in Northumberland, UK for the purpose of model and technique evaluation as outlined in Chapter \ref{ch:cetDet}. In order to achieve this evaluation, the photo-identification data was curated and transformed from a biological catalogue into a computer vision dataset known as The Northumberland Dolphin Dataset 2020 (NDD20) - the creation of which will also be discussed. 
 
 \section{Data Collection}\label{ch:NDD,sec:dataCollection}
 
@@ -22,6 +22,17 @@ The area is of high importance, supporting a wide variety of marine life thanks 
 
 \subsection{Survey Effort}\label{ch:NDD,sec:dataCollection,sub:surveyArea}
 
+Dedicated bottlenose and white-beakded dolphin photo-identification surveys were conducted in the MCZ between XXX and XXX, with a total of XXX surveys undertaken. These were performed using a XXXm rigid inflatable boat (RIB) with a XXX horsepower engine. All surveys began from Newcastle University's Blyth Marine Station, located in the Port of Blyth, before entering the MCZ. 
+
+Surveys were generally conducted following set transect lines, traversing between the northern and southern-most points of the MCZ typically remaining within XXXkm of the shore. The use of citizen scientists for photo-id surveys has seen increased prevalence in recent years, with multiple studies producing promising results \cite{araujo_population_2017, currie_conservation_2018, armstrong_photographic_2019, araujo_photo-id_2019}. As such some opportunistic surveying was undertaken, occurring when cetacean activity was reported by citizen scientists and dedicated dolphin watchers. These reports were posted to two Facebook groups: the Newbiggin-by-the-Sea Dolphin Watch\footnote{Newbiggin-by-the-Sea Dolphin Watch: \href{https://en-gb.facebook.com/groups/NEWILDDOLPHINMONITORINGPROJECT/}{facebook.com/groups/NEWILDDOLPHINMONITORINGPROJECT}} and the North East Cetacean Project\footnote{North East Cetacean Project: \href{https://en-gb.facebook.com/groups/NorthEastCetaceanProject/about/}{facebook.com/groups/NorthEastCetaceanProject}}. Track lines showing the movement of the vessel of time were recorded a XXX via GPS tracking, and can be seen in Figure XXX. When dolphins were encountered, the time stamp was also recorded with the XXX, and other effort data such as direction of travel, sea state, species, group size, and demographic composition were manually recorded. Groups were defined by the 10m chain rule \cite{smolker_sex_1992}.
+
+Surveys were only conducted in Beaufort Sea States $\le 3$ \cite{world_meteorologicial_society_beaufort_1970} without heavy rain. Outside of these conditions surveying can become unsafe and the photographs unusable for photo-id due to swell and lens splash. Surveying was performed using the constant scanning method \cite{mann_behavioral_1999}, with cues including sight of dorsal fins breaching the waterline, splashing, and leaping.
+
+Individual dolphins in an encounter were photographed randomly using a XXX with the goal of capturing photographic data for every individual present. Multiple photographs were captured of each cetacean over the course of the encounter to ensure identifiable information could be fully captured. When capturing an encounter care was taken not to approach individual cetaceans at an angle less than $30^{\circ}$, keeping as parallel as possible at a distance no closer than 100m, and to speeds no greater than 6 knots in order to prevent the cetaceans becoming stressed or injured as per Marine Management Organisation guidelines. All members of the survey team were trained in minimising wildlife disturbance through the WiSe Scheme by the Yorkshire Wildlife Trust\footnote{WiSe Scheme: \href{https://www.wisescheme.org/}{wisescheme.org}}, with the survey itself having the approval of Newcastle University's Ethics Board.
+
+%TODO: Summary of results, catalogue processing before the images got to me
+
 %%%%%%%%%%%%%%%%%%%
 \nomenclature[z-MCZ]{MCZ}{Marine Conservation Zone}
+\nomenclature[z-RIB]{RIB}{Rigid Inflatable Boat}
 

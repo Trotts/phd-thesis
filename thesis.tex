@@ -11,6 +11,7 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
@@ -28,6 +29,7 @@
 
 \ifdefineAbstract
  \pagestyle{empty}
+ \includeonly{Declaration/declaration}
  \includeonly{Abstract/abstract}
 \fi
 
@@ -51,7 +53,7 @@
 
 \include{Dedication/dedication}
 %\include{Declaration/declaration}
-\include{Acknowledgement/acknowledgement}
+\include{Acknowledgement/acknowledgement} %Citizen scientists of the facebook groups
 \include{Abstract/abstract}
 
 % *********************** Adding TOC and List of Figures ***********************
