@@ -34,12 +34,36 @@ Individual dolphins in an encounter were photographed randomly using a XXX with 
 
 \subsection{Field Season Summary}\label{ch:NDD,sec:dataCollection,sub:summary}
 
-Of the XXX days where surveys were conducted, 27 contained at least one encounter. In total, XXX encounters were documented with XXX containing only bottlenose dolphin, XXX white-beaked dolphin only, and XXX containing both species. Across these sightings group size ranged from XXX to XXX for bottlenose dolphins (median = XXX) and XXX to XXX for white-beaked dolphins (median = XXX). Altogether XXX individuals were identified and catalogued, broken down into XXX bottlenose and XXX white-beaked dolphins. XXX calves were identified, but have been excluded from this analysis as they could not be considered dependant due to reliance on their mothers, and had not yet developed permanent markings. No new identifications were recorded after the XXXth encounter, suggesting all individuals using the survey area during the study period were catalogued. 
+Of the XXX days where surveys were conducted, 27 contained at least one encounter. In total, XXX encounters were documented with XXX containing only bottlenose dolphin, XXX white-beaked dolphin only, and XXX containing both species. Across these sightings group size ranged from XXX to XXX for bottlenose dolphins (median = XXX) and XXX to XXX for white-beaked dolphins (median = XXX). Altogether XXX individuals were identified and catalogued, broken down into XXX bottlenose and XXX white-beaked dolphins. XXX calves were identified, but have been excluded from this analysis as they could not be considered independent due to reliance on their mothers, and had not yet developed permanent markings. No new identifications were recorded after the XXXth encounter, suggesting all individuals using the survey area during the study period were catalogued. 
 
-A total of XXX images were captured throughout the fieldwork season. These were processed for use in the photo-identification catalogue as to remove any images with no value, such as those which were out of focus or did not contain any cetacean. Animals present in the images were coded according to their distinctiveness as per the guidelines presented in \cite{urian_recommendations_2015}. Those coded D1 were considered very distinctive with little chance of misidentification, whilst those coded D2 were considered moderately distinctive with small prominent markings which could allow for a high chance of correct classification provided the image is clear. CF coded individuals were those which contained little to no identifying information which have a high chance of misclassification. Once coded animals considered D1 and D2 were individually identified, resulting in a catalogue of XXX images. 
+A total of XXX images were captured throughout the fieldwork season. These were processed for use in the photo-identification catalogue as to remove any images with no value, such as those which were out of focus or did not contain any cetacean. Animals present in the images were coded according to their distinctiveness as per the guidelines presented in \cite{urian_recommendations_2015}. Those coded D1 were considered very distinctive with little chance of misidentification, whilst those coded D2 were considered moderately distinctive with small prominent markings which could allow for a high chance of correct classification provided the image is clear. CF coded individuals were those which contained little to no identifying information which have a high chance of misclassification. Once coded, animals considered D1 and D2 were individually identified resulting in a catalogue of XXX images. 
 
+\section{The Northumberland Dolphin Dataset 2020}\label{ch:NDD,sec:NDD20}
+
+The fieldwork season and data processing undertaken resulted in a photo-identification catalogue of bottlenose and white-beaked dolphins currently inhabiting the Coquet to St. Mary's MCZ. Photo-identification catalogues utilised in marine biology however are not in the form required for training or validating a computer vision model. As such, further processing was required to transform the catalogue into a dataset capable of both validating the instance segmentation model developed in Chapter \ref{ch:cetDet}, as well as training a model for fine-grained individual identification. This Section discusses the creation of the Northumberland Dolphin Dataset 2020 (NDD20) \cite{trotter_ndd20_2020}, the computer vision dataset created from the photo-identification catalogue.
+
+\subsection{Data Pre-processing}\label{ch:NDD,sec:NDD20,sub:dataPreprocessing}
+
+%TODO: Write up of the data preprocessing. Removed images unsuitable for object detection (make clear the dataset has multiple levels of coarseness). DSP presentation/NDD20 paper good here.
+
+\subsection{Data Labelling}\label{ch:NDD,sec:NDD20,sub:dataLabelling}
+
+%TODO: Discuss data labelling, JobsOC. Training provided, checked after for errors. Only object detection was labelled by JobsOC
+%Used VIA \cite{dutta_via_2019} as with Zanzibar data.
+% Species ID and Individual ID labelled by me.
+
+\subsection{Underwater Data Addition}\label{ch:NDD,sec:NDD20,sub:underwaterData}
+
+%TODO: Discuss the addition of the underwater data from the Farnes Deep. NDD20 paper good here. 
+
+\subsection{NDD20 Summary}\label{ch:NDD,sec:NDD20,sub:NDD20Summary}
+
+%TODO: Summary of NDD20. Take from NDD20 paper? Num imgs, classes, etc.
+% Basline experiments from NDD20 paper.
+% Link to access NDD20. Use in Kaggle competition.
 
 %%%%%%%%%%%%%%%%%%%
 \nomenclature[z-MCZ]{MCZ}{Marine Conservation Zone}
 \nomenclature[z-RIB]{RIB}{Rigid Inflatable Boat}
+\nomenclature[z-NDD20]{NDD20}{Northumberland Dolphin Dataset 2020}
 

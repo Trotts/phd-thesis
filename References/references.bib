@@ -48,16 +48,6 @@
 	file = {Quiñonez et al. - 2019 - Using Convolutional Neural Networks to Recognition.pdf:/Users/b3020111/Zotero/storage/R54YVDT3/Quiñonez et al. - 2019 - Using Convolutional Neural Networks to Recognition.pdf:application/pdf},
 }
 
-@inproceedings{bouma_individual_2018,
-	title = {Individual common dolphin identification via metric embedding learning},
-	abstract = {Photo-identiﬁcation (photo-id) of dolphin individuals is a commonly used technique in ecological sciences to monitor state and health of individuals, as well as to study the social structure and distribution of a population. Traditional photo-id involves a laborious manual process of matching each dolphin ﬁn photograph captured in the ﬁeld to a catalogue of known individuals.},
-	language = {en},
-	author = {Bouma, Soren and Pawley, Matthew D M and Hupman, Krista and Gilman, Andrew},
-	year = {2018},
-	pages = {7},
-	file = {Bouma et al. - Individual common dolphin identiﬁcation via metric.pdf:/Users/b3020111/Dropbox/University/PhD/Data and Cetacians/Bouma et al. - Individual common dolphin identiﬁcation via metric.pdf:application/pdf},
-}
-
 @article{berger-wolf_wildbook:_2017,
 	title = {Wildbook: {Crowdsourcing}, computer vision, and data science for conservation},
 	shorttitle = {Wildbook},
@@ -1565,7 +1555,7 @@
 	file = {Computer-assisted recognition of dolphin individuals using dorsal fin pigmentations - IEEE Conference Publication:/Users/b3020111/Zotero/storage/RRFACPVA/7804460.html:text/html},
 }
 
-@inproceedings{bouma_individual_2018-1,
+@inproceedings{bouma_individual_2018,
 	title = {Individual {Common} {Dolphin} {Identification} {Via} {Metric} {Embedding} {Learning}},
 	doi = {10.1109/IVCNZ.2018.8634778},
 	abstract = {Photo-identification (photo-id) of dolphin individuals is a commonly used technique in ecological sciences to monitor state and health of individuals, as well as to study the social structure and distribution of a population. Traditional photo-id involves a laborious manual process of matching each dolphin fin photograph captured in the field to a catalogue of known individuals. We examine this problem in the context of open-set recognition and utilise a triplet loss function to learn a compact representation of fin images in a Euclidean embedding, where the Euclidean distance metric represents fin similarity. We show that this compact representation can be successfully learnt from a fairly small (in deep learning context) training set and still generalise well to out-of-sample identities (completely new dolphin individuals), with top-1 and top-5 test set (37 individuals) accuracy of 90.5 ± 2 and 93.6 ± 1 percent. In the presence of 1200 distractors, top-1 accuracy dropped by 12\%; however, top-5 accuracy saw only a 2.8\% drop.},
@@ -4536,4 +4526,42 @@ Publisher: Nature Publishing Group},
 	year = {2012},
 	pages = {6},
 	file = {Silva et al. - 2012 - Winter sighting of a known western North Atlantic .pdf:/Users/b3020111/Zotero/storage/KE36XX4E/Silva et al. - 2012 - Winter sighting of a known western North Atlantic .pdf:application/pdf},
+}
+
+@article{tyson_moore_rise_2022,
+	title = {Rise of the {Machines}: {Best} {Practices} and {Experimental} {Evaluation} of {Computer}-{Assisted} {Dorsal} {Fin} {Image} {Matching} {Systems} for {Bottlenose} {Dolphins}},
+	volume = {9},
+	issn = {2296-7745},
+	shorttitle = {Rise of the {Machines}},
+	url = {https://www.frontiersin.org/articles/10.3389/fmars.2022.849813/full},
+	doi = {10.3389/fmars.2022.849813},
+	abstract = {Photographic-identification (photo-ID) of bottlenose dolphins using individually distinctive features on the dorsal fin is a well-established and useful tool for tracking individuals; however, this method can be labor-intensive, especially when dealing with large catalogs and/or infrequently surveyed populations. Computer vision algorithms have been developed that can find a fin in an image, characterize the features of the fin, and compare the fin to a catalog of known individuals to generate a ranking of potential matches based on dorsal fin similarity. We examined if and how researchers use computer vision systems in their photo-ID process and developed an experiment to evaluate the performance of the most commonly used, recently developed, systems to date using a long-term photo-ID database of known individuals curated by the Chicago Zoological Society’s Sarasota Dolphin Research Program. Survey results obtained for the “Rise of the machines – Application of automated systems for matching dolphin dorsal fins: current status and future directions” workshop held at the 2019 World Marine Mammal Conference indicated that most researchers still rely on manual methods for comparing unknown dorsal fin images to reference catalogs of known individuals. Experimental evaluation of the finFindR R application, as well as the CurvRank, CurvRank v2, and finFindR implementations in Flukebook suggest that high match rates can be achieved with these systems, with the highest match rates found when only good to excellent quality images of fins with average to high distinctiveness are included in the matching process: for the finFindR R application and the CurvRank and CurvRank v2 algorithms within Flukebook more than 98.92\% of correct matches were in the top 50-ranked positions, and more than 91.94\% of correct matches were returned in the first ranked position. Our results offer the first comprehensive examination into the performance and accuracy of computer vision algorithms designed to assist with the photo-ID process of bottlenose dolphins and can be used to build trust by researchers hesitant to use these systems. Based on our findings and discussions from the “Rise of the Machines” workshop we provide recommendations for best practices for using computer vision systems for dorsal fin photo-ID.},
+	language = {en},
+	urldate = {2022-04-21},
+	journal = {Frontiers in Marine Science},
+	author = {Tyson Moore, Reny B. and Urian, Kim W. and Allen, Jason B. and Cush, Carolyn and Parham, Jason R. and Blount, Drew and Holmberg, Jason and Thompson, Jamie W. and Wells, Randall S.},
+	month = apr,
+	year = {2022},
+	pages = {849813},
+	file = {Tyson Moore et al. - 2022 - Rise of the Machines Best Practices and Experimen.pdf:/Users/b3020111/Zotero/storage/5U9HPZ44/Tyson Moore et al. - 2022 - Rise of the Machines Best Practices and Experimen.pdf:application/pdf},
+}
+
+@article{thompson_finfindr_2022,
+	title = {{finFindR}: {Automated} recognition and identification of marine mammal dorsal fins using residual convolutional neural networks},
+	volume = {38},
+	issn = {1748-7692},
+	shorttitle = {{finFindR}},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/mms.12849},
+	doi = {10.1111/mms.12849},
+	abstract = {Photographic identification is an essential research and management tool for marine mammal scientists. However, manual identification of individuals is time-consuming. To shorten processing times, we developed finFindR, an open-source application that uses a series of neural networks to autonomously locate dorsal fins in unedited field images, quantify an individual's unique fin characteristics, and match them to an existing photograph catalog. During a blind test comparing manual searching to finFindR for common bottlenose dolphin (Tursiops Tursiops truncatus) photographs, experienced photo-identification technicians achieved similar match rates but examined an order of magnitude fewer photographs using finFindR (an average of 10 required with finFindR versus 124 with manual search). In those tests, the correct identity was ranked in the first position in 88\% of cases and was within the top 50 ranked positions in 97\% of cases. Our observations suggest that finFindR's matching capabilities are robust to moderate variation in image quality and fin distinctiveness. Importantly, finFindR allows users to build a catalog of known individuals through time and match an unlimited number of individuals instead of being restricted to a predefined set. finFindR's convolutional neural networks could be re-trained to identify members of many marine mammal species without altering finFindR's inherent structure.},
+	language = {en},
+	number = {1},
+	urldate = {2022-04-21},
+	journal = {Marine Mammal Science},
+	author = {Thompson, Jaime W. and Zero, Victoria H. and Schwacke, Lori H. and Speakman, Todd R. and Quigley, Brian M. and Morey, Jeanine S. and McDonald, Trent L.},
+	year = {2022},
+	note = {\_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/mms.12849},
+	keywords = {automated detection, cetacean, dolphin, machine learning, neural network, noninvasive sampling, photo-identification, Tursiops truncatus},
+	pages = {139--150},
+	file = {Full Text PDF:/Users/b3020111/Zotero/storage/Z5HCP8MJ/Thompson et al. - 2022 - finFindR Automated recognition and identification.pdf:application/pdf;Snapshot:/Users/b3020111/Zotero/storage/H2GEDPJ5/mms.html:text/html},
 }
