@@ -52,7 +52,7 @@ During fieldwork 4940 images were collected which contained part of a cetacean a
 
 From manual analysis it was determined that not all images contained enough identifying information for individual classification labels. Because of this, the decision was made to include multiple levels of granularity to the dataset. As all images contained part of a cetacean, each one could be labelled to allow for instance segmentation training. To enable this, each mask located was given the label \texttt{dolphin}. Next, masks could be provided a fine-grained species classification. Thanks to the difference in colour between bottlenose and white-beaked dolphins, every mask labelled for instance segmentation could also be provided a species label - either \texttt{BND} or \texttt{WBD} representing bottlenose and white-beaked dolphin respectively. 
 
-At the highest level of granularity, some masks contained enough information to allow for individual identification. If an ID could be attained with high confidence, likely from images with D1 or D2 coded individuals, the mask containing the individual was provided an \texttt{ID} label. To protect ongoing cetacean research efforts a pseudo-anonomisation has been performed. This however does not diminish the value of this data to computer vision researchers. It is not the case that images with sequential filenames were captured sequentially, and all individual IDs have been randomly allocated a numerical value rather than the code given to them by the Marine MEGAfauna Lab. All EXIF data found in the images has also been removed. The photo-identification catalogue itself is not publicly hosted at this time.
+At the highest level of granularity, some masks contained enough information to allow for individual identification. If an ID could be attained with high confidence, likely from images with D1 or D2 coded individuals, the mask containing the individual was provided an \texttt{ID} label. Recent work has shown that publicly available datasets containing animals may aid poachers \cite{beery_can_2021}. In response, to protect ongoing cetacean research efforts a pseudo-anonomisation has been performed. This however does not diminish the value of this data to computer vision researchers. It is not the case that images with sequential filenames were captured sequentially, and all individual IDs have been randomly allocated a numerical value rather than the code given to them by the Marine MEGAfauna Lab. All EXIF data found in the images has also been removed. The photo-identification catalogue itself is not publicly hosted at this time.
 
 Data was labelled at a pixel level using the VGG Image Annotator \cite{dutta_via_2019} in a similar fashion to the Zanzibar dataset as discussed in Section \ref{ch:cetDet,sec:initialTesting,sub:zanzibar}. In order to speed up the process data labellers were employed through Newcastle University's Jobs On Campus service\footnote{Newcastle University Jobs On Campus: \href{https://www.ncl.ac.uk/careers/jobs/opportunities-on-campus/jobsoc/\#jobsocoverview}{ncl.ac.uk/careers/jobs/opportunities-on-campus/jobsoc/}} to manually annotate the masks and label them for instance segmentation. Once complete all masks were checked for error correcting and consistency purposes. Afterwards, the extra labels for both species and individual level identification were added. As this required expert knowledge, data labellers were not utilised for this. Example above water images from NDD20 and the labels assigned can be seen in Figure \ref{fig:above-water-example}.
 
@@ -66,7 +66,7 @@ Data was labelled at a pixel level using the VGG Image Annotator \cite{dutta_via
 
 \subsection{Below Water Data}\label{ch:NDD,sec:NDD20,sub:belowWaterData}
 
-In addition to the above water imagery captured during fieldwork, NDD20 also contains below water images. Whilst this data has not been utilised in the work on automatic photo-id presented in this thesis it is important to discuss all aspects of the dataset created. Images contained in the below water section of NDD20 are a subset of a much larger collection of images collected by the Marine MEGAfauna Lab during work in the Farnes Deep MCZ, a glacial trench situated approximately 11km from the Northumberland coast. Opportunistic surveys undertaken since 2011 have shown the area to contain a high abundance of white-beaked dolphin activity \cite{van_bressem_visual_2018}. Data from these surveys takes the form of screen grabs from high definition video footage captured by a diver using GoPro Hero 3 and Go Pro Hero 4 cameras. 
+In addition to the above water imagery captured during fieldwork, NDD20 also contains below water images. Underwater photo-id is not as widely used compared to its above-water counterpart at present, however uses have been noted for certain species and environments in recent years \cite{van_bressem_visual_2018, veronique_underwater_2022} Whilst this data has not been utilised in the work on automatic photo-id presented in this thesis it is important to discuss all aspects of the dataset created. Images contained in the below water section of NDD20 are a subset of a much larger collection of images collected by the Marine MEGAfauna Lab during work in the Farnes Deep MCZ, a glacial trench situated approximately 11km from the Northumberland coast. Opportunistic surveys undertaken since 2011 have shown the area to contain a high abundance of white-beaked dolphin activity \cite{van_bressem_visual_2018}. Data from these surveys takes the form of screen grabs from high definition video footage captured by a diver using GoPro Hero 3 and Go Pro Hero 4 cameras. 
 
 To mirror the above water section, there are 2201 below water images included in NDD20 labelled for multiple levels of granularity. As before, the first attribute level is \texttt{dolphin} to allow for instance segmentation. Unlike the above water images, all below water images contain at least one mask with an \texttt{ID} label. It is not the case that masks in the above and below image sets contain the same individual animal even if they have the same \texttt{ID} class label - the numbering systems are independent of one another. No species label is provided as all images are of white-beaked dolphins. Below water images are also labelled with an \texttt{out of focus} flag, denoting if the individual is deemed to be out of focus. Example below water images from NDD20 and the labels assigned can be seen in Figure \ref{fig:below-water-example}.
 
@@ -80,12 +80,59 @@ To mirror the above water section, there are 2201 below water images included in
 
 \subsection{NDD20 Summary}\label{ch:NDD,sec:NDD20,sub:NDD20Summary}
 
-%TODO: Summary of NDD20. Take from NDD20 paper? Num imgs, classes, etc.
-% Link to access NDD20. Use in Kaggle competition.
+As NDD20 is split into two related but distinct sets of images, a summary is provided below for each. Due to the nature of cetacean group dynamics, multiple images contain more than one individual animal. As a result, there are 2900 masks present in the above water set of 2201 images. These masks contain both a \texttt{dolphin} label for instance segmentation as well as either a \texttt{BND} or \texttt{WBD} label to facilitate species level fine-grained classification. It should be noted however that the distribution of species class labels is imbalanced, with 73\% of masks being labelled \texttt{BND}. Some above water masks also contain an individual level \texttt{ID} label to allow for extreme fine-grained classification. Due to the nature of the task only 14\% of masks contain an \texttt{ID} class label, with 44 distinct individuals present. Once again these classes are imbalanced presenting both a fine-grained and few-shot learning problem. The above water \texttt{ID} class label distribution can be seen in Figure \ref{fig:above-water-id-dist}. Many of the challenges associated with manual above water photo-id apply here too, particularly the likelihood that unique features are specific to one side of an animal's body which may not have been captured in the image.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter4/figs/aboveWaterIDDist.png}
+	\end{center}
+	\caption{The \texttt{ID} class label distribution for the above water set of NDD20.}
+	\label{fig:above-water-id-dist}
+\end{figure}
+
+Like the above water set, the below water set also contains 2201 images each with at least one mask with a \texttt{dolphin} label present. Masks in the below water set are significantly larger than in the above water set, as far more of the cetacean is visible when captured below the waterline. Unlike the above water set however, all below water images also contain at least one mask with an \texttt{ID} class label, with 82 classes represented. The distribution of \texttt{ID} class labels in the below water set can be seen in Figure \ref{fig:below-water-id-dist}. This set represents a significantly more challenging fine-grained and few-show learning problem, both due to the higher number of classes as well as decreased image quality thanks to the nature of underwater photography. The main challenges are water clarity, affected by factors such as algae bloom, and sunlight refraction which may both obscure areas of the individual useful for identification or add artificial markings which may hinder this. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter4/figs/belowWaterIDDist.png}
+	\end{center}
+	\caption{The \texttt{ID} class label distribution for the below water set of NDD20.}
+	\label{fig:below-water-id-dist}
+\end{figure}
+
+NDD20 is small compared to traditional benchmarking computer vision datasets such as ImageNet \cite{deng_imagenet:_2009} or those which are domain specific such as iWildcam \cite{beery_iwildcam_2019} or Caltech-UCSD Birds 200 \cite{welinder_caltech-ucsd_2010}. Even when compared to other related non-benchmark marine conservation datasets such as The Fishnet Open Images dataset \cite{kay_fishnet_2021} or SEAMAPD21 \cite{boulais_seamapd21_2021}, the number of images in NDD20 is much lower. Whilst it may be tempting to compare NDD20 to the above datasets however, it is important to note the difference in use-case. NDD20 is not designed for use as a large scale dataset capable of use for model pre-training like those considered benchmark. In contrast to the non-benchmark conservation datasets mentioned, NDD20 contains class labels which allow for more fine-grained classification. As such, it is better to compare the quality of NDD20 with other individual animal identification datasets.
+
+%TODO Fix footnotes not showing
+\begin{table}
+	\caption[A comparison of computer vision datasets capable of training models for individual animal identification, sorted by number of individuals.]{A comparison of computer vision datasets capable of training models for individual animal identification, sorted by number of individuals.}\label{tab:animal-id-datasets-comparison}
+	\begin{adjustbox}{width=\columnwidth, center}
+		\begin{tabular}{*{4}{c}}
+			\toprule
+			\textbf{Dataset}                                                                                                                         & \textbf{Species}                                                                                                & \textbf{Number of Images} & \textbf{Number of Individuals}  \\
+			\midrule
+			Beluga ID 2022\footnote{Beluga ID 2022: \href{https://lila.science/datasets/beluga-id-2022/}{lila.science/datasets/beluga-id-2022}}     & Beluga whales (\textit{Delphinapterus leucas})                & 5902                      & 788                         \\
+			Leopard ID 2022\footnote{Leopard ID 2022: \href{https://lila.science/datasets/leopard-id-2022/}{lila.science/datasets/leopard-id-2022}} & African leopards (\textit{Panthera pardus})                   & 6795                      & 430                         \\
+			Hyena ID 2022\footnote{Hyena ID 2022: \href{https://lila.science/datasets/hyena-id-2022/}{lila.science/datasets/hyena-id-2022}}         & Spotted hyena (\textit{Crocuta crocuta})                      & 3104                      & 256                         \\
+			Cows2021 \cite{gao_towards_2021}                                                                                                         & Holstein-Friesian cow (\textit{Bos taurus taurus})    & 10,402                     & 186                         \\
+			BearID \cite{clapham_automated_2020}                                                                                                     & Brown bear (\textit{Ursus arctos})                            & 4675                      & 132                         \\
+			Multi Camera Pig Tracking \cite{shirke_tracking_2021}                                                                                    & Domestic pig (\textit{Sus scrofa domesticus})                 & 380                       & 33                          \\
+			Jaguar ID \cite{timm_large-scale_2018}                                                                                                   & Jaguar (\textit{Panthera onca})                               & 176                       & 16                          \\\midrule
+			\textbf{NDD20 (Below Water)}                                                                                                                      & White-beaked dolphin (\textit{Lagenorhynchus albirostris})    & 2201                      & 82                         \\
+			\multirow{2}{*}{\textbf{NDD20 (Above Water)}}                                                                                                    & Bottlenose dolphin (\textit{Tursiops truncatus})              & \multirow{2}{*}{2201}     & \multirow{2}{*}{44}         \\
+			& \& white-beaked dolphin (\textit{Lagenorhynchus albirostris}) &                           &                             \\
+			\bottomrule
+		\end{tabular}
+	\end{adjustbox}
+\end{table}
+
+Unlike other datasets for individual animal identification, NDD20 is unusual in that it covers multiple species. Other conservation datasets which cover a range of species do not include individual identification labels \cite{beery_iwildcam_2019, van_horn_inaturalist_2018, khosla_novel_2011}. This combination of multiple species and individual class labels provides novelty to NDD20. 
+
+As seen in Table \ref{tab:animal-id-datasets-comparison}, whilst NDD20 is not the smallest dataset for available for individual animal identification it is still on the lower end both in terms of number of images and individuals. This is due to the nature of the populations surveyed. The Coquet to St. Mary's and Farnes Deep MCZs are small geographic areas, resulting in smaller population catalogues. The size of the dataset has not limited scientific value however. NDD20 was accepted for presentation at the Fine Grained Visual Categorization workshop at CVPR 2020 \cite{trotter_ndd20_2020}. To coincide with this presentation, the dataset was made public\footnote{NDD20 download: \href{https://doi.org/10.25405/data.ncl.c.4982342}{doi.org/10.25405/data.ncl.c.4982342}}. Furthermore, NDD20 was utilised as one of multiple datasets for use in a Kaggle competition hosted by HappyWhale \footnote{Kaggle competition: \href{https://www.kaggle.com/c/happy-whale-and-dolphin/}{kaggle.com/c/happy-whale-and-dolphin}}. This highlights the usefulness of NDD20 irrespective of size limitations. 
 
 
 % Basline experiments from NDD20 paper. - Other section
-
+%TODO: Tiles of random example images from above and below sets. Put in Appendix.
+%TODO: Add in image format, resoltuion, camera settings
 
 %%%%%%%%%%%%%%%%%%%
 \nomenclature[z-MCZ]{MCZ}{Marine Conservation Zone}
