@@ -2,7 +2,7 @@
 %**************************
 % Please have a look at the README.md file for info on how to use the template
 
-\documentclass[a4paper,21pt,times,numbered,print,index,customargin]{Classes/PhDThesisPSnPDF}
+\documentclass[a4paper,21pt,times,numbered,online,index,customargin]{Classes/PhDThesisPSnPDF} %online -> print for printed copies
 \usepackage{longtable}
 \usepackage{titlesec}
 \usepackage{adjustbox}
@@ -13,6 +13,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{tablefootnote}
+\usepackage[scaled=0.85]{beramono} %bold texttt in Appendix
+\usepackage[intoc]{nomencl}
 
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
@@ -54,7 +56,7 @@
 
 \include{Dedication/dedication}
 %\include{Declaration/declaration}
-\include{Acknowledgement/acknowledgement} %Citizen scientists of the facebook groups
+\include{Acknowledgement/acknowledgement} %Citizen scientists of the facebook groups, Aberdeen and St Andrews, WMMC data
 \include{Abstract/abstract}
 
 % *********************** Adding TOC and List of Figures ***********************
@@ -65,9 +67,7 @@
 
 \listoftables
 
-% \printnomenclature[space] space can be set as 2.5cm between symbol and
-% description
-\printnomenclature[2.5cm]
+\printnomenclature
 
 % ******************************** Main Matter *********************************
 \mainmatter

@@ -1,9 +1,9 @@
 % ******************************* Thesis Appendix A ********************************
+\renewcommand{\thesection}{\Alph{section}} % Make sections alpha for appendix
 \renewcommand{\thesubsection}{\Alph{subsection}} % Make subsections alpha for appendix
+
 \titleformat{\chapter}[display]
 {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge} % Recreate the default Chapter sizing and spacing so we can edit it and put the Mask-RCNN table on the same page
-
-%TODO Tables and Figs set to A.1, A.2 etc. Currently uses numbering of chapter before 
 
 % this alters "before" spacing (the second length argument) to 0, "after" to 20pt
 \titlespacing*{\chapter}{0pt}{0pt}{20pt}
@@ -11,9 +11,11 @@
 % this changes "before" spacing back to its default of 50pt
 \titlespacing*{\chapter}{0pt}{50pt}{40pt}
 
-\setcounter{subsection}{0} % Force a reset of the appendix subsection lettering
+\setcounter{section}{0} % Force a reset of the appendix section lettering
+\setcounter{table}{0}
+\renewcommand{\thetable}{\Alph{section}}
 
-\subsection{mAP@IOU[0.5:0.95] Scores for Mask-RCNN Grid Search Models}\label{app:mAPScoresGridSearch}
+\section{mAP@IOU[0.5:0.95] Scores for Mask-RCNN Grid Search Models}\label{app:mAPScoresGridSearch}
 
 \begin{table}[!ht]
 \centering
@@ -80,6 +82,62 @@
 	\caption{mAP@IOU[0.5:0.95] scores for each Mask-RCNN model trained in the Zanzibar dataset grid search. See Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning} for model hyperparameters.}
 \end{table}
 
+\newpage
+\section{NDD20 Above Water Example Images Class Labels}\label{app:NDD20AwegLabels}
 
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{cccc}\toprule
+		\textbf{Filename}    & \multicolumn{3}{c}{\textbf{Labels}}                                                                                                                                               \\\cmidrule(lr){2-4}
+		\multicolumn{1}{l}{} & \multicolumn{1}{l}{\texttt{\textbf{object}}}                                          & \texttt{\textbf{species}}                                                 & \texttt{\textbf{ID}}                                              \\\midrule
+		911                  & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		421                  & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		241                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\\ \texttt{dolphin}\end{tabular} & \begin{tabular}[t]{@{}l@{}}\texttt{BND}\\ \texttt{BND}\\ \texttt{BND}\end{tabular} & \begin{tabular}[t]{@{}l@{}}\texttt{-}\\ \texttt{-}\\ \texttt{-}\end{tabular} \\
+		177                  & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{30}                                                \\
+		296                  & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{7}                                                 \\
+		1547                 & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		2078                 & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\end{tabular}           & \begin{tabular}[t]{@{}l@{}}\texttt{BND}\\ \texttt{BND}\end{tabular}       & \begin{tabular}[t]{@{}l@{}}\texttt{-}\\ \texttt{-}\end{tabular}     \\
+		549                  & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		1891                 & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		1055                 & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\end{tabular}           & \begin{tabular}[t]{@{}l@{}}\texttt{BND}\\ \texttt{BND}\end{tabular}       & \begin{tabular}[t]{@{}l@{}}\texttt{-}\\ \texttt{-}\end{tabular}     \\
+		797                  & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		61                   & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		1137                 & \texttt{dolphin}                                                             & \texttt{BND}                                                     & \texttt{-}                                                 \\
+		365                  & \texttt{dolphin}                                                             & \texttt{WBD}                                                     & \texttt{-}                                                 \\
+		1010                 & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\end{tabular}           & \begin{tabular}[t]{@{}l@{}}\texttt{BND}\\ \texttt{BND}\end{tabular}       & \begin{tabular}[t]{@{}l@{}}\texttt{2}\\ \texttt{-}\end{tabular}     \\
+		450                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\\ \texttt{dolphin}\end{tabular} & \begin{tabular}[t]{@{}l@{}}\texttt{BND}\\ \texttt{BND}\\ \texttt{BND}\end{tabular} & \begin{tabular}[t]{@{}l@{}}\texttt{-}\\ \texttt{-}\\ -\end{tabular}\\\bottomrule
+	\end{tabular}
+	\caption{Class labels for the images shown in Figure \ref{fig:above-water-example}. Table ordering is consistent with that of the Figure, viewing left to right.}
+\end{table}
 
+\newpage
+\section{NDD20 Below Water Example Images Class Labels}\label{app:NDD20BwegLabels}
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{cccc}\toprule
+		\textbf{Filename}    & \multicolumn{3}{c}{\textbf{Labels}}                                                                                                                                               \\\cmidrule(lr){2-4}
+		\multicolumn{1}{l}{} & \multicolumn{1}{l}{\texttt{\textbf{object}}}                                          & \texttt{\textbf{out of focus}}                                                 & \texttt{\textbf{ID}}                                              \\\midrule
+		26                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{false}\\ \texttt{true}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{71}\\ \texttt{-}\end{tabular}                                                 \\
+		2116                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{18}                                                 \\
+		803                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{11}                                                 \\
+		1554                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{49}                                                 \\
+		1857                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{false}\\ \texttt{false}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{41}\\ \texttt{-}\end{tabular}                                                 \\
+		1868                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{false}\\ \texttt{true}\\ \texttt{true}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{30}\\ \texttt{-} \\ \texttt{-}\end{tabular}                                                 \\
+		509                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{74}                                                 \\
+		1065                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{true}\\ \texttt{false}\\ \texttt{true}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{-}\\ \texttt{47} \\ \texttt{-}\end{tabular}                                                 \\
+		1136                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{2}                                                 \\
+		383                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{7}                                                 \\
+		311                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{30}                                                 \\
+		1602                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{true}\\ \texttt{false}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{-}\\ \texttt{12}\end{tabular}                                                 \\
+		441                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{true}\\ \texttt{true}\\ \texttt{false}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{-}\\ \texttt{-} \\ \texttt{50}\end{tabular}                                                 \\
+		522                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{false}\\ \texttt{false}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{51}\\ \texttt{76}\end{tabular}                                                 \\
+		1341                  & \begin{tabular}[t]{@{}c@{}}\texttt{dolphin}\\ \texttt{dolphin}\\ \texttt{dolphin}\end{tabular}  & \begin{tabular}[t]{@{}c@{}}\texttt{false}\\ \texttt{true}\\ \texttt{true}\end{tabular}                                                    & \begin{tabular}[t]{@{}c@{}}\texttt{72}\\ \texttt{-} \\ \texttt{-}\end{tabular}                                                 \\
+		2116                  & \texttt{dolphin}                                                             & \texttt{false}                                                     & \texttt{47}                                                 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Class labels for the images shown in Figure \ref{fig:below-water-example}. Table ordering is consistent with that of the Figure, viewing left to right.}
+\end{table}
+
+\newpage
 
