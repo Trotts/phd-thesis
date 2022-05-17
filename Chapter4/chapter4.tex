@@ -34,7 +34,7 @@ Surveys initially began by following set transect lines, traversing between the 
 
 Surveys were only conducted in Beaufort Sea States $\le 3$ \cite{world_meteorologicial_society_beaufort_1970} without heavy rain. Outside of these conditions surveying can become unsafe and the photographs unusable for photo-id because of swell and lens splash. Due to the nature of the North Sea, conditions outside of these restrictions can be common. Surveying was performed using the constant scanning method \cite{mann_behavioral_1999}, with cues including sight of dorsal fins breaching the waterline, splashing, and leaping. For each survey the vessel was manned by at least two dedicated observers and a skipper, in line with other photo-id surveys \cite{sharpe_indian_2019, bessesen_lacaziosis-like_2014, silva_winter_2012}.
 
-Individual dolphins in an encounter were photographed randomly using a Canon EOS 550D Digital SLR with a Canon 70–200mm zoom lens, aiming to capture photographic data for every individual present. Multiple photographs were captured of each cetacean over the course of the encounter to ensure identifiable information could be fully captured. When capturing an encounter care was taken not to approach individual cetaceans at an angle less than $30^{\circ}$, keeping as parallel as possible and to speeds no greater than 6 knots in order to prevent the cetaceans becoming stressed or injured as per Marine Management Organisation guidelines. All members of the survey team were trained in minimising wildlife disturbance through the WiSe Scheme by the Yorkshire Wildlife Trust\footnote{WiSe Scheme: \href{https://www.wisescheme.org/}{wisescheme.org}}, with the survey itself having the approval of Newcastle University's Ethics Board.
+Individual dolphins in an encounter were photographed randomly using a Canon EOS 550D Digital SLR with a Canon 70–200mm zoom lens, aiming to capture photographic data for every individual present. Camera settings can be found in Appendix \ref{app:DataCollectionCameraSettings}. Multiple photographs were captured of each cetacean over the course of the encounter to ensure identifiable information could be fully captured. When capturing an encounter care was taken not to approach individual cetaceans at an angle less than $30^{\circ}$, keeping as parallel as possible and to speeds no greater than 6 knots in order to prevent the cetaceans becoming stressed or injured as per Marine Management Organisation guidelines. All members of the survey team were trained in minimising wildlife disturbance through the WiSe Scheme by the Yorkshire Wildlife Trust\footnote{WiSe Scheme: \href{https://www.wisescheme.org/}{wisescheme.org}}, with the survey itself having the approval of Newcastle University's Ethics Board.
 
 \subsection{Field Season Summary}\label{ch:NDD,sec:dataCollection,sub:summary}
 
@@ -130,7 +130,6 @@ Unlike other datasets for individual animal identification, NDD20 is unusual in 
 
 As seen in Table \ref{tab:animal-id-datasets-comparison}, whilst NDD20 is not the smallest dataset for available for individual animal identification it is still on the lower end both in terms of number of images and individuals. This is due to the nature of the populations surveyed. The Coquet to St. Mary's and Farnes Deep MCZs are small geographic areas, resulting in smaller population catalogues. The size of the dataset has not limited scientific value however. NDD20 was accepted for presentation at the Fine Grained Visual Categorization workshop at CVPR 2020 \cite{trotter_ndd20_2020}. To coincide with this presentation, the dataset was made public\footnote{NDD20 download: \href{https://doi.org/10.25405/data.ncl.c.4982342}{doi.org/10.25405/data.ncl.c.4982342}}. Furthermore, NDD20 was utilised as one of multiple datasets for use in a Kaggle competition hosted by HappyWhale \footnote{Kaggle competition: \href{https://www.kaggle.com/c/happy-whale-and-dolphin/}{kaggle.com/c/happy-whale-and-dolphin}}. This highlights the usefulness of NDD20 irrespective of size limitations. 
 
-%TODO: Add in image format, resolution, camera settings
 
 \section{Evaluation Using NDD20}\label{ch:NDD,sec:EvalUsingNDD20}
 
@@ -166,19 +165,38 @@ Work was also undertaken to produce a baseline instance segmentation score for t
 
 \section{Post-Processing NDD20}\label{ch:NDD,sec:postProcessingNDD20}
 
-NDD20 consists of large scale panoramic images, similar to the Zanzibar data before post-processing. As a result, there is a high amount of noise present in the images which should be ignored and removed before the dataset is utilised for individual identification. Whilst Chapter \ref{ch:ID} will focus on both the theory behind, and implementation of, a model capable of individual identification, this Section will detail the processing of NDD20 into a form usable for the task of individual identification. 
+NDD20 consists of large scale panoramic images, similar to the Zanzibar data before post-processing. As a result, there is a high amount of noise present in the images which should be ignored and removed before the dataset is utilised for individual identification. Whilst Chapter \ref{ch:ID} will focus on both the theory behind, and implementation of, a model capable of individual identification, this Section will detail the processing of NDD20 into a form usable for the task of individual identification.
 
-\subsection{Application of Post-Processing Techniques}\label{ch:NDD,sec:postProcessingNDD20,sub:applyingPostProcessing}
+Utilising the post-processing techniques as outlined in Section \ref{ch:cetDet,sec:postProcessing}, the detections from the Mask-RCNN model were used to generate a dataset of images to train another model capable of individual identification. This dataset, known as \textit{Segmented NDD20}, is a collection of images which contains only the segmented masks from NDD20. 
 
-Utilising the post-processing techniques as outlined in Section \ref{ch:cetDet,sec:postProcessing}, the masks detected by model 20190902T0946 were used to create a dataset of images ready to train a model capable of individual identification. This dataset, known as Cropped Detections NDD20, is a collection of images which contain only the crop of the detected mask. Example images from Cropped Detections NDD20 can be seen in Figure XXX.
+Once images of the segmentations had been created these were then processed further to create a folder structure which allowed for easy training of an identification model. To facilitate this, each segmentation was checked against the ground truth for the image. Any images which contained a dorsal fin with identifying information were placed in a directory containing other examples of that individual. Any fins that did not contain identifying information were removed as their identity could not be guaranteed. Noise which had passed through the mask post-processing were included in a \texttt{noise} directory with the goal of allowing any future model to learn how to identify erroneous masks which have made it through post-processing. 
 
-%TODO: show examples of the Cropped Detections NDD20. Tiled, with class names.
+Example images from Segmented NDD20 are shown in Figure \ref{fig:segmented-ndd20-example}. As can be seen there is low inter-class but high intra-class differences. For example there is relatively little difference between the images shown for individuals \texttt{32} and \texttt{39}, whilst there is a large difference between the three example images for individual \texttt{11}. It is this variance and fine-grained nature which makes the task of automatic individual photo-identification particularly challenging. 
 
-Once images of the cropped masks had been created, these were then processed further into a folder structure which allowed for easy training of a model capable of individual identification. To facilitate this, each cropped mask was checked against the ground truth masks for the image. Any cropped mask images which contained a dorsal fin with identifying information was placed in a directory containing other examples of that individual. Any fins that did not contain identifying information were removed as their identity could not be guaranteed. Any noise which had passed through the mask post-processing were included in a \texttt{noise} directory with the goal of allowing any future model to learn how to identify erroneous detections which have made it through processing. At this point, the Cropped Detections NDD20 dataset contained 39 classes including \texttt{noise}. Individuals \texttt{5}, \texttt{6}, \texttt{17}, \texttt{27}, \texttt{40}, and \texttt{41} were removed by the post-processing due to poor quality detections. Upon examination few examples of these individuals were present in NDD20, those that were showed the individuals in challenging positions for the detector such as at an extreme angle or with large amounts of splash.
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.6]{Chapter4/figs/segmented-ndd20-tiled.png}
+	\end{center}
+	\caption{Example images from Segmented NDD20. The individual class label is displayed above each image.}
+	\label{fig:segmented-ndd20-example}
+\end{figure}
 
-As Cropped Detections NDD20 was produced from the output of the Mask-RCNN detector, example images for each individual are not perfect. If the detector has missed a part of the animal's dorsal fin for example, then this information will not be present in Cropped Detections NDD20. In order to quantify the effect this loss has, a second dataset called Cropped Ground Truths NDD20 was created. Images in this dataset were generated using the ground truth pixel masks present in NDD20 to crop rather than using the predicted masks generated by the detector. This creates a dataset representing perfect detections, as if the model's mAP@IOU[1.0] = 1.0. As a result this dataset does not contain a noise class, however does examples of all individuals is present. 
+In total, Segmented NDD20 contains 1243 images representing 43 classes including \texttt{noise}. Individuals \texttt{6} and \texttt{27} were removed from the dataset by the post-processing algorithm. Upon examination, images of these individuals were captured from extreme angles or with large amounts of splash, making it difficult for the detector to produce accurate segmentations. The dataset is highly skewed, as seen in Figure \ref{fig:segmented-ndd20-dist}, with approximately 66\% of images in the dataset labelled as \texttt{noise}. Classes representing individual animals contain a non-uniform number of example images varying between 33 examples for individual \texttt{11} and just one for individuals \texttt{5} and \texttt{35}. As such this dataset represents not just a fine-grained but also a few-shot problem, a combination which is extremely challenging for current computer vision methods. 
 
-%TODO: show examples of the Cropped Ground Truths NDD20. Tiled, with class names.
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter4/figs/seg-ndd20-dist.png}
+	\end{center}
+	\caption{The \texttt{ID} class label distribution for Segmented NDD20.}
+	\label{fig:segmented-ndd20-dist}
+\end{figure}
+
+\section{Aberdeen \& St. Andrews University Additional Data}\label{ch:NDD,sec:NDD_AU_SMRU}
+
+After post-processing the data collected during fieldwork into the Segmented NDD20 dataset, it was clear from the class distribution present (seen in Figure \ref{fig:segmented-ndd20-dist}) that it may be beneficial to increase the number of examples per individual, providing a photo-id model more data to learn from. As it was not possible due to sea state conditions to continue data collection in the Coquet to St. Mary's MCZ after 10/10/2019, it was possible for more bottlenose dolphin data to be obtained from external sources. 
+
+% Aberdeen, St Andrews provided data to help aliviate. 2003-2019. 1827 photos of quality 3 (highest on scale used by Aberdeen). Each photo has 1 BND only. Work undertaken to match individuals between the two catalogues (23 inidvidual overlap between the two study areas, checked by us and Aberdeen). Show count of NDD20_AU_SMRU. 
+
 
 
 % Addition of AU_SMRU data to provide more data
