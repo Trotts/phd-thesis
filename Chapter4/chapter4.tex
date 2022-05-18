@@ -181,30 +181,31 @@ Example images from Segmented NDD20 are shown in Figure \ref{fig:segmented-ndd20
 	\label{fig:segmented-ndd20-example}
 \end{figure}
 
-In total, Segmented NDD20 contains 1243 images representing 43 classes including \texttt{noise}. Individuals \texttt{6} and \texttt{27} were removed from the dataset by the post-processing algorithm. Upon examination, images of these individuals were captured from extreme angles or with large amounts of splash, making it difficult for the detector to produce accurate segmentations. The dataset is highly skewed, as seen in Figure \ref{fig:segmented-ndd20-dist}, with approximately 66\% of images in the dataset labelled as \texttt{noise}. Classes representing individual animals contain a non-uniform number of example images varying between 33 examples for individual \texttt{11} and just one for individuals \texttt{5} and \texttt{35}. As such this dataset represents not just a fine-grained but also a few-shot problem, a combination which is extremely challenging for current computer vision methods. 
+In total, Segmented NDD20 contains 1243 images representing 43 classes including \texttt{noise}. Individuals \texttt{6} and \texttt{27} were removed from the dataset by the post-processing algorithm. Upon examination, images of these individuals were captured from extreme angles or with large amounts of splash, making it difficult for the detector to produce accurate segmentations. The dataset is highly skewed, as seen in Figure \ref{fig:segmented-ndd20-and-ndd20-au-smru-dist} (blue), with approximately 66\% of images in the dataset labelled as \texttt{noise}. Classes representing individual animals contain a non-uniform number of example images (median = 8.5) varying between 33 examples for individual \texttt{11} and just one for individuals \texttt{5} and \texttt{35}. As such this dataset represents not just a fine-grained but also a few-shot problem, a combination which is extremely challenging for current computer vision methods. 
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter4/figs/seg-ndd20-dist.png}
+		\includegraphics[scale=0.5]{Chapter4/figs/seg-ndd20-and-ndd20-au-smru-dist}
 	\end{center}
-	\caption{The \texttt{ID} class label distribution for Segmented NDD20.}
-	\label{fig:segmented-ndd20-dist}
+	\caption{The \texttt{ID} class label distribution for Segmented NDD20 and NDD20 AU SMRU.}
+	\label{fig:segmented-ndd20-and-ndd20-au-smru-dist}
 \end{figure}
 
-\section{Aberdeen \& St. Andrews University Additional Data}\label{ch:NDD,sec:NDD_AU_SMRU}
+\section{Additional External Data}\label{ch:NDD,sec:NDD_AU_SMRU}
 
-After post-processing the data collected during fieldwork into the Segmented NDD20 dataset, it was clear from the class distribution present (seen in Figure \ref{fig:segmented-ndd20-dist}) that it may be beneficial to increase the number of examples per individual, providing a photo-id model more data to learn from. As it was not possible due to sea state conditions to continue data collection in the Coquet to St. Mary's MCZ after 10/10/2019, it was possible for more bottlenose dolphin data to be obtained from external sources. 
+After post-processing the data collected during fieldwork into the Segmented NDD20 dataset, it was clear from the class distribution present that it may be beneficial to increase the number of examples per individual, providing a photo-id model more data to learn from. As it was not possible due to sea state conditions to continue data collection in the Coquet to St. Mary's MCZ after 10/10/2019, work was undertaken to procure data from other external sources. 
 
-% Aberdeen, St Andrews provided data to help aliviate. 2003-2019. 1827 photos of quality 3 (highest on scale used by Aberdeen). Each photo has 1 BND only. Work undertaken to match individuals between the two catalogues (23 inidvidual overlap between the two study areas, checked by us and Aberdeen). Show count of NDD20_AU_SMRU. 
+%TODO: Get range and citation from Per
+As a result of the large range traversed by cetaceans, up to XXX for bottlenose dolphins, there was a chance that the individuals catalogued in the MCZ had also been recorded in other areas. Examination of photo-id catalogues from the University of Aberdeen, provided after discussions with manager of the University's long-term bottlenose dolphin studies manager Dr. Barbara Cheney confirmed a catalogue overlap. It was determined that 23 individuals (all bottlenose dolphins) were present in both catalogues. As a result of this analysis, Dr. Cheney provided 1827 additional images of the overlapping individuals to complement Segmented NDD20. Images provided were collected by both the University of Aberdeen and the University of St. Andrews' Sea Mammal Research Unit (SMRU) with the approval of Dr. Monica Arso Civil. These images were captured during surveys undertaken between 2003-2019 and were of the highest quality rating on the scale used by the institutions. All images contained only a single individual. 
 
+The additional external data procured was passed through the Mask-RCNN detector and post-processing algorithm, producing images similar to those already present in Segmented NDD20. The post-processed Aberdeen and SMRU data was combined with Segmented NDD20 to produce \textit{NDD20 AU SMRU}. This dataset consists of 2626 images, 1383 more than Segmented NDD20, representing 44 classes including \texttt{noise}. Individual \texttt{6}, whilst not present in Segmented NDD20, is accounted for in NDD20 AU SMRU however individual \texttt{27} still remains absent. Like Segmented NDD20, NDD20 AU SMRU is heavily skewed towards \texttt{noise} as seen in Figure \ref{fig:segmented-ndd20-and-ndd20-au-smru-dist} (orange), with 61\% of images labelled as this class. Non-\texttt{noise} classes however now have a median of 22 examples per class, providing a larger number of example images to train an automatic photo-id model from. 
 
-
-% Addition of AU_SMRU data to provide more data
-% Distribution of classes and num examples graph/table?
 
 % Chapter Summary
-% Creation of a dataset. Shown the model created previously is invariant to changes in geo, time, species. Baseline results for below water. 
-% Processed into a form ready for individual ID.
+% Creation of a NDD20. Shown the model created previously is invariant to changes in geo, time, species. Baseline results for below water. 
+% Highlight use of NDD20, Kaggle comp.
+% Processed into a form ready for individual ID, Segmented NDD20  + NDD AU SMRU. Table comparing the two datasets. 
+
 
 %%%%%%%%%%%%%%%%%%%
 
