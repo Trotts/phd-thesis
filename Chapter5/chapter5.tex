@@ -1,4 +1,22 @@
-\chapter{Individual Identification Using Siamese Neural Networks}\label{ch:ID}
+\chapter{Individual Cetacean ID via Automatic Most Likely Catalogue Matching}\label{ch:ID}
+
+This Chapter examines the final component in the automatic photo-id pipeline, focussing on individual identification. The component takes as input photo-id catalogue images which have been passed through the dorsal fin detector and post-processing methodology outlined in Chapter \ref{ch:cetDet} to produce a list of most likely catalogue matches. It is important to note here that this component does not intend to replace photo-id researchers by performing the job for them. Instead, the component aims to vastly reduce the search space the researcher needs to examine in order to verify a catalogue match; the component suggests a list of most likely catalogue matches, but ultimately the final decision lies with the researcher.
+
+Beginning by outlining the requirements an automatic system for most likely catalogue matching must meet, the Chapter then discusses possible approaches to the problem and justification for the selected approach. System development is discussed in detail, using the NDD AU SMRU dataset created in Chapter \ref{ch:NDD} for training and evaluation. Discussion of further processing techniques and their effect on most likely catalogue matching accuracy is discussed, alongside the current limitations of the approach. 
+
+\section{Most Likely Catalogue Matching System Requirements}\label{ch:ID,sec:Requirements}
+
+Before development can begin it is important to outline the requirements of a system capable of most likely catalogue matching. Unlike the detector which could be considered a coarse-grain task, identification of individual cetaceans is an extremely fine-grain problem as they are distinguished from each other using small prominent markings present on the dorsal fin. As the animals are free roaming, there can be high variation in how the fin is captured in the image, discussed in greater detail in Section \ref{ch:cetDet,sec:requirements,sub:environmental}. These two issues when combined lead to photo-id catalogues having low inter-class but high intra-class differences between the individuals present, seen in Figure \ref{fig:segmented-ndd20-example}. As a result of this, any system capable of accurate catalogue matching must be able to recognise these minute differences between individuals even when there is high variation in the examples for each individual class. 
+
+The system must also be capable of operating using all information provided to it. Other photo-id aides which perform most likely catalogue matching such as finFindR \cite{thompson_finfindr_2022} operate using only the trailing edge of the fin, with matching performed using notches and shape. This misses other prominent markings such as long term scarring or pigmentation, as well as the shape of other fin edges. As such, it may be the case that finFindR struggles when operating over a catalogue with few to no notches. To avoid this issue, the system developed must be capable of matching using all available prominent markings. 
+
+Further, the system must also be capable of performing accurate catalogue matching under the presence of noise, both classified and unclassified. Datasets developed for the training of this system such as NDD AU SMRU contain a \texttt{noise} class which contains all detected mask components which are erroneously retained after post-processing has been applied. This class has extremely high intra-class variance, however it is imperative the system is able to match erroneous components to it. Unclassified noise is defined as noise which has been passed downstream as a result of being attached to an individual class example, such as in Figure XXX where %TODO: Find a detection where some noise is still present. Could use one from previous chapters but adds an example close by. Finish discussing unclassified noise. 
+
+%TODO: Can handle unseen individuals
+
+
+
+
 
 
 
