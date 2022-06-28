@@ -24,7 +24,7 @@ Any developed system must also be capable of handling examples of individuals wh
 
 In traditional computer vision classification models, if a new class were to be added this would require a large number of example images of the new class as well as model retraining or fine-tuning. However, cetacean researchers are highly unlikely to possess the technical skills required to retrain or fine-tune a computer vision model, and even if they do it is unlikely a large number of example images for the new individual would be available to do so. As such, the system must be adaptable enough so as to not require extensive retraining when new individuals are added to the catalogue.
 
-\section{Deciding on Approach}\label{ch:ID,sec:deciding}
+\section{Possible Approaches}\label{ch:ID,sec:deciding}
 
 Out of all requirements an automatic most likely catalogue matching system must meet, arguably the most important is the need for flagging of previously unseen individuals. As noted, this necessitates any underlying computer vision model to have some notion of uncertainty or similarity. It is this requirement that guided approach selection. 
 
@@ -42,7 +42,7 @@ This is the main reason why Bayesian dropout was not utilised for automated most
 
 \subsection{Siamese Neural Networks}\label{ch:ID,sec:deciding,sub:SNN}
 
-Rather than producing a classification and measuring uncertainty as is the case with Bayesian dropout, Siamese Neural Networks (SNNs) aim to incorporate the notion of similarity in the model. SNNs are made up of at least two parallel identical CNNs; they share the same backbone architecture, initial and updated weights, and hyperparameters. This consistency allows the SNN to compare the inputs received by each CNN branch, producing a similarity score between the outputs rather than a direct classification. A visualisation of a two branch SNN can be seen in Figure \ref{fig:signet-SNN-architecture}.
+Rather than producing a classification and measuring uncertainty as is the case with Bayesian dropout, Siamese Neural Networks (SNNs) aim to incorporate the notion of similarity into the model. This is achieved by connecting two or more identical CNNs in parallel, each sharing the same backbone architecture, initial and updated weights, and hyperparameters. Each CNN in the SNN is designed to produce an embedding, or a  $d$-dimensional representation, of the input. The size of this embedding is set via hyperparameter and dictates how many $d$ dimensions the output of the SNN will be. For example, if an SNN is created with an embedding size of 10, each CNN may take a high dimensional input of size \textit{width} * \textit{height} * \textit{channels} and output a 10-dimensional embedding, a float vector of size 10, which represents the input image. A visualisation of a two branch SNN can be seen in Figure \ref{fig:signet-SNN-architecture}.
 
 \begin{figure}
 	\begin{center}
@@ -52,18 +52,64 @@ Rather than producing a classification and measuring uncertainty as is the case 
 	\label{fig:signet-SNN-architecture}
 \end{figure}
 
-Each parallel CNN which forms an SNN branch is designed to produce an embedding, or a lower dimensional representation, of the input it receives through the use of an embedding layer placed at the end of the CNNs architecture. It is these generated embeddings which are utilised to optimise the loss function, rather than the model inputs themselves. As common CNN architectures often make use of an embedding layer before their final softmax layer, it is routine to see SNNs created simply by removing the softmax layer of a common CNN architecture and parallelising. Thanks to this ability to perform similarity comparison SNNs have been utilised for multiple problems in computer vision, for example in signature verification \cite{dey_signet_2017} or vehicle re-identification \cite{wang_discriminative_2020}. Specifically in conservation tech, SNNs have found use in fine-grain species identification problems \cite{vetrova_hidden_2018, araujo_two-view_2022} as well as in more extreme fine-grain individual animal identification \cite{clapham_automated_2020}. 
+At train time, each CNN branch receives a different image and generates an embedding. These embeddings are compared to one another in order to optimise some loss function. By optimising in such a way that input images of the same class have similar embeddings but those of different classes are dissimilar, the SNN can be tuned to provide a measure of image similarity. Once trained only one branch of the model is retained. This allows a single image to be embedded by the model which can then be compared to the training examples.
+
+It is this ability which has resulted in the wide use of SNNs for verification or identification problems in computer vision \cite{dey_signet_2017, wang_discriminative_2020}. Specifically in conservation tech, SNNs have found use in fine-grain species identification problems \cite{vetrova_hidden_2018, araujo_two-view_2022} as well as in more extreme fine-grain individual animal identification \cite{clapham_automated_2020}. 
+
+\subsubsection{Clustering Embeddings in a Latent Space}\label{ch:ID,sec:deciding,sub:SNN,subsub:ClusteringEmbeddings}
+
+By storing the embeddings generated for each trained class it is possible to produce a list of likely class predictions for a new image by measuring the Euclidean distance between the generated embedding and those previously produced when plotted into some $d$-dimensional latent space. If the SNN has trained in such a way as to produce low intra-class, high inter-class difference between generated embeddings then this will create class clusters when plotted in the latent space. 
+
+An example of this behaviour can be seen in Figure \ref{fig:mnist-class-clusters-PCA} which shows a 2-dimensional visualisation, produced using Principle Component Analysis (PCA), of the embedding locations for a subset of the MNIST dataset \cite{lecun_gradient-based_1998}. Here, an SNN has been trained for 100 epochs to generate embeddings of images for the 10 unique classes. As can be seen, the model is able to generate embeddings in such as way as to cluster those of the same class in the latent space. Note that some clusters are visualised on top of each other due to the dimensionality reduction performed in order to show the latent space on the page. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter5/figs/mnist-class-clusters-PCA.png}
+	\end{center}
+	\caption{A 2-dimensional visualisation of a multi-dimensional latent space produced by an SNN trained on the MNIST dataset \cite{lecun_gradient-based_1998} for 100 epochs.}
+	\label{fig:mnist-class-clusters-PCA}
+\end{figure}
+
+It is important to note here that the value of the embeddings is not necessarily important, just the distances between them. Notice how all points in Figure \ref{fig:mnist-class-clusters-PCA} lie within approximately -1.5, 2.0 on the x-axis and -2.0, 2.0 on the y-axis. There is nothing inherently good or bad about an SNN that embeds within this range, all that matters is the points are clustering in their respective classes.
+
+\subsubsection{Meeting the Outlined Requirements}\label{ch:ID,sec:deciding,sub:SNN,subsub:meetingOutlinedRequirements}
+% Advantages and disadvantages for SNNs in relation to catalogue matching to show why the approach was taken.
+
+When compared to Bayesian dropout, the computational expense of performing inference with an SNN is quite small. Whilst training requires the use of a branched CNN architecture in order to optimise the loss function, this is reduced to just one branch at inference time. Generating a list of most likely catalogue matches would only require an image to be passed through the network once in order to generate an embedding, and similarity via Euclidean distance measurement in the latent space is cheap to perform. As such, producing a list of most likely catalogue matches is overall more computationally efficient using SNNs as opposed to Bayesian dropout. 
+
+The clustering of class embeddings in the latent space also allows for easy identification of potential previously unseen individuals. Passing the dorsal fin of an individual not present at train-time through the model would result in, theoretically, a distinct embedding which would plot into a unique point in the latent space far from any existing class clusters. By implementing a threshold on the Euclidean distance measurement, potentially unseen individuals could be easily flagged to the researcher for further investigation. Clustering also removes the need for re-training to allow for matching to previously unseen individuals when they are added to the catalogue. Adding a new class to the latent space can be achieved simply by defining embeddings to a new class cluster and including these in future distance measurements. 
+
+In addition, SNNs are capable of operating over all information provided to them. This can be achieved by not limiting the embedding generation to one specific part of the dorsal fin. It also stands to reason that this embedding generation will be robust enough to deal with small amounts of retained background noise given a high enough number of dimensions. Overall, the use of SNNs for most likely catalogue matching far outweighs the use of Bayesian dropout. It is for this reason the decision was taken to first begin development of a model capable of most likely catalogue matching using SNNs.
+
+\section{Siamese Neural Network Development}\label{ch:ID,sec:SNNDevelopment}
+% Sec: Development of an SNN for Most Likely Catalogue Matching
+% Discuss development of the SNN for catalogue matching using NDD AU SMRU
+% Triplet Ranking loss, semi-hard triplet mining, prototypes from TDS blog
+% Data augmentation, hyperparameter tuning
+
+% Sec: SNN Evaluation
+% Finding the best model, top-n accuracy explanation
+% Unseen inidividual thresholding using prototypes and KNN
+% Limitations (unseen individuals may just be changed - at least we're flagging and having a human decide. re-training needed for each catalogue.)
+
+% Sec: Effect of Input Image Variation
+% Black and white
+% Two classes for each side of the fin (seems to work but inconclusive given size of dataset)
+
+% Sec (Ch if above ~20pages+?): Full Pipeline Evaluation
+% WMMC dataset discussion
+% Go through the pipeline, highlighting each step
+% Show SNN approach is generalisable with retraining, Mask-RCNN does not need re-training
+% Hyperparam tuning SNN here helps but only slightly (near optimal hyperparams found for the problem space?)
+
+% Sec: Conclusion
+% Summary of the work
+% Produced a model capable of meeting requirements
+% State we have extended the literature in use of image embeddings and latent space distance measurements for conservation (vetrova etc) and individual re-id (bearID)
 
 
-% Follow Format of https://towardsdatascience.com/how-to-train-your-siamese-neural-network-4c6da3259463
-% Rework description of embedding above to include example like in ^ ?
-% Discuss how the embedding generated is used for similarity. Train time needing all branches and test time only using one. Generated embedding plotted into N-dimensional latent space. Euclidean distance used for distance measurement. etc.
 
-% Introduce triplet loss. Semi-Hard triplet mining. Prototypes.
-
-
-
-
+  
 
 
 %%%%%%%%%%%%%%%%%%%
