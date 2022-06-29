@@ -87,6 +87,43 @@ In addition, SNNs are capable of operating over all information provided to them
 % Triplet Ranking loss, semi-hard triplet mining, prototypes from TDS blog
 % Data augmentation, hyperparameter tuning
 
+Before an SNN capable of most likely catalogue matching using the NDD AU SMRU dataset could be created, a development environment was first required to be selected. Initial testing first began using the Tensorflow framework \cite{abadi_tensorflow:_2016}, specifically version 1.14, as this would keep consistency with the dorsal fin detector developed in Chapter \ref{ch:cetDet}. 
+
+Replication of the work undertaken by Vetrova \textit{et al.} \cite{vetrova_hidden_2018} for moth species identification proved promising. However, expanding to individual identification using the NDD AU SMRU dataset faltered when using Tensorflow, believed to be caused by a bug\footnote{Batch Normalisation Issues in Keras/Tensorflow: see \href{https://github.com/keras-team/keras/issues/11927}{github.com/keras-team/keras/issues/11927} and  \href{https://github.com/keras-team/keras/issues/9498}{github.com/keras-team/keras/issues/9498}} in how the Keras backend handles Batch Normalisation for models with multiple inputs resulting in model collapse, a phenomenon which results in the model returning the exact same output regardless of input. As a result of this, the decision was made to switch to using the PyTorch framework \cite{paszke_automatic_2017} which does not suffer these issues. 
+
+\subsection{Pairwise vs Triplet Ranking Loss}\label{ch:ID,sec:SNNDevelopment,sub:lossFunction}
+
+Training of any neural network is performed through the optimisation of a loss function. For SNNs, a group of loss functions known as Ranking Losses are utilised. Here, the goal is not to predict a class label but rather a distance between model inputs. As such, they are perfect for training SNNs. 
+
+During training, an SNN will generate embeddings for some received inputs and generate a similarity value (e.g. via Euclidean distance when plotted into a latent space). This similarity value is then used to optimise the Ranking Loss, which in turn tells the model how to adjust to create better embeddings, for example how to bring two embeddings closer when they are of the same class. The type of Ranking Loss utilised for training and the number of branches present in the SNN are intertwined. Two of the most commonly used Ranking Losses are Pairwise Ranking Loss and Triplet Ranking Loss.
+
+\subsubsection{Pairwise Ranking Loss}\label{ch:ID,sec:SNNDevelopment,sub:lossFunction,subsub:Pairwise}
+
+SNNs which make use of two branches can be optimised using a Pairwise Ranking Loss, a visualisation of which can be seen in Figure \ref{fig:pairwise_ranking_loss_faces}. Here the model is trained using data points made up of two inputs. The first input is called the Anchor, an input which defines the class the model is training to optimise for. The second input can be either a Positive containing another example of the Anchor class, or a Negative containing an example input of some class other than the Anchor. 
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter5/figs/pairwise_ranking_loss_faces.png}
+	\end{center}
+	\caption{A visualisation of SNN optimisation using Pairwise Ranking Loss. Image from \cite{gomez_understanding_2019}.}
+	\label{fig:pairwise_ranking_loss_faces}
+\end{figure}
+
+Using these two input types Pairwise Ranking Loss can be used to optimise in such a way that the model learns to produce embeddings with a small distance between Anchors and Positives, and a large distance between Anchors and Negatives. Mathematically Pairwise Ranking Loss can be defined as such:
+
+\begin{equation}
+	L =
+		\begin{cases}
+			D(A,P) & \text{if Positive Pair}\\
+			max(0, m - D(A,N)) & \text{if Negative Pair}\\
+		\end{cases}       
+\end{equation}
+
+Where $L$ is the loss, $D(A,P)$ is the distance between the Anchor and the Positive, and $D(A,N)$ is the distance between the Anchor and the Negative. When optimising for Positive Pairs the loss function will only ever return 0 when the distance between the Anchor and the Positive is 0, ensuring these embeddings are nearly always pulled closer. When optimising for Negative Pairs, the loss function will return 0 when the distance between the Anchor and the Negative is greater than some margin $m$. As such, a weight update is not performed when the distance between the Anchor and the Negative is sufficiently large.
+
+% Problem with Pairwise: Positive Pair optimisation eventually leads to collapse whereby examples of the same class produce exactly the embedding, negativley effecting the model's ability to understand similarity and input variation. 
+
+
 % Sec: SNN Evaluation
 % Finding the best model, top-n accuracy explanation
 % Unseen inidividual thresholding using prototypes and KNN
