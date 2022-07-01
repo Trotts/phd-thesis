@@ -48,7 +48,7 @@ Rather than producing a classification and measuring uncertainty as is the case 
 	\begin{center}
 		\includegraphics[scale=0.4]{Chapter5/figs/signet-SNN-architecture.png}
 	\end{center}
-	\caption{A visualisation of an example SNN architecture. Image from \cite{dey_signet_2017}.}
+	\caption{An example SNN architecture for signature verification. Image from \cite{dey_signet_2017}.}
 	\label{fig:signet-SNN-architecture}
 \end{figure}
 
@@ -82,10 +82,6 @@ The clustering of class embeddings in the latent space also allows for easy iden
 In addition, SNNs are capable of operating over all information provided to them. This can be achieved by not limiting the embedding generation to one specific part of the dorsal fin. It also stands to reason that this embedding generation will be robust enough to deal with small amounts of retained background noise given a high enough number of dimensions. Overall, the use of SNNs for most likely catalogue matching far outweighs the use of Bayesian dropout. It is for this reason the decision was taken to first begin development of a model capable of most likely catalogue matching using SNNs.
 
 \section{Siamese Neural Network Development}\label{ch:ID,sec:SNNDevelopment}
-% Sec: Development of an SNN for Most Likely Catalogue Matching
-% Discuss development of the SNN for catalogue matching using NDD AU SMRU
-% Triplet Ranking loss, semi-hard triplet mining, prototypes from TDS blog
-% Data augmentation, hyperparameter tuning
 
 Before an SNN capable of most likely catalogue matching using the NDD AU SMRU dataset could be created, a development environment was first required to be selected. Initial testing first began using the Tensorflow framework \cite{abadi_tensorflow:_2016}, specifically version 1.14, as this would keep consistency with the dorsal fin detector developed in Chapter \ref{ch:cetDet}. 
 
@@ -105,13 +101,14 @@ SNNs which make use of two branches can be optimised using a Pairwise Ranking Lo
 	\begin{center}
 		\includegraphics[scale=0.4]{Chapter5/figs/pairwise_ranking_loss_faces.png}
 	\end{center}
-	\caption{A visualisation of SNN optimisation using Pairwise Ranking Loss. Image from \cite{gomez_understanding_2019}.}
+	\caption{SNN optimisation using Pairwise Ranking Loss. Image from \cite{gomez_understanding_2019}.}
 	\label{fig:pairwise_ranking_loss_faces}
 \end{figure}
 
-Using these two input types Pairwise Ranking Loss can be used to optimise in such a way that the model learns to produce embeddings with a small distance between Anchors and Positives, and a large distance between Anchors and Negatives. Mathematically Pairwise Ranking Loss can be defined as such:
+Using these two input types Pairwise Ranking Loss can be used to optimise in such a way that the model learns to produce embeddings with a small distance between Anchors and Positives, and a large distance between Anchors and Negatives. Mathematically Pairwise Ranking Loss can be defined using Equation \ref{eq:pairwiseLoss}:
 
 \begin{equation}
+	\label{eq:pairwiseLoss}
 	L =
 		\begin{cases}
 			D(A,P) & \text{if Positive Pair}\\
@@ -121,7 +118,61 @@ Using these two input types Pairwise Ranking Loss can be used to optimise in suc
 
 Where $L$ is the loss, $D(A,P)$ is the distance between the Anchor and the Positive, and $D(A,N)$ is the distance between the Anchor and the Negative. When optimising for Positive Pairs the loss function will only ever return 0 when the distance between the Anchor and the Positive is 0, ensuring these embeddings are nearly always pulled closer. When optimising for Negative Pairs, the loss function will return 0 when the distance between the Anchor and the Negative is greater than some margin $m$. As such, a weight update is not performed when the distance between the Anchor and the Negative is sufficiently large.
 
-% Problem with Pairwise: Positive Pair optimisation eventually leads to collapse whereby examples of the same class produce exactly the embedding, negativley effecting the model's ability to understand similarity and input variation. 
+\subsubsection{Triplet Ranking Loss}\label{ch:ID,sec:SNNDevelopment,sub:lossFunction,subsub:Triplet}
+
+One of the main problems presented by Pairwise Ranking Loss is the issue of model collapse, occurring after a large amount of Positive Pair optimisations. In this scenario, the distance between Anchors and Positives are pushed so close together in the latent space as to produce the same embedding. This can in turn affect the model's ability to understand variation in input and similarity scoring. 
+
+Triplet Ranking Loss aims to avoid this issue by training on triplets of data points rather than pairs, with each triplet containing an Anchor, a Positive, and a Negative. SNNs which make use of Triplet Ranking Loss are often named Triplet Networks in literature (such as in Hoffer \textit{et al.} \cite{hoffer_deep_2018} which first made use of them), however the only difference between the structure of an SNN using Pairwise Ranking Loss or Triplet Ranking Loss is the number of branches - two or three respectively. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter5/figs/triplet-loss-eg.png}
+	\end{center}
+	\caption{SNN optimisation using Triplet Ranking Loss. Each input is passed to a branch of the SNN and an embedding is produced. These embeddings are used to optimise future embedding generation, aiming to pull the Anchor and Positive together whilst pushing the Positive and Negative apart. Example Anchor, Positive, and Negative from the MNIST dataset \cite{lecun_gradient-based_1998}.}
+	\label{fig:triplet-loss-eg}
+\end{figure}
+
+Just like with Pairwise Ranking Loss, Triplet Ranking Loss takes as input the generated embeddings for each branch input and optimises to pull the Anchor and Positive close whilst pushing the Negative away, as visualised in Figure \ref{fig:triplet-loss-eg}. Optimisation is performed using Equation \ref{eq:tripletLoss}:
+
+\begin{equation}
+	\label{eq:tripletLoss}
+	L = max(0, D(A,P) - D(A,N) + m)
+\end{equation}
+
+By utilising a triplet, the loss function evaluates to 0 when $D(A, N) > D(A, P) + m$. This occurs only when the triplet contains examples the model is already well trained on and no further optimisations can be gained. By enforcing $m$, where typically $m = 0.2$ thanks to work by Schroff \textit{et al.} \cite{schroff_facenet_2015}, the function ensures embedding variation between distinct inputs thus allowing for a similarity score to be computed between the Anchor and the Positive in all cases. Thanks to the advantages of Triplet Ranking Loss over its Pairwise counterpart, the decision was made to make use of this loss function and train an SNN with three branches. Further, Triplet Ranking Loss has been shown to perform well on individual identification tasks in both humans \cite{hermans_defense_2017} and animals \cite{vetrova_hidden_2018}, providing evidence to support its use for training a most likely catalogue matcher.
+
+\subsection{Semi-Hard Triplet Mining}\label{ch:ID,sec:SNNDevelopment,sub:SemiHardTripletMining}
+
+When training a model, care should be taken to ensure learning occurs at every step. When using Triplet Ranking Loss however, learning does not occur during training steps where the loss evaluates to 0, such as when $D(A, N) > D(A, P) + m$. Negatives provided should be sufficiently difficult such that the triplet allows the loss to evaluate to a non-zero value, allowing the model to learn. However care should also be taken so as to not provide the model with triplets that are too difficult, as this will increase optimisation and thus overall training time. 
+
+This leads to somewhat of a Goldilocks problem. Triplets must be not too soft to prevent learning, but not too hard to dramatically increase training time. Semi-Hard Triplet Mining aims to fix this problem, providing triplets which are \textit{just right}. First, three types of triplets are defined:
+
+\begin{itemize}
+	\item \textbf{Easy}: where $D(A, P) + m < D(A, N)$
+	\item \textbf{Hard}: where $D(A, N) < D(A, P)$
+	\item \textbf{Semi-Hard}: where $D(A, P) < D(A, N) < D(A, P) + m$
+\end{itemize}
+
+The goal of Semi-Hard Triplet Mining is to locate as many Semi-Hard triplets from the training set as possible. These are triplets whereby the loss still evaluates to a positive value however the Anchor is closer to the Positive than the Negative when plotted in the latent space, as seen in Figure \ref{fig:semi-hard-triplet-mining}. This allows for fast training whilst still providing enough triplet difficulty for the model to learn during training. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.7]{Chapter5/figs/semi-hard-triplet-mining.png}
+	\end{center}
+	\caption{A visualisation of the areas in the latent space where Easy, Hard, and Semi-Hard triplets can occur, where $a$ is the location of the Anchor and $p$ is the location of the Positive. Image from \cite{moindrot_triplet_2018}.}
+	\label{fig:semi-hard-triplet-mining}
+\end{figure}
+
+Finding, or mining, Semi-Hard triplets can be performed either Offline or Online. In Offline mining, the entire training set is converted into triplets before the training epoch occurs and those which fit the Semi-Hard definition are utilised. With Online mining, Semi-Hard triplets are generated on the fly as required. Generally, Online mining results in faster training when compared to Offline Mining as this allows for the ability to update our definition of a Semi-Hard Triplet as training progresses.
+
+\subsection{Class Prototyping}\label{ch:ID,sec:SNNDevelopment,sub:prototypes}
+% Discuss need for prototypes at inference time, allows for generating of new classes without need for retraining
+
+
+% Sec: Development of an SNN for Most Likely Catalogue Matching
+% Discuss development of the SNN for catalogue matching using NDD AU SMRU
+% Triplet Ranking loss, semi-hard triplet mining, prototypes from TDS blog
+% Data augmentation, hyperparameter tuning
 
 
 % Sec: SNN Evaluation
@@ -133,16 +184,18 @@ Where $L$ is the loss, $D(A,P)$ is the distance between the Anchor and the Posit
 % Black and white
 % Two classes for each side of the fin (seems to work but inconclusive given size of dataset)
 
-% Sec (Ch if above ~20pages+?): Full Pipeline Evaluation
+% Sec: Conclusion
+% Summary of the work
+% Produced a model capable of meeting requirements
+% State we have extended the literature in use of image embeddings and latent space distance measurements for conservation (vetrova etc) and individual re-id (bearID)
+
+
+% Ch: Full Pipeline Evaluation
 % WMMC dataset discussion
 % Go through the pipeline, highlighting each step
 % Show SNN approach is generalisable with retraining, Mask-RCNN does not need re-training
 % Hyperparam tuning SNN here helps but only slightly (near optimal hyperparams found for the problem space?)
 
-% Sec: Conclusion
-% Summary of the work
-% Produced a model capable of meeting requirements
-% State we have extended the literature in use of image embeddings and latent space distance measurements for conservation (vetrova etc) and individual re-id (bearID)
 
 
 
