@@ -6,7 +6,7 @@ Beginning by outlining the requirements an automatic system for most likely cata
 
 \section{Most Likely Catalogue Matching System Requirements}\label{ch:ID,sec:Requirements}
 
-Before development can begin it is important to outline the requirements of a system capable of most likely catalogue matching. Unlike the detector which could be considered a coarse-grain task, identification of individual cetaceans is an extremely fine-grain problem as they are distinguished from each other using small prominent markings present on the dorsal fin. As the animals are free roaming, there can be high variation in how the fin is captured in the image, discussed in greater detail in Section \ref{ch:cetDet,sec:requirements,sub:environmental}. This can lead to photo-id catalogues with low inter-class but high intra-class differences between the individuals present, seen in Figure \ref{fig:segmented-ndd20-example}. As a result of this, any system capable of accurate catalogue matching must be able to recognise these minute differences between individuals even when there is high variation in the examples for each individual class. 
+Before development can begin it is important to outline the requirements of a system capable of most likely catalogue matching. Unlike the detector which could be considered a coarse-grain task, identification of individual cetaceans is an extreme fine-grain problem as they are distinguished from each other using small prominent markings present on the dorsal fin. As the animals are free roaming, there can be high variation in how the fin is captured in the image, discussed in greater detail in Section \ref{ch:cetDet,sec:requirements,sub:environmental}. This can lead to photo-id catalogues with low inter-class but high intra-class differences between the individuals present, seen in Figure \ref{fig:segmented-ndd20-example}. As a result of this, any system capable of accurate catalogue matching must be able to recognise these minute differences between individuals even when there is high variation in the examples for each individual class. 
 
 The system must also be capable of operating using all information provided to it. Other photo-id aides which perform most likely catalogue matching such as finFindR \cite{thompson_finfindr_2022} operate using only the trailing edge of the fin, with matching performed using notches and shape. This misses other prominent markings such as long term scarring or pigmentation, as well as the shape of other fin edges. As such, it may be the case that finFindR struggles when operating over a catalogue with few to no notches. To avoid this issue, the system developed must be capable of matching using all available prominent markings. 
 
@@ -22,7 +22,7 @@ Further, the system must also be capable of performing accurate catalogue matchi
 
 Any developed system must also be capable of handling examples of individuals which are not present in the photo-id catalogue. Due to the free roaming nature of cetaceans (or indeed any wild animal) and the limitations on photo-id survey size dictated by both weather and workforce, there is no guarantee that every animal who makes use of the survey area will be captured. New animals may also become resident in the area through birth or migration. When these animals are eventually captured during a survey and their image processed, the system must be capable of recognising this as an individual not currently present in the catalogue and highlight this to the researcher. This is made more difficult given the extreme fine-grain nature of the catalogues. As a result, this requirement necessitates the system must be capable of recognising uncertainty or understand a notion of similarity between an input and the class examples present in the catalogue. 
 
-In traditional computer vision classification models, if a new class were to be added this would require a large number of example images of the new class as well as model retraining or fine-tuning. However, cetacean researchers are highly unlikely to possess the technical skills required to retrain or fine-tune a computer vision model, and even if they do it is unlikely a large number of example images for the new individual would be available to do so. As such, the system must be adaptable enough so as to not require extensive retraining when new individuals are added to the catalogue.
+In traditional computer vision classification models if the model was required to classify a new class, this would require a large number of example images as well as model retraining or fine-tuning. However, cetacean researchers are highly unlikely to possess a large number of example images for the new individual from first encounter. As such, the system must be adaptable enough so as to not require extensive retraining when new individuals are added to the catalogue.
 
 \section{Possible Approaches}\label{ch:ID,sec:deciding}
 
@@ -81,21 +81,19 @@ The clustering of class embeddings in the latent space also allows for easy iden
 
 In addition, SNNs are capable of operating over all information provided to them. This can be achieved by not limiting the embedding generation to one specific part of the dorsal fin. It also stands to reason that this embedding generation will be robust enough to deal with small amounts of retained background noise given a high enough number of dimensions. Overall, the use of SNNs for most likely catalogue matching far outweighs the use of Bayesian dropout. It is for this reason the decision was taken to first begin development of a model capable of most likely catalogue matching using SNNs.
 
-\section{Siamese Neural Network Development}\label{ch:ID,sec:SNNDevelopment}
+\section{Siamese Neural Network Background}\label{ch:ID,sec:SNNBackground}
 
-Before an SNN capable of most likely catalogue matching using the NDD AU SMRU dataset could be created, a development environment was first required to be selected. Initial testing first began using the Tensorflow framework \cite{abadi_tensorflow:_2016}, specifically version 1.14, as this would keep consistency with the dorsal fin detector developed in Chapter \ref{ch:cetDet}. 
+As this work will focus on utilising SNNs for the task of most likely catalogue matching it is important to first outline some key concepts. This Section provides the required background knowledge for various terms which are used when discussing SNN development and evaluation later in this Chapter.
 
-Replication of the work undertaken by Vetrova \textit{et al.} \cite{vetrova_hidden_2018} for moth species identification proved promising. However, expanding to individual identification using the NDD AU SMRU dataset faltered when using Tensorflow, believed to be caused by a bug\footnote{Batch Normalisation Issues in Keras/Tensorflow: see \href{https://github.com/keras-team/keras/issues/11927}{github.com/keras-team/keras/issues/11927} and  \href{https://github.com/keras-team/keras/issues/9498}{github.com/keras-team/keras/issues/9498}} in how the Keras backend handles Batch Normalisation for models with multiple inputs resulting in model collapse, a phenomenon which results in the model returning the exact same output regardless of input. As a result of this, the decision was made to switch to using the PyTorch framework \cite{paszke_automatic_2017} which does not suffer these issues. 
-
-\subsection{Pairwise vs Triplet Ranking Loss}\label{ch:ID,sec:SNNDevelopment,sub:lossFunction}
+\subsection{Pairwise vs Triplet Ranking Loss}\label{ch:ID,sec:SNNBackground,sub:lossFunction}
 
 Training of any neural network is performed through the optimisation of a loss function. For SNNs, a group of loss functions known as Ranking Losses are utilised. Here, the goal is not to predict a class label but rather a distance between model inputs. As such, they are perfect for training SNNs. 
 
-During training, an SNN will generate embeddings for some received inputs and generate a similarity value (e.g. via Euclidean distance when plotted into a latent space). This similarity value is then used to optimise the Ranking Loss, which in turn tells the model how to adjust to create better embeddings, for example how to bring two embeddings closer when they are of the same class. The type of Ranking Loss utilised for training and the number of branches present in the SNN are intertwined. Two of the most commonly used Ranking Losses are Pairwise Ranking Loss and Triplet Ranking Loss.
+During training an SNN will generate embeddings for some received inputs and generate a similarity value (e.g. via Euclidean distance when plotted into a latent space). This similarity value is then used to optimise the Ranking Loss which in turn tells the model how to adjust to create better embeddings, for example how to bring two embeddings closer when they are of the same class. The type of Ranking Loss utilised for training and the number of branches present in the SNN are intertwined. Two of the most commonly used Ranking Losses are Pairwise Ranking Loss and Triplet Ranking Loss.
 
-\subsubsection{Pairwise Ranking Loss}\label{ch:ID,sec:SNNDevelopment,sub:lossFunction,subsub:Pairwise}
+\subsubsection{Pairwise Ranking Loss}\label{ch:ID,sec:SNNBackground,sub:lossFunction,subsub:Pairwise}
 
-SNNs which make use of two branches can be optimised using a Pairwise Ranking Loss, a visualisation of which can be seen in Figure \ref{fig:pairwise_ranking_loss_faces}. Here the model is trained using data points made up of two inputs. The first input is called the Anchor, an input which defines the class the model is training to optimise for. The second input can be either a Positive containing another example of the Anchor class, or a Negative containing an example input of some class other than the Anchor. 
+SNNs which make use of two branches can be optimised using a Pairwise Ranking Loss, a visualisation of which can be seen in Figure \ref{fig:pairwise_ranking_loss_faces}. Here the model is trained using data points made up of two inputs. The first input is called the Anchor, which defines the class the model is training to optimise for. The second input can be either a Positive containing another example of the Anchor class, or a Negative containing an example of some class other than the Anchor. 
 
 \begin{figure}[h]
 	\begin{center}
@@ -118,7 +116,7 @@ Using these two input types Pairwise Ranking Loss can be used to optimise in suc
 
 Where $L$ is the loss, $D(A,P)$ is the distance between the Anchor and the Positive, and $D(A,N)$ is the distance between the Anchor and the Negative. When optimising for Positive Pairs the loss function will only ever return 0 when the distance between the Anchor and the Positive is 0, ensuring these embeddings are nearly always pulled closer. When optimising for Negative Pairs, the loss function will return 0 when the distance between the Anchor and the Negative is greater than some margin $m$. As such, a weight update is not performed when the distance between the Anchor and the Negative is sufficiently large.
 
-\subsubsection{Triplet Ranking Loss}\label{ch:ID,sec:SNNDevelopment,sub:lossFunction,subsub:Triplet}
+\subsubsection{Triplet Ranking Loss}\label{ch:ID,sec:SNNBackground,sub:lossFunction,subsub:Triplet}
 
 One of the main problems presented by Pairwise Ranking Loss is the issue of model collapse, occurring after a large amount of Positive Pair optimisations. In this scenario, the distance between Anchors and Positives are pushed so close together in the latent space as to produce the same embedding. This can in turn affect the model's ability to understand variation in input and similarity scoring. 
 
@@ -132,7 +130,7 @@ Triplet Ranking Loss aims to avoid this issue by training on triplets of data po
 	\label{fig:triplet-loss-eg}
 \end{figure}
 
-Just like with Pairwise Ranking Loss, Triplet Ranking Loss takes as input the generated embeddings for each branch input and optimises to pull the Anchor and Positive close whilst pushing the Negative away, as visualised in Figure \ref{fig:triplet-loss-eg}. Optimisation is performed using Equation \ref{eq:tripletLoss}:
+Just like with Pairwise Ranking Loss, Triplet Ranking Loss takes as input the generated embeddings for each branch and optimises to pull the Anchor and Positive close whilst pushing the Negative away, as visualised in Figure \ref{fig:triplet-loss-eg}. Optimisation is performed using Equation \ref{eq:tripletLoss}:
 
 \begin{equation}
 	\label{eq:tripletLoss}
@@ -141,7 +139,7 @@ Just like with Pairwise Ranking Loss, Triplet Ranking Loss takes as input the ge
 
 By utilising a triplet, the loss function evaluates to 0 when $D(A, N) > D(A, P) + m$. This occurs only when the triplet contains examples the model is already well trained on and no further optimisations can be gained. By enforcing $m$, where typically $m = 0.2$ thanks to work by Schroff \textit{et al.} \cite{schroff_facenet_2015}, the function ensures embedding variation between distinct inputs thus allowing for a similarity score to be computed between the Anchor and the Positive in all cases. Thanks to the advantages of Triplet Ranking Loss over its Pairwise counterpart, the decision was made to make use of this loss function and train an SNN with three branches. Further, Triplet Ranking Loss has been shown to perform well on individual identification tasks in both humans \cite{hermans_defense_2017} and animals \cite{vetrova_hidden_2018}, providing evidence to support its use for training a most likely catalogue matcher.
 
-\subsection{Semi-Hard Triplet Mining}\label{ch:ID,sec:SNNDevelopment,sub:SemiHardTripletMining}
+\subsection{Semi-Hard Triplet Mining}\label{ch:ID,sec:SNNBackground,sub:SemiHardTripletMining}
 
 When training a model, care should be taken to ensure learning occurs at every step. When using Triplet Ranking Loss however, learning does not occur during training steps where the loss evaluates to 0, such as when $D(A, N) > D(A, P) + m$. Negatives provided should be sufficiently difficult such that the triplet allows the loss to evaluate to a non-zero value, allowing the model to learn. However care should also be taken so as to not provide the model with triplets that are too difficult, as this will increase optimisation and thus overall training time. 
 
@@ -163,15 +161,68 @@ The goal of Semi-Hard Triplet Mining is to locate as many Semi-Hard triplets fro
 	\label{fig:semi-hard-triplet-mining}
 \end{figure}
 
-Finding, or mining, Semi-Hard triplets can be performed either Offline or Online. In Offline mining, the entire training set is converted into triplets before the training epoch occurs and those which fit the Semi-Hard definition are utilised. With Online mining, Semi-Hard triplets are generated on the fly as required. Generally, Online mining results in faster training when compared to Offline Mining as this allows for the ability to update our definition of a Semi-Hard Triplet as training progresses.
+Finding, or mining, Semi-Hard triplets can be performed either Offline or Online. In Offline mining, the entire training set is converted into triplets before the training epoch occurs and those which fit the Semi-Hard definition are utilised. With Online mining, Semi-Hard triplets are generated on the fly as required. Generally, Online mining results in faster training when compared to Offline mining as this allows for the ability to update our definition of a Semi-Hard Triplet as training progresses.
 
-\subsection{Class Prototyping}\label{ch:ID,sec:SNNDevelopment,sub:prototypes}
+\subsection{Class Prototyping}\label{ch:ID,sec:SNNBackground,sub:prototypes}
 % Discuss need for prototypes at inference time, allows for generating of new classes without need for retraining
+
+After SNN training it is possible to obtain likely classifications for an input based on Euclidean distance measurements between the input's embedding and the previously generated embeddings when plotted into the latent space. If there is a large number of embeddings in the space however this can increase classification time, as the input's embedding must be checked against every other in the space. 
+
+There are ways to reduce the time taken for this calculation to complete by reducing the number of distance measurements which occur. A naive approach would, for example, be to randomly select one embedding for each class and measure the distance between it and the input embedding such that the distance to each class is only measured once, vastly reducing the computation required for classification. This may only work however when the class embeddings are perfectly clustered in the latent space, which will likely not be the case when using real world data.
+
+As no neural network is perfect there may be cases where embeddings are not clustered with their class, such as in Figure \ref{fig:naive-embedding-example} where an embedding of class \texttt{cross} has been generated such that it is surrounded by example of class \texttt{square} - far from the other \texttt{cross} examples. There is also a triangle in the top-right of the Figure which represents the embedding location of an unclassified inference image. 
+
+ \begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter5/figs/naive-embedding-example.png}
+	\end{center}
+	\caption{An example latent space with two classes (\texttt{cross} and \texttt{square}) alongside a triangle which represents the embedding location of an unclassified inference image. The two class examples selected for distance measurement to classify the triangle using the naive approach are circled.}
+	\label{fig:naive-embedding-example}
+\end{figure}
+
+Using the naive approach to classify this triangle as either a \texttt{cross} or \texttt{square}, assuming the two randomly selected class embeddings are the ones circled in the Figure, then the triangle would be classified as an example of class \texttt{cross}. However, looking at the space globally is is clear the triangle should more likely be classified as a \texttt{square}; the chosen \texttt{cross} is simply an outlier. By selecting embeddings to measure from, the risk of outliers skewing the distance measurement, and thus the final classification, increases.
+
+This risk can be mitigated through the use of class prototypes, generalised embeddings generated from the example embeddings for each class. By making use of prototypes, the effect of outliers during classification is reduced. These can be calculated using multiple different methods, however simple techniques such as defining the prototype as the median embedding for all class examples works well. 
+
+Figure \ref{fig:prototype-embedding-example} shows the same example two class latent space as previously, however it now also displays the generated class prototypes $P_{x}$ and $P_{\rule{0.8ex}{0.8ex}}$ respectively. If the distance measurement is performed using the prototypes, the triangle is now classified as a \texttt{square}, which is more likely given the construction of the global space.
+
+ \begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter5/figs/prototype-embedding-example.png}
+	\end{center}
+	\caption{An example latent space with two classes (\texttt{cross} and \texttt{square}) alongside a triangle which represents the embedding location of an unclassified inference image. The two class prototypes used to classify the triangle are circled.}
+	\label{fig:prototype-embedding-example}
+\end{figure}
+
+This method is not without its limitations either however. If all examples of the \texttt{cross} class formed a circle of radius 1 around the origin and all \texttt{square} examples formed a circle of radius 2, in both cases the class prototypes would be formed at the origin resulting in equal distance measurements. Although the chances of this are small, and these formations could be avoided using different hyperparameters or model architecture, it is important to be aware that this could happen when utilising prototypes. 
+
+\section{Siamese Neural Network Development}\label{ch:ID,sec:SNNDevelopment}
+
+Before an SNN capable of most likely catalogue matching using the NDD AU SMRU dataset could be created, a development environment was first required to be selected. Initial testing first began using the Tensorflow framework \cite{abadi_tensorflow:_2016}, specifically version 1.14, as this would keep consistency with the dorsal fin detector developed in Chapter \ref{ch:cetDet}. 
+
+Replication of the work undertaken by Vetrova \textit{et al.} \cite{vetrova_hidden_2018} for moth species identification proved promising. However, expanding to individual identification using the NDD AU SMRU dataset faltered when using Tensorflow, believed to be caused by a bug\footnote{Batch Normalisation Issues in Keras/Tensorflow: see \href{https://github.com/keras-team/keras/issues/11927}{github.com/keras-team/keras/issues/11927} and  \href{https://github.com/keras-team/keras/issues/9498}{github.com/keras-team/keras/issues/9498}} in how the Keras backend handles Batch Normalisation for models with multiple inputs resulting in model collapse, a phenomenon which causes the model to return the exact same output embedding regardless of input image. As such, the decision was made to switch to using the PyTorch framework \cite{paszke_automatic_2017} which does not suffer these issues. To aid development, this work made use of Adam Bielski's PyTorch implementation of SNNs\footnote{\textit{Siamese and triplet learning with online pair/triplet mining} repository by Adam Bielski: \href{https://github.com/adambielski/siamese-triplet}{github.com/adambielski/siamese-triplet}}.
+
+\subsection{Hyperparameter Tuning Via Bayesian Optimisation }\label{ch:ID,sec:SNNDevelopment,sub:Optuna}
+
+Like all models, SNNs have multiple hyperparameters which must be tuned. As such, development began by selecting which hyperparameters should be tuned and how. Since developing the Mask R-CNN fin detector, discussed in Chapter \ref{ch:cetDet}, the area of hyperparameter optimisation has advanced considerably. Multiple frameworks now exist which take a Bayesian approach to finding the optimal hyperparameter values. Unlike optimisation through a Grid Search whereby all combinations of user-defined hyperparameter values are evaluated (see Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning} for an example of this), with Bayesian Optimisation the user only needs to define the upper and lower bounds for each hyperparameter. The search space is then explored using a probabilistic methodology, locating the optimal set of hyperparameters within the ranges provided. This speeds up the optimisation process as values unlikely to yield promising results are ignored. As a result, a larger number of hyperparameters can be optimised when compared to a Grid Search. 
+
+The Optuna framework \cite{akiba_optuna_2019}  was utilised for hyperparameter optimisation. Whilst Optuna allows users to make use of custom optimisation algorithms, this work specifically made use of the built-in Tree-structured Parzen Estimator (TPE) algorithm. Optuna performs optimisation iteratively over trials, with hyperparameter values updated for each. As such, during each trial and for each hyperparameter, TPE fits one Gaussian Mixture Model to the set of hyperparameter values, $x$, associated with the current optimal values, $l(x)$, and another to the remaining hyperparameter values, $g(x)$. Optimal values for each trial are selected by maximising the ratio $l(x)/g(x)$, with the final trial producing the current optimal hyperparameter values. For a more in-depth discussion of TPE, see Bergstra \textit{et al.} \cite{bergstra_algorithms_2011}.
+
+% Double check on VM to make sure TPE is the one used.
+
+
+
+% Discuss how the optimisation results in final optimal values which are unlikely to be chosen by a human during a grid search. By allowing optimisation to occur over a continuous rather than discrete range, this also has the effect of locating optimal hyperparameters with values unlikely to be defined by humans for a grid search.  
+
+\subsection{Data Augmentation Strategy}\label{ch:ID,sec:SNNDevelopment,sub:DataAugmentation}
+
+
+% Discuss hyperparameter tuning using Optuna, show best model finding. 
+% Discuss data augmentation strategies, all using best model hyperparameters found, show best strategy.
 
 
 % Sec: Development of an SNN for Most Likely Catalogue Matching
 % Discuss development of the SNN for catalogue matching using NDD AU SMRU
-% Triplet Ranking loss, semi-hard triplet mining, prototypes from TDS blog
 % Data augmentation, hyperparameter tuning
 
 
@@ -193,7 +244,7 @@ Finding, or mining, Semi-Hard triplets can be performed either Offline or Online
 % Ch: Full Pipeline Evaluation
 % WMMC dataset discussion
 % Go through the pipeline, highlighting each step
-% Show SNN approach is generalisable with retraining, Mask-RCNN does not need re-training
+% Show SNN approach is generalisable with retraining, Mask R-CNN does not need re-training
 % Hyperparam tuning SNN here helps but only slightly (near optimal hyperparams found for the problem space?)
 
 
