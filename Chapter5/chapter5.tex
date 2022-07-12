@@ -164,7 +164,6 @@ The goal of Semi-Hard Triplet Mining is to locate as many Semi-Hard triplets fro
 Finding, or mining, Semi-Hard triplets can be performed either Offline or Online. In Offline mining, the entire training set is converted into triplets before the training epoch occurs and those which fit the Semi-Hard definition are utilised. With Online mining, Semi-Hard triplets are generated on the fly as required. Generally, Online mining results in faster training when compared to Offline mining as this allows for the ability to update our definition of a Semi-Hard Triplet as training progresses.
 
 \subsection{Class Prototyping}\label{ch:ID,sec:SNNBackground,sub:prototypes}
-% Discuss need for prototypes at inference time, allows for generating of new classes without need for retraining
 
 After SNN training it is possible to obtain likely classifications for an input based on Euclidean distance measurements between the input's embedding and the previously generated embeddings when plotted into the latent space. If there is a large number of embeddings in the space however this can increase classification time, as the input's embedding must be checked against every other in the space. 
 
@@ -196,38 +195,59 @@ Figure \ref{fig:prototype-embedding-example} shows the same example two class la
 
 This method is not without its limitations either however. If all examples of the \texttt{cross} class formed a circle of radius 1 around the origin and all \texttt{square} examples formed a circle of radius 2, in both cases the class prototypes would be formed at the origin resulting in equal distance measurements. Although the chances of this are small, and these formations could be avoided using different hyperparameters or model architecture, it is important to be aware that this could happen when utilising prototypes. 
 
+\subsection{Top-N Accuracy}\label{ch:ID,sec:SNNBackground,subsec:TopNAccuracy}
+
+In coarse-grain computer vision tasks such as image classification, the effectiveness of a model is evaluated using, among other metrics, an accuracy score. Given an image in the test dataset, the model's class prediction for the image, defined as the class which has the highest probability assigned to it in the model's final softmax layer, is compared against the ground truth class label. If the predicted and ground truth classes are the same, the model is correct and is operating as intended. Performing this process iteratively over all images in the test dataset provides an accuracy score, often written as a percentage denoting how many test images the model classified correctly.
+
+Due to the low inter-class differences between the classes in a fine-grain dataset however, the same model's softmax layer may struggle to consistently assign the highest probability to an image's ground truth. Using the coarse-grain definition of accuracy, this model may now perform poorly. However for certain tasks, such as most likely catalogue matching, the model may be considered effective simply if it is able to reduce the range of classification possibilities.
+
+As such, the Top-$N$ Accuracy metric is often utilised for fine-grain classification tasks \cite{yang_large-scale_2015, gao_towards_2021, brust_towards_2017}. Rather than only using the softmax's highest probability, the model instead takes the $N$ highest probabilities, outputting its prediction as a list of possible values. If the ground truth class is contained within the list, the model is considered to be correct. 
+
+For example, utilising Top-10 accuracy the model would output the 10 highest probabilities for an image and would be considered correct if the ground truth label was within this list. Utilising Top-1 Accuracy would force the model to output a single prediction, which would be the same as using the coarse-grain accuracy definition. 
+
+As the task of most likely catalogue matching is a fine-grain problem, developed SNNs are evaluated using the Top-$N$ Accuracy metric. Furthermore, as the goal of this work is to produce a system which aides researchers through the task of catalogue matching rather than fully replace them, it is beneficial for the SNNs to produce a list of predictions as this will greatly reduce the number of individuals the researcher needs to examine in order to be confident of a match.
+
 \section{Siamese Neural Network Development}\label{ch:ID,sec:SNNDevelopment}
 
-Before an SNN capable of most likely catalogue matching using the NDD AU SMRU dataset could be created, a development environment was first required to be selected. Initial testing first began using the Tensorflow framework \cite{abadi_tensorflow:_2016}, specifically version 1.14, as this would keep consistency with the dorsal fin detector developed in Chapter \ref{ch:cetDet}. 
+Before an SNN capable of most likely catalogue matching could be created, a development environment was first required to be selected. Initial testing first began using the Tensorflow framework \cite{abadi_tensorflow:_2016}, specifically version 1.14, as this would keep consistency with the dorsal fin detector developed in Chapter \ref{ch:cetDet}. 
 
 Replication of the work undertaken by Vetrova \textit{et al.} \cite{vetrova_hidden_2018} for moth species identification proved promising. However, expanding to individual identification using the NDD AU SMRU dataset faltered when using Tensorflow, believed to be caused by a bug\footnote{Batch Normalisation Issues in Keras/Tensorflow: see \href{https://github.com/keras-team/keras/issues/11927}{github.com/keras-team/keras/issues/11927} and  \href{https://github.com/keras-team/keras/issues/9498}{github.com/keras-team/keras/issues/9498}} in how the Keras backend handles Batch Normalisation for models with multiple inputs resulting in model collapse, a phenomenon which causes the model to return the exact same output embedding regardless of input image. As such, the decision was made to switch to using the PyTorch framework \cite{paszke_automatic_2017} which does not suffer these issues. To aid development, this work made use of Adam Bielski's PyTorch implementation of SNNs\footnote{\textit{Siamese and triplet learning with online pair/triplet mining} repository by Adam Bielski: \href{https://github.com/adambielski/siamese-triplet}{github.com/adambielski/siamese-triplet}}.
 
+Two backbone architectures were tested during SNN development. The first of these was the architecture defined in Vetrova \textit{et al.} \cite{vetrova_hidden_2018}, hereafter denoted as \textit{VarvaraNet}. This was utilised to examine if a network which is proven capable at species identification is also able to perform well for the task of individual identification. The second was a custom architecture consisting of a Convolutional layer, a Dropout layer, a PReLU layer, and a MaxPool layer (stride = 2). This network was utilised to examine if a more basic backbone would be capable of performing well given the fine-grain, few-shot nature of the task. This architecture is hereafter denoted as \textit{EmbeddingNet}.
+
 \subsection{Hyperparameter Tuning Via Bayesian Optimisation }\label{ch:ID,sec:SNNDevelopment,sub:Optuna}
 
-Like all models, SNNs have multiple hyperparameters which must be tuned. As such, development began by selecting which hyperparameters should be tuned and how. Since developing the Mask R-CNN fin detector, discussed in Chapter \ref{ch:cetDet}, the area of hyperparameter optimisation has advanced considerably. Multiple frameworks now exist which take a Bayesian approach to finding the optimal hyperparameter values. Unlike optimisation through a Grid Search whereby all combinations of user-defined hyperparameter values are evaluated (see Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning} for an example of this), with Bayesian Optimisation the user only needs to define the upper and lower bounds for each hyperparameter. The search space is then explored using a probabilistic methodology, locating the optimal set of hyperparameters within the ranges provided. This speeds up the optimisation process as values unlikely to yield promising results are ignored. As a result, a larger number of hyperparameters can be optimised when compared to a Grid Search. 
+Like all models, SNNs have multiple hyperparameters which must be tuned. As such, work began to select which hyperparameters should be tuned and how. Since developing the Mask R-CNN fin detector, discussed in Chapter \ref{ch:cetDet}, the area of hyperparameter optimisation has advanced considerably. Multiple frameworks now exist which take a Bayesian approach to finding the optimal hyperparameter values. Unlike optimisation through a Grid Search whereby all combinations of user-defined hyperparameter values are evaluated (see Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning} for an example of this), with Bayesian Optimisation the user only needs to define the upper and lower bounds for each hyperparameter. The search space is then explored using a probabilistic methodology, locating the optimal set of hyperparameters within the ranges provided. This speeds up the optimisation process as values unlikely to yield promising results are ignored. As such, a larger number of hyperparameters can be optimised when compared to a Grid Search. 
 
-The Optuna framework \cite{akiba_optuna_2019}  was utilised for hyperparameter optimisation. Whilst Optuna allows users to make use of custom optimisation algorithms, this work specifically made use of the built-in Tree-structured Parzen Estimator (TPE) algorithm. Optuna performs optimisation iteratively over trials, with hyperparameter values updated for each. As such, during each trial and for each hyperparameter, TPE fits one Gaussian Mixture Model to the set of hyperparameter values, $x$, associated with the current optimal values, $l(x)$, and another to the remaining hyperparameter values, $g(x)$. Optimal values for each trial are selected by maximising the ratio $l(x)/g(x)$, with the final trial producing the current optimal hyperparameter values. For a more in-depth discussion of TPE, see Bergstra \textit{et al.} \cite{bergstra_algorithms_2011}.
+The Optuna framework \cite{akiba_optuna_2019}  was utilised for hyperparameter optimisation. Whilst Optuna allows users to make use of custom optimisation algorithms, this work specifically made use of the built-in Tree-structured Parzen Estimator (TPE) algorithm. Optuna performs optimisation iteratively. This means that, for each iteration and for each hyperparameter, TPE fits one Gaussian Mixture Model to the set of hyperparameter values, $x$, associated with the current optimal values, $l(x)$, and another to the remaining hyperparameter values, $g(x)$. Optimal values for each iteration are selected by maximising the ratio $l(x)/g(x)$, with the final trial producing the current optimal hyperparameter values. For a more in-depth discussion of TPE, see Bergstra \textit{et al.} \cite{bergstra_algorithms_2011}.
 
-% Double check on VM to make sure TPE is the one used.
+Through Optuna, TPE was utilised to set the learning rate to a \texttt{log uniform} value between 1e-6 and 1e-3, for use with either the SGD or Adam optimiser.  Weight decay was set to a \texttt{log uniform} value between 1e-6 and 1e-1. Step size was set to an \texttt{int} value between 5 and 10, with the $\gamma$ value for this set to a \texttt{log uniform} between 1e-3 and 1e-1. The margin \textit{m} defined in the Triplet Ranking Loss (see Equation \ref{eq:tripletLoss}) was set to a \texttt{log uniform} value between 0.1 and 1.0. The final embedding layer was tuned to produce an \texttt{int} value between 16 and 128.
 
-
-
-% Discuss how the optimisation results in final optimal values which are unlikely to be chosen by a human during a grid search. By allowing optimisation to occur over a continuous rather than discrete range, this also has the effect of locating optimal hyperparameters with values unlikely to be defined by humans for a grid search.  
+Optimisation of the number of network blocks was also examined. For VarvaraNet a block consisted of a Convolutional Layer, a MaxPool layer (stride = 2), a ReLU layer, and a Dropout layer. For EmbeddingNet a block consisted of a Convolutional layer, a Dropout later, a PReLU layer, and a MaxPool layer (stride = 2). During searching, the number of blocks was treated as a hyperparameter optimising for an \texttt{int} between 1 and 5 blocks. The size of the initial Convolutional layer was also tuned, searching for an optimal \texttt{int} value between 16 and 100. Subsequent layers were double the size of the previous. Dropout was set to search for a \texttt{log uniform} value between 0.1 and 0.7. The kernel size of the initial Convolutional layer was set to a \texttt{categorical} value of either 5, 6, 7, or 8 with subsequent layers set according to $max(1, k - 2)$ where $k$ is the kernel size of the previous Convolutional layer.
 
 \subsection{Data Augmentation Strategy}\label{ch:ID,sec:SNNDevelopment,sub:DataAugmentation}
 
+The use of data augmentation was also examined. The decision was made to reduce the variety of augmentations performed compared to Mask R-CNN development, as discussed in Section \ref{ch:cetDet,sec:initialTesting,sub:dataaugmentation}. At this stage in the pipeline the data seen by the SNN has been post-processed, thus it would not be realistic to utilise an aggressive data augmentation strategy over the NDD AU SMRU dataset. Further, an aggressive strategy may obscure the identifying markers present on the fins too much for meaningful training to occur. 
 
-% Discuss hyperparameter tuning using Optuna, show best model finding. 
-% Discuss data augmentation strategies, all using best model hyperparameters found, show best strategy.
+The first strategy, \textit{Colour Jitter}, randomly perturbs the input images' brightness by a factor of between 0.8 and 1.2, contrast by a factor of between 0.8 and 1.2, saturation by a factor of 0.9 and 1.1, and hue by a factor of -0.1 and 0.1. The second, \textit{Perspective Shift}, randomly distorts the input image's perspective by a factor of 0.5. The third, \textit{Greyscale}, converted the three-channel RGB input image into a single-channel greyscale image. Tests examining combinations of these strategies were also examined, such as augmenting with both Colour Jitter and Perspective Shift. Note that Greyscale cannot be combined with Colour Jitter due to the reduction in colour channels required. 
+
+\section{Siamese Neural Network Model Selection}\label{ch:ID,sec:ModelSelection}
+
+Models with both VarvaraNet and EmbeddingNet architectures were trained for the task of most likely catalogue matching using the data augmentation strategies defined in Section \ref{ch:ID,sec:SNNDevelopment,sub:DataAugmentation}. Hyperparameter optimisation was performed for each architecture-augmentation combination, as defined Section \ref{ch:ID,sec:SNNDevelopment,sub:Optuna}, as each architecture and augmentation strategy may influence the optimal hyperparameters for the model.
+
+% How the dataset was split - validation set for Optuna, some classes removed as unable to make diverse triplets
+
+% Figure showing results of model development on NDD AU SMRU
+
+% What is the best model and how was it chosen?
 
 
-% Sec: Development of an SNN for Most Likely Catalogue Matching
-% Discuss development of the SNN for catalogue matching using NDD AU SMRU
-% Data augmentation, hyperparameter tuning
+% subsection: An Evaluation of Optimal Model Hyperparameters
+% Table of models and optimal values
+% See if there is anything interesting, discuss 
 
 
 % Sec: SNN Evaluation
-% Finding the best model, top-n accuracy explanation
 % Unseen inidividual thresholding using prototypes and KNN
 % Limitations (unseen individuals may just be changed - at least we're flagging and having a human decide. re-training needed for each catalogue.)
 

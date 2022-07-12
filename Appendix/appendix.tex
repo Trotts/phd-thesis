@@ -3,7 +3,7 @@
 \renewcommand{\thesubsection}{\Alph{subsection}} % Make subsections alpha for appendix
 
 \titleformat{\chapter}[display]
-{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge} % Recreate the default Chapter sizing and spacing so we can edit it and put the Mask-RCNN table on the same page
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge} % Recreate the default Chapter sizing and spacing so we can edit it and put the Mask R-CNN table on the same page
 
 % this alters "before" spacing (the second length argument) to 0, "after" to 20pt
 \titlespacing*{\chapter}{0pt}{0pt}{20pt}
@@ -15,7 +15,7 @@
 \setcounter{table}{0}
 \renewcommand{\thetable}{\Alph{section}}
 
-\section{mAP@IOU[0.5:0.95] Scores for Mask-RCNN Grid Search Models}\label{app:mAPScoresGridSearch}
+\section{mAP@IOU[0.5:0.95] Scores for Mask R-CNN Grid Search Models}\label{app:mAPScoresGridSearch}
 
 \begin{table}[!ht]
 \centering
@@ -79,7 +79,7 @@
 			20191102T0615 &          0.902 &          0.891 &          0.886 &          0.873 &          0.819 &          0.745 &          0.661 &          0.410 &          0.158 &          0.000 \\
 			\bottomrule
 		\end{tabular}}
-	\caption{mAP@IOU[0.5:0.95] scores for each Mask-RCNN model trained in the Zanzibar dataset grid search. See Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning} for model hyperparameters.}
+	\caption{mAP@IOU[0.5:0.95] scores for each Mask R-CNN model trained in the Zanzibar dataset grid search. See Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning} for model hyperparameters.}
 \end{table}
 
 \newpage
