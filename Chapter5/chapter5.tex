@@ -26,7 +26,7 @@ In traditional computer vision classification models if the model was required t
 
 \section{Possible Approaches}\label{ch:ID,sec:deciding}
 
-Out of all requirements an automatic most likely catalogue matching system must meet, arguably the most important is the need for flagging of previously unseen individuals. As noted, this necessitates any underlying computer vision model to have some notion of uncertainty or similarity. It is this requirement that guided approach selection. 
+Out of all requirements an automatic most likely catalogue matching system must meet, arguably the most important is the need for flagging of previously uncatalogued individuals. As noted, this necessitates any underlying computer vision model to have some notion of uncertainty or similarity. It is this requirement that guided approach selection. 
 
 \subsection{Bayesian Dropout}\label{ch:ID,sec:deciding,sub:bayesianDropout}
 
@@ -77,7 +77,7 @@ It is important to note here that the value of the embeddings is not necessarily
 
 When compared to Bayesian dropout, the computational expense of performing inference with an SNN is quite small. Whilst training requires the use of a branched CNN architecture in order to optimise the loss function, this is reduced to just one branch at inference time. Generating a list of most likely catalogue matches would only require an image to be passed through the network once in order to generate an embedding, and similarity via Euclidean distance measurement in the latent space is cheap to perform. As such, producing a list of most likely catalogue matches is overall more computationally efficient using SNNs as opposed to Bayesian dropout. 
 
-The clustering of class embeddings in the latent space also allows for easy identification of potential previously unseen individuals. Passing the dorsal fin of an individual not present at train-time through the model would result in, theoretically, a distinct embedding which would plot into a unique point in the latent space far from any existing class clusters. By implementing a threshold on the Euclidean distance measurement, potentially unseen individuals could be easily flagged to the researcher for further investigation. Clustering also removes the need for re-training to allow for matching to previously unseen individuals when they are added to the catalogue. Adding a new class to the latent space can be achieved simply by defining embeddings to a new class cluster and including these in future distance measurements. 
+The clustering of class embeddings in the latent space also allows for easy identification of potential previously uncatalogued individuals. Passing the dorsal fin of an individual not present at train-time through the model would result in, theoretically, a distinct embedding which would plot into a unique point in the latent space far from any existing class clusters. By implementing a threshold on the Euclidean distance measurement, potentially uncatalogued individuals could be easily flagged to the researcher for further investigation. Clustering also removes the need for re-training to allow for matching to previously uncatalogued individuals when they are added to the catalogue. Adding a new class to the latent space can be achieved simply by defining embeddings to a new class cluster and including these in future distance measurements. 
 
 In addition, SNNs are capable of operating over all information provided to them. This can be achieved by not limiting the embedding generation to one specific part of the dorsal fin. It also stands to reason that this embedding generation will be robust enough to deal with small amounts of retained background noise given a high enough number of dimensions. Overall, the use of SNNs for most likely catalogue matching far outweighs the use of Bayesian dropout. It is for this reason the decision was taken to first begin development of a model capable of most likely catalogue matching using SNNs.
 
@@ -253,6 +253,8 @@ Figure \ref{fig:NDDAUSMRU-SNN-model-accuracies} shows the results of training an
 
 On the whole, it is the case that models using an EmbeddingNet backbone perform worse than those using a VarvaraNet backbone, even when utilising the same data augmentation strategies. Furthermore it can be seen that, in general, the data augmentation strategy chosen for training has little effect on final model performance against the test set as evidenced by the lack of variation in accuracy metrics between models when trained using different strategies. This is especially interesting with regards to the greyscale augmentation as whilst there has been a drop in accuracy when compared to the best performing model this is only slight. However, this does suggest that a reduction in colour channel leads to some information loss. The fact that the best performing model is one which makes use of no data augmentations may suggest that even strategies which only perturb the input slightly still has a negative effect on the model's ability to extract identifying information. 
 
+%TODO: How does the best model meet the requirements? Add in top-1 confusion matrix for best model? If it struggles with class 19 highlight this alongside the KNN/prototypes uncatalogued individuals section?
+
 \subsection{An Evaluation of Optimal Model Hyperparameters}\label{ch:ID,sec:ModelSelection,subsec:paramEval}
 
 The optimal SNN hyperparameters chosen through Bayesian optimisation for each architecture-augmentation training run can be seen in Table \ref{tab:optunaBestParamsPerSNN}. Of the models trained, 83\% of them use Adam \cite{kingma_adam:_2014} as an optimiser, including the best performing model (VarvaraNet without data augmentation). This aligns with the belief within deep learning research that Adam will often provide optimal model training \cite{karpathy_peek_2017}.
@@ -287,10 +289,36 @@ The optimal SNN hyperparameters chosen through Bayesian optimisation for each ar
  Interestingly it is also the case that all hyperparameter optimisation runs, regardless of architecture or data augmentation strategy, settle on a Triplet Ranking Loss margin above 0.2, the value commonly used as a default for this hyperparameter thanks to work by Schroff \textit{et al.} \cite{schroff_facenet_2015}. There is a high deviation in margin value between the models, which may suggest that the use of 0.2 in all cases by default will not lead to optimal results.
  
  One important takeaway from the use of Bayesian optimisation techniques is that for some hyperparameters which require a continuous input, such as learning rate or weight decay, the optimal value may be one which would likely not be selected by a human when performing a Grid Search. This highlights the effectiveness of Bayesian optimisation over a Grid Search as, whilst the difference between a learning rate of 2e-6 selected during a Grid Search and 2.578e-6 selected by Bayesian optimisation, may only be a few percentage points increase in test set accuracy, this still results in an overall more generalisable model. 
+
+\subsection{Uncatalogued Individual Thresholding}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding}
+
+Further evaluation was performed to examine the best performing model's ability to flag uncatalogued individuals to the user. Before training, some classes from the NDD AU SMRU dataset were removed. As these are classes which have not yet been seen by the model, they can be utilised as if they were uncatalogued individuals.
+
+\subsubsection{Thresholding via Class Prototypes}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding,subsub:prototypes}
+
+When an image is passed through the SNN its most likely catalogue matches are generated using the Euclidean distance between it and the available class prototypes. By clustering individuals together in the latent space based on embedding similarity and comparing new images using Euclidean distance to the generated class prototypes, the system can flag potentially previously uncatalogued individuals to the researcher - assuming the model has learnt to generate well defined class clusters. 
+
+New individuals who have entered the catalogue's geographical survey area (e.g. through migration or birth) will thus have numeric representations which plot them into their own distinct location in the latent space, resulting in large Euclidean distances between it and the existing photo-id catalogue prototypes. In order to flag potentially uncatalogued individuals, the use of a threshold was required. If the Euclidean distances between the input image and all class prototypes are above this threshold, then the input image is flagged to the user as a potentially uncatalogued individual. 
+
+To decide on a threshold value for the NDD AU SMURU dataset, each image not utilised for SNN training was ran through the model and the distances between it and the class prototypes were examined. Through this, a threshold value of 10 was determined - if the distances to all class prototypes was above this value, then it is likely that the individual may be uncatalogued. 
+
+The use of class prototypes proved especially useful for determining noise. Through experimentation it was found that an image could be flagged as belonging to the noise class simply if the distance between the input image's embedding and the noise class prototype was the smallest, as seen in Figure XXX. This provides evidence to suggest that the model is capable of clustering examples of noise together well in the latent space, especially impressive as this class contains the highest intra-class variation as a result of containing all images of erroneous non-fin detections.
+
+\subsubsection{Thresholding via K-Nearest Neighbours}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding,subsub:KNN}
+
+ During experimentation it was found that when only utilising class prototypes, the model struggled to highlight uncatalogued individuals if some class clusters were spread over a large area in the latent space. To combat this, the use of K-Nearest Neighbours (KNN) to flag potentially uncatalogued individuals was examined. KNN works by comparing each input image's embedding to the $K$ closest embeddings in the latent space, where $K$ is some user defined value. 
+ 
+ If, for example, $K = 8$ then the closest 8 embeddings to that of the input image are examined. If 7 embeddings are of class \texttt{1} and 1 embedding is of class \texttt{2}, then we have an 88\% certainty that the input image is an example of class \texttt{2}. However, if the image is embedded and 3 of the closest 8 embeddings are of class \texttt{1}, 2 are class \texttt{2}, 1 of class \texttt{3}, 1 of class \texttt{4}, and 1 of class \texttt{10}, then the uncertainty score for any classification of the input image would be high. This could then be flagged to the user. As such, the use of an uncertainty score allows for greater interpretability when compared to a similarity score based on distances between points in the latent space, especially for those without an understanding of the underlying concepts behind SNNs like cetacean researchers. 
+
+During experimentation, it was found that setting $K = 10$ alongside an uncertainty threshold of 30\% allowed for the best chance of flagging uncatalogued individuals. If no class reached above 30\% certainty, this was flagged to the user. This thresholding via KNN again worked well for warning the user the input may have been erroneously detected noise, as seen in Figure XXX. 
+
+After experimentation with both methodologies, it was decided that utilising both class prototypes and KNN for flagging potentially uncatalogued individuals to the user would be best given the ability of the methodologies to complement one another. Whilst KNN allows for the production of an easily understandable metric for those without knowledge of the underlying processes of SNNs, the use of class prototypes provides a more nuanced, albeit latent space specific, metric. Both methods also allow for extra classes to be added to the latent space without the need for model fine-tuning or retraining. This means any uncatalogued individuals identified by the model can be added to the latent space to aid future identifications, alongside addition to the biological catalogue.
+
+%TODO: Add in images showing input and output of the SNN. Maybe 1 image of an uncatalogued fin, 1 of a catalogued fin, and 1 of noise?  
+
  
 % Sec: SNN Evaluation
-% Unseen inidividual thresholding using prototypes and KNN
-% Limitations (unseen individuals may just be changed - at least we're flagging and having a human decide. re-training needed for each catalogue.)
+% Limitations (uncatalogued individuals may just be changed - at least we're flagging and having a human decide. re-training needed for each catalogue.)
 
 % Sec: Effect of Input Image Variation
 % Black and white

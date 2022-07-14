@@ -410,18 +410,19 @@ It is the work undertaken by the aforementioned solutions which motivates this t
 
 \textbf{Photo-ID}: The system must be capable of identifying individuals.
 
-\textbf{Handle unseen individuals}: The system must be capable of handling individuals which have never been seen before, and are thus not in the existing catalogue. 
+\textbf{Handle uncatalogued individuals}: The system must be capable of handling individuals which have not yet been catalogued. 
 
 \textbf{Locally deployable}: It must be possible to deploy the system on local hardware, allowing researchers to keep full ownership of their catalogue.
 
-An overview of how current photo-id aides meet these requirements can be seen in Table \ref{tab:Photo-IDAidesComparison}. Only Maglietta \textit{et al.} propose a fully automated photo-id aid which can be locally ran, requires no data preprocessing, and is capable of handling unseen individuals. However as previously stated this solution utilises SURF \cite{bay_speeded-up_2008}. This algorithm, like its predecessor SIFT \cite{lowe_object_1999}, excel at detecting well defined features in images. This is appropriate for Maglietta \textit{et al.}'s data subjects, Risso's dolphins, due to the well defined scarring patterns present on their dorsal fins \cite{mariani_analysis_2016}. The algorithm would fail when used on other cetacean species however due to a lack of well defined features on the fin, where even prominent markings used for photo-id fail to be extracted. See Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SURF} for an investigation into the use of feature extraction algorithms on bottlenose dolphin dorsal fins. Furthermore, both SURF and SIFT are patented algorithms. As such this may increase the cost of developing or using a system based around these algorithms, an open source solution should be utilised if possible.
+An overview of how current photo-id aides meet these requirements can be seen in Table \ref{tab:Photo-IDAidesComparison}. Only Maglietta \textit{et al.} propose a fully automated photo-id aid which can be locally ran, requires no data preprocessing, and is capable of handling uncatalogued individuals. However as previously stated this solution utilises SURF \cite{bay_speeded-up_2008}. This algorithm, like its predecessor SIFT \cite{lowe_object_1999}, excel at detecting well defined features in images. This is appropriate for Maglietta \textit{et al.}'s data subjects, Risso's dolphins, due to the well defined scarring patterns present on their dorsal fins \cite{mariani_analysis_2016}. The algorithm would fail when used on other cetacean species however due to a lack of well defined features on the fin, where even prominent markings used for photo-id fail to be extracted. See Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SURF} for an investigation into the use of feature extraction algorithms on bottlenose dolphin dorsal fins. Furthermore, both SURF and SIFT are patented algorithms. As such this may increase the cost of developing or using a system based around these algorithms, an open source solution should be utilised if possible.
 
+%TODO: Update based on WACV paper
 \begin{table}[!ht]
 	\caption[A comparison of available photo-id aides.]{A comparison of available photo-id aides.}\label{tab:Photo-IDAidesComparison}
 	\begin{adjustbox}{width=\columnwidth, center}
 		\begin{tabular}{*{7}{c}}
 			\toprule
-			System & Data Preprocessing & Detection & Segmentation & Photo-ID & Handles Unseen Individuals & Locally Deployable\\
+			System & Data Preprocessing & Detection & Segmentation & Photo-ID & Handles Uncatalogued Individuals & Locally Deployable\\
 			\midrule
 			FinScan \cite{hillman_finscan_2002} & \cmark & \xmark & \xmark & \cmark & \cmark & \cmark \\
 			FinBase \cite{fisheries_finbase_2018} & \cmark & \xmark & \xmark & \cmark & \cmark & \cmark \\
@@ -443,7 +444,7 @@ An overview of how current photo-id aides meet these requirements can be seen in
 		\end{tabular}
 	\end{adjustbox}
 
-	{\raggedright\footnotesize {? It is unclear if the system is capable of handling unseen individuals based on the literature available. \\ $\dagger$ Utilises Photo-ID Ninja for detection. \\$\ddagger$ Sparse on detail regarding photo-id performance. \\ $\mathsection$ Utilises SURF for photo-id, thus unsuitable for some cetacean species.} \par}
+	{\raggedright\footnotesize {? It is unclear if the system is capable of handling uncatalogued individuals based on the literature available. \\ $\dagger$ Utilises Photo-ID Ninja for detection. \\$\ddagger$ Sparse on detail regarding photo-id performance. \\ $\mathsection$ Utilises SURF for photo-id, thus unsuitable for some cetacean species.} \par}
 \end{table}
 
 
