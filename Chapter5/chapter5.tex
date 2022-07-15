@@ -253,7 +253,7 @@ Figure \ref{fig:NDDAUSMRU-SNN-model-accuracies} shows the results of training an
 
 On the whole, it is the case that models using an EmbeddingNet backbone perform worse than those using a VarvaraNet backbone, even when utilising the same data augmentation strategies. Furthermore it can be seen that, in general, the data augmentation strategy chosen for training has little effect on final model performance against the test set as evidenced by the lack of variation in accuracy metrics between models when trained using different strategies. This is especially interesting with regards to the greyscale augmentation as whilst there has been a drop in accuracy when compared to the best performing model this is only slight. However, this does suggest that a reduction in colour channel leads to some information loss. The fact that the best performing model is one which makes use of no data augmentations may suggest that even strategies which only perturb the input slightly still has a negative effect on the model's ability to extract identifying information. 
 
-%TODO: How does the best model meet the requirements? Add in top-1 confusion matrix for best model? If it struggles with class 19 highlight this alongside the KNN/prototypes uncatalogued individuals section?
+% Confusion matrix for top-1 doesn't visualise well due to number of classes, high number of noise examples skews visualisation.
 
 \subsection{An Evaluation of Optimal Model Hyperparameters}\label{ch:ID,sec:ModelSelection,subsec:paramEval}
 
@@ -300,9 +300,25 @@ When an image is passed through the SNN its most likely catalogue matches are ge
 
 New individuals who have entered the catalogue's geographical survey area (e.g. through migration or birth) will thus have numeric representations which plot them into their own distinct location in the latent space, resulting in large Euclidean distances between it and the existing photo-id catalogue prototypes. In order to flag potentially uncatalogued individuals, the use of a threshold was required. If the Euclidean distances between the input image and all class prototypes are above this threshold, then the input image is flagged to the user as a potentially uncatalogued individual. 
 
-To decide on a threshold value for the NDD AU SMURU dataset, each image not utilised for SNN training was ran through the model and the distances between it and the class prototypes were examined. Through this, a threshold value of 10 was determined - if the distances to all class prototypes was above this value, then it is likely that the individual may be uncatalogued. 
+To decide on a threshold value for the NDD AU SMURU dataset, each image not utilised for SNN training was ran through the model and the distances between it and the class prototypes were examined. Through this, a threshold value of 4.0 was determined - if the distance to the closest class prototype was above this value, then it is likely that the individual may be uncatalogued. An example of this can be seen in Figure \ref{fig:uncatalogued-individual-example-ndd-au-smru} (Top Right), which shows an example image of individual \texttt{3}, a class which was not included in the training of the model. As can be seen, the distance between the image's embedding and the closest class prototype is above the threshold, and thus the image has been flagged for manual review.
 
-The use of class prototypes proved especially useful for determining noise. Through experimentation it was found that an image could be flagged as belonging to the noise class simply if the distance between the input image's embedding and the noise class prototype was the smallest, as seen in Figure XXX. This provides evidence to suggest that the model is capable of clustering examples of noise together well in the latent space, especially impressive as this class contains the highest intra-class variation as a result of containing all images of erroneous non-fin detections.
+\begin{figure}[t]
+	\begin{center}
+		\includegraphics[scale=0.6]{Chapter5/figs/uncatalogued-individual-example-ndd-au-smru.png}
+	\end{center}
+	\caption{Example uncatalogued individual thresholding. Left: The input image seen by the model, of class \texttt{3}. The model has not been trained using this class. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the distance to the closest prototype is above the threshold, the fin has been flagged for manual review. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's most confident class is below the threshold, and thus the fin has been flagged for manual review.}
+	\label{fig:uncatalogued-individual-example-ndd-au-smru}
+\end{figure}
+
+The use of class prototypes proved especially useful for determining noise. Through experimentation it was found that an image could be flagged as belonging to the noise class simply if the distance between the input image's embedding and the noise class prototype was the smallest, as seen in Figure \ref{fig:noise-individual-example-ndd-au-smru} (Top Right). This provides evidence to suggest that the model is capable of clustering examples of noise together well in the latent space, especially impressive as this class contains the highest intra-class variation as a result of containing all images of erroneous non-fin detections.
+
+\begin{figure}[t]
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter5/figs/noise-example-ndd-au-smru.png}
+	\end{center}
+	\caption{Example noise thresholding. Left: The input image seen by the model, of class \texttt{noise}. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the closest prototype is \texttt{noise}, the input has been flagged. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's \texttt{noise} confidence is above the threshold, and thus the input has been flagged.}
+	\label{fig:noise-individual-example-ndd-au-smru}
+\end{figure}
 
 \subsubsection{Thresholding via K-Nearest Neighbours}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding,subsub:KNN}
 
@@ -310,15 +326,24 @@ The use of class prototypes proved especially useful for determining noise. Thro
  
  If, for example, $K = 8$ then the closest 8 embeddings to that of the input image are examined. If 7 embeddings are of class \texttt{1} and 1 embedding is of class \texttt{2}, then we have an 88\% certainty that the input image is an example of class \texttt{2}. However, if the image is embedded and 3 of the closest 8 embeddings are of class \texttt{1}, 2 are class \texttt{2}, 1 of class \texttt{3}, 1 of class \texttt{4}, and 1 of class \texttt{10}, then the uncertainty score for any classification of the input image would be high. This could then be flagged to the user. As such, the use of an uncertainty score allows for greater interpretability when compared to a similarity score based on distances between points in the latent space, especially for those without an understanding of the underlying concepts behind SNNs like cetacean researchers. 
 
-During experimentation, it was found that setting $K = 10$ alongside an uncertainty threshold of 30\% allowed for the best chance of flagging uncatalogued individuals. If no class reached above 30\% certainty, this was flagged to the user. This thresholding via KNN again worked well for warning the user the input may have been erroneously detected noise, as seen in Figure XXX. 
+During experimentation, it was found that setting $K = 10$ alongside an uncertainty threshold of 30\% allowed for the best chance of flagging uncatalogued individuals. If no class reached above 30\% certainty, this was flagged to the user as seen in Figure \ref{fig:uncatalogued-individual-example-ndd-au-smru} (Bottom Right). A noise threshold of 70\% was also enforced, whereby if the \texttt{noise} class confidence was above 70\% this would be flagged as seen in Figure \ref{fig:noise-individual-example-ndd-au-smru} (Bottom Right).
 
 After experimentation with both methodologies, it was decided that utilising both class prototypes and KNN for flagging potentially uncatalogued individuals to the user would be best given the ability of the methodologies to complement one another. Whilst KNN allows for the production of an easily understandable metric for those without knowledge of the underlying processes of SNNs, the use of class prototypes provides a more nuanced, albeit latent space specific, metric. Both methods also allow for extra classes to be added to the latent space without the need for model fine-tuning or retraining. This means any uncatalogued individuals identified by the model can be added to the latent space to aid future identifications, alongside addition to the biological catalogue.
 
-%TODO: Add in images showing input and output of the SNN. Maybe 1 image of an uncatalogued fin, 1 of a catalogued fin, and 1 of noise?  
+\subsection{Limitations of the Model}\label{ch:ID,sec:ModelSelection,subsec:limitations}
+
+As discussed in Section \ref{ch:ID,sec:ModelSelection}, the best performing SNN trained for most likely catalogue matching using the NDD AU SMRU dataset achieves 40.9\% top-1, 68.9\% top-5, and 83.1\% top-10 accuracies. Whilst these results are impressive given the fine-grain, few-shot nature of the task, it is important to also highlight the limitations of the approach. 
+
+One limitation is the need to re-train the SNN for each new photo-id catalogue. As a result, initial manual curation must be performed before the proposed methodology can be applied. Further, evidence outlined in Section \ref{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding} suggests that, once trained, new classes can be added to the SNN with ease when a new individual is added to an existing catalogue - however it is not yet clear if this is the case in perpetuity. The problem of drift, where model performance begins to degrade over time as the distribution of the data it receives naturally changes, is common with models once in production. It may be the case that as more individuals are added to the photo-id catalogue, and thus classes are added to the SNN's latent space, the need for a full model retrain increases. Drift detection for computer vision models is an open area of research \cite{siva_weakly_2011, suprem_odin_2020, nagar_concept_2020, cobb_context-aware_2022}, and it may be the case that proposed works in this area are able to detect when the SNN should be retrained on the updated catalogue. 
+
+Issues may also arise if existing individuals in the catalogue change significantly, both from natural or anthropogenic interactions. If an individual's prominent markings change drastically due to an event such as a boat strike, then this may impact the SNN's ability to perform catalogue matching. It is likely the case that example images of the individual after their markings have changed would result in the model believing the individual to be uncatalogued. This problem is one of the main driving factors behind the decision to keep a human involved in the cataloguing process, as a drastically different fin is highly likely to be flagged by the system as an uncatalogued individual. 
+
+
 
  
 % Sec: SNN Evaluation
-% Limitations (uncatalogued individuals may just be changed - at least we're flagging and having a human decide. re-training needed for each catalogue.)
+% Limitations - Thresholding values may be catalogue dependant, requires the researcher to play around with the value when training a new catalogue (add into first para?)
+% Might not work for other cetacean species, catalogues are well protected. 
 
 % Sec: Effect of Input Image Variation
 % Black and white
@@ -327,20 +352,19 @@ After experimentation with both methodologies, it was decided that utilising bot
 
 % Sec: Conclusion
 % Summary of the work
-% Produced a model capable of meeting requirements
+% How does the best model meet the requirements? 
 % State we have extended the literature in use of image embeddings and latent space distance measurements for conservation (vetrova etc) and individual re-id (bearID)
 
+
+
+
+%%%%%%%%%%%%%%%%%%%
 
 % Ch: Full Pipeline Evaluation
 % WMMC dataset discussion
 % Go through the pipeline, highlighting each step
 % Show SNN approach is generalisable with retraining, Mask R-CNN does not need re-training
 % Hyperparam tuning SNN here helps but only slightly (near optimal hyperparams found for the problem space?)
-
-
-
-
-  
 
 
 %%%%%%%%%%%%%%%%%%%
