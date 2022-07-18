@@ -334,27 +334,86 @@ After experimentation with both methodologies, it was decided that utilising bot
 
 As discussed in Section \ref{ch:ID,sec:ModelSelection}, the best performing SNN trained for most likely catalogue matching using the NDD AU SMRU dataset achieves 40.9\% top-1, 68.9\% top-5, and 83.1\% top-10 accuracies. Whilst these results are impressive given the fine-grain, few-shot nature of the task, it is important to also highlight the limitations of the approach. 
 
-One limitation is the need to re-train the SNN for each new photo-id catalogue. As a result, initial manual curation must be performed before the proposed methodology can be applied. Further, evidence outlined in Section \ref{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding} suggests that, once trained, new classes can be added to the SNN with ease when a new individual is added to an existing catalogue - however it is not yet clear if this is the case in perpetuity. The problem of drift, where model performance begins to degrade over time as the distribution of the data it receives naturally changes, is common with models once in production. It may be the case that as more individuals are added to the photo-id catalogue, and thus classes are added to the SNN's latent space, the need for a full model retrain increases. Drift detection for computer vision models is an open area of research \cite{siva_weakly_2011, suprem_odin_2020, nagar_concept_2020, cobb_context-aware_2022}, and it may be the case that proposed works in this area are able to detect when the SNN should be retrained on the updated catalogue. 
+One limitation is the need to re-train the SNN for each new photo-id catalogue. As a result, initial manual curation must be performed before the proposed methodology can be applied. Evidence outlined in Section \ref{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding} suggests that, once trained, new classes can be added to the SNN with ease when a new individual is added to an existing catalogue - however it is not yet clear if this is the case in perpetuity. The problem of drift, where model performance begins to degrade over time as the distribution of the data it receives naturally changes, is common with models once in production. It may be the case that as more individuals are added to the photo-id catalogue, and thus classes are added to the SNN's latent space, the need for a full model retrain increases. Drift detection for computer vision models is an open area of research \cite{siva_weakly_2011, suprem_odin_2020, nagar_concept_2020, cobb_context-aware_2022}, and it may be the case that proposed works in this area are able to detect when the SNN should be retrained on the updated catalogue. It may be the cast that uncatalogued individual thresholding is also catalogue dependant. If this is the case, model retraining may also necessitate the location of a new threshold value. 
 
 Issues may also arise if existing individuals in the catalogue change significantly, both from natural or anthropogenic interactions. If an individual's prominent markings change drastically due to an event such as a boat strike, then this may impact the SNN's ability to perform catalogue matching. It is likely the case that example images of the individual after their markings have changed would result in the model believing the individual to be uncatalogued. This problem is one of the main driving factors behind the decision to keep a human involved in the cataloguing process, as a drastically different fin is highly likely to be flagged by the system as an uncatalogued individual. 
 
+Finally, it is not currently clear how well the approach taken in this Chapter to most likely catalogue matching would perform with other cetacean species such as whales or porpoises, or with other body parts such as flukes rather than dorsal fins. Further studies with other species and body parts should be explored, assuming access to these catalogues can be obtained. 
 
+\section{Effect of Input Image Variation}\label{ch:ID,sec:EffectOfInputImageVariation}
 
- 
-% Sec: SNN Evaluation
-% Limitations - Thresholding values may be catalogue dependant, requires the researcher to play around with the value when training a new catalogue (add into first para?)
-% Might not work for other cetacean species, catalogues are well protected. 
+Once an SNN capable of most likely catalogue matching was created, experimentation was performed to determine the effect of different input image variations.
+
+\subsection{Per-Side Identification}\label{ch:ID,sec:EffectOfInputImageVariation,subsec:perSide}
+
+When performing catalogue matching manually, cetacean researchers will often identify each side of an individual independently rather than as a whole if both the left and right side of the dorsal fin have been captured. During initial testing the decision was made to train the model using only a single class for each individual using example images of both the left and right side if available. This decision was made for two reasons. First, the number of catalogue images for some individuals was small. If a single class was utilised for both the left and right side, this increased the number of example images available for each class. This was deemed important for initial model development. Second, by combining both the left and right side images into a single class this further tests the model's ability to handle intra-class variation. 
+
+Once a baseline best model had been located, experimentation was undertaken to examine whether automated photo-id matching should, like its manual counterpart, split individual classes on a per-side basis. Where possible, each class in the NDD AU SMRU dataset was divided in two, with each new class containing only the left or right side examples of the individual. This increased the number of classes in the dataset from 24 to 47, as some original classes only contained examples images of a single side of an individual.
+
+Using this split dataset model training was performed, utilising the same architectures, data augmentations, and hyperparameter optimisation strategy as outlined in Section \ref{ch:ID,sec:SNNDevelopment}. Greyscaling was not performed here due to the results outlined in Section \ref{ch:ID,sec:ModelSelection} highlighting that information was lost when using this data augmentation. Resultant models were again evaluated using top-1, top-5, and top-10 accuracies. The results of this search can be seen in Figure \ref{fig:NDDAUSMRU-per-side-SNN-model-accuracies}.
+		
+\begin{figure}[t]
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter5/figs/NDDAUSMRU-per-side-SNN-model-accuracies.png}
+	\end{center}
+	\caption{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting.}
+	\label{fig:NDDAUSMRU-per-side-SNN-model-accuracies}
+\end{figure}
+
+ A comparison between the best performing combined-side and per-side models can be seen in Figure \ref{fig:NDDAUSMRU-combined-and-per-side-comparison}. Only a 5.3\% drop in top-10 accuracy is observed between the combined-side and per-side models, reduced to a 2.16\% drop when utilising top-5 accuracy. When evaluating with top-1 accuracy however, the per-side model outperforms the combined-side model by 3.08\%. Whilst model performance has dropped using some metrics when compared to training using the combined-side dataset, it is important to note that training using the per-side dataset nearly doubles the number of possible classes known by the model. As such, a drop in top-$N$ accuracy should be expected. The fact that this drop is so small at top-10 and top-5 levels, and performance actually improves when measuring using top-1 accuracy, suggests that utilising a per-side approach to automated catalogue matching is better than utilising a single class for all example images of an individual.
+
+\begin{figure}[t]
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter5/figs/NDDAUSMRU-combined-and-per-side-comparison.png}
+	\end{center}
+	\caption{Comparison between the best performing SNN models for the task of most likely catalogue matching trained on the combined-side (Left) and per-side (Right) NDD AU SMRU datasets.}
+	\label{fig:NDDAUSMRU-combined-and-per-side-comparison}
+\end{figure}
+
+Interestingly the best performing per-side model utilises an EmbeddingNet backbone architecture, whilst the best performing combined-side model makes use of a VarvaraNet. Both models however did not make use of a data augmentation strategy. As the EmbeddingNet architecture is less complex than the VarvaraNet, this may suggest that the reduction in intra-class variation when utilising a per-side dataset reduces the complexity of the backbone architecture required for the model to perform well on the test dataset. This is also reflected in the optimal output embedding size located during hyperparameter optimisation. Whilst the combined-side model has an output size of 106 the per-side model has an output size of 36, suggesting that less dimensionality is required to capture the information needed to perform catalogue matching. A full list of model hyperparameters for the best performing per-side model can be found in Appendix \ref{app:NDDAUSMRUPerSideModelParams}.
+
+\subsubsection{Individual Only Top-N Accuracy}\label{ch:ID,sec:EffectOfInputImageVariation,subsec:perSide,sub:individualOnlyTopN}
+
+When performing catalogue matching on a per-side basis, the final classification is still only recorded at an individual level. However, evaluation discussed previously in Section \ref{ch:ID,sec:EffectOfInputImageVariation,subsec:perSide} does not take this into account. 
+
+When the model outputs a list of possible classifications, it may be the case that whilst the correct individual is in the list, the incorrect side is given. For example, with an input image of class \texttt{10\_R} the model may output a list of likely matches which contains \texttt{10\_L} but not \texttt{10\_R}. Using the traditional implementation of top-$N$ accuracy, the model would be deemed incorrect even though the correct identification has been given. 
+
+To replicate this, a modification was made to the top-$N$ accuracy metric such that it ignored the side classification. For example, both \texttt{10\_L} and \texttt{10\_R} would evaluate to \texttt{10}. Now, if the model provides a correct individual classification but an incorrect side classification, it is deemed to be correct during evaluation. Note that this change was only implemented at test time, so as to not hinder embedding generation through the training process. 
+
+Results of evaluating the models trained in Section \ref{ch:ID,sec:EffectOfInputImageVariation,subsec:perSide} using this modified top-$N$ accuracy score can be seen in Figure \ref{fig:NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies}. On average, this truer-to-life modification improves a model's top-1 accuracy by 0.94\%, top-5 accuracy by 3.01\%, and top-10 accuracy by 4.34\%.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter5/figs/NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies.png}
+	\end{center}
+	\caption{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting, utilising the modified Top-$N$ accuracy measurement to only take into account the individual classification.}
+	\label{fig:NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter5/figs/NDDAUSMRU-combined-and-per-side-comparison.png}
+	\end{center}
+	\caption{Comparison between the best performing SNN models for the task of most likely catalogue matching trained on the combined-side (Left) and per-side (Right) NDD AU SMRU datasets.}
+	\label{fig:NDDAUSMRU-combined-and-per-side-comparison-individual-classification-only}
+\end{figure}
+
+Figure \ref{fig:NDDAUSMRU-combined-and-per-side-comparison-individual-classification-only} shows a comparison between the best performing combined-side model and the best performing per-side model evaluated against the modified top-$N$ accuracy. Using this metric the gap between top-10 and top-5 accuracy comparisons reduces further, with the gap between top-1 accuracy comparisons increasing. Given the difference in number of classes, evidence suggests that using a per-side dataset for training improves the overall performance of a most likely catalogue matching model. 
+
+\subsection{Identification Without Noise}\label{ch:ID,sec:EffectOfInputImageVariation,subsec:NoNoise}
+
+% Experimentation to show the effect noise has on the model's ability. Show comparison chart between models trained with noise and those trained without. In majority of cases the exlcusion of a noise class has hindered top-10 model performance. 
+% try to modify chart in NDD-Detections-Model-Selection notebook to show top-1,5,10 accuracies stacked for noise vs no-noise comparison
+
 
 % Sec: Effect of Input Image Variation
-% Black and white
-% Two classes for each side of the fin (seems to work but inconclusive given size of dataset)
 % No Noise class
 
 % Sec: Conclusion
 % Summary of the work
 % How does the best model meet the requirements? 
 % State we have extended the literature in use of image embeddings and latent space distance measurements for conservation (vetrova etc) and individual re-id (bearID)
-
+% Some limitations discussed in Ch 6 using different dataset (model retraining, uncatalogued thresholding, etc)
 
 
 

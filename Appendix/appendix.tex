@@ -159,3 +159,18 @@
 
 \newpage
 
+\section{Optimal Hyperparameters for Per-Side NDD AU SMRU Identification}\label{app:NDDAUSMRUPerSideModelParams}
+
+\begin{table}[!ht]
+	\centering
+	\resizebox{!}{.55\height}{
+		\small
+		\begin{tabular}{ccccccccccccc}
+			\hline
+			\textbf{\begin{tabular}[c]{@{}c@{}}Model\\Backbone\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Data\\Augmentation\\Strategy\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Network\\Blocks\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Initial\\Convolutional\\Layer\\Size\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Initial\\Convolutional\\Layer\\Kernel\\Size\end{tabular}} & \textbf{Dropout} & \textbf{\begin{tabular}[c]{@{}c@{}}Learning\\Rate\end{tabular}} & \textbf{Optimiser} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Weight\\Decay\end{tabular}}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Step\\Size\end{tabular}}} & \textbf{$\gamma$} & \textbf{\begin{tabular}[c]{@{}c@{}}Embedding\\Size\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Triplet\\Ranking\\Loss\\Margin\end{tabular}} \\ \hline
+			EmbeddingNet                                                       & None                                                                        & 2                                                                 & 19                                                                                     & 8                                                                                             & 0.162            & 6.430e-5                                                          & SGD               & 0.010                                                                            & 9                                                                                & 0.018             & 38                                                               & 0.818                                                                              \\
+			\bottomrule                                                      
+	\end{tabular}}
+	\caption{Optimal SNN hyperparameters for the best performing SNN trained on the per-side NDD AU SMRU dataset located using Bayesian optimisation over 100 iterations. Results given to 3 decimal places where applicable. See Section \ref{ch:ID,sec:EffectOfInputImageVariation,subsec:perSide}}
+\end{table}
+
