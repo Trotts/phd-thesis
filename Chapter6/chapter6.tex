@@ -38,7 +38,52 @@ After detection and processing the resultant SDRP dataset contained a total of 1
 
 These properties lead to the SDRP dataset being extremely challenging for an SNN to train on. However it is also an accurate representation of what a real life photo-id catalogue dataset would look like in the initial stages of a survey, providing an excellent test of both the robustness and generalisability of the SNN-based approach to automatic most likely catalogue matching when only small amounts of training data are available. 
 
-\section{Siamese Neural Network Evaluation Using the SDRP Dataset}\label{ch:SNNGeneralisation,sec:SNNEvalWithSDRP}
+\section{Evaluation Using the SDRP Dataset}\label{ch:SNNGeneralisation,sec:SNNEvalWithSDRP}
+
+Due to the small amount of data, it was not possible to create a meaningfully large and diverse validation set for the SDRP dataset. This prevented hyperparameter optimisation, and as such the decision was made to utilise the optimal hyperparameters located for the best performing SNN on the NDD AU SMRU dataset, alongside the same backbone architectures and data augmentation strategies defined in Section \ref{ch:ID,sec:SNNDevelopment}.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter6/figs/SDRP-normal-split-model-comparison.png}
+	\end{center}
+	\caption{Results of SNN training for the task of most likely catalogue matching on the SDRP dataset.}
+	\label{fig:SDRP-normal-split-model-comparison}
+\end{figure}
+
+The results of model training on the SDRP dataset can be seen in Figure \ref{fig:SDRP-normal-split-model-comparison}, with each model evaluated using top-1, top-5, and top-10 accuracies.
+Higher scores were achieved across the board on the SDRP dataset compared to the NDD AU SMRU dataset even without hyperparameter optimisation, however it is important to remember the smaller number of possible classes for the model to choose from which may inflate relative model performance.
+
+Unlike training on the NDD AU SMRU data where best results were achieved without any augmentation, here the results are more mixed. Whilst the best top-10 accuracy, 97.5\%, is obtained using Colour Jitter and Perspective Shift augmentations (both together and separately), the best top-5 and top-1 accuracies were obtained using Colour Jitter only. These findings suggest that data augmentation strategy may be catalogue dependant and have a large impact on final model performance. 
+
+Variation in backbone architecture had little effect on overall model performance. Interestingly models trained using a VarvaraNet backbone were more consistent, with a 10.00\% difference between the best and worst performing model, compared to an 18.75\% difference between those trained using an EmbeddingNet backbone. Overall however, the best performing model was determined to be an SNN using an EmbeddingNet backbone architecture and Colour Jitter data augmentation, which achieved 81.25\% top-1, 95.00\% top-5, and 97.50\% top-10 accuracies. This is in contrast to the best performing NDD AU SMRU model, made up of a VarvaraNet backbone architecture without any data augmentation. Using the optimal NDD AU SMRU model setup achieved 72.50\% top-1, 85.00\% top-5, and 92.50\% top-10 accuracies on the SDRP dataset. The use of an EmbeddingNet backbone as optimal for this dataset suggests that a simpler model structure may be best when working with smaller catalogues.
+
+\subsection{Effect of Training Set Size on Model Backbone Selection}\label{ch:SNNGeneralisation,sec:SNNEvalWithSDRP,sub:reversedSDRP}
+
+ As previously mentioned, the SDRP catalogue was provided pre-divided which, once post-processed, produced a 35-65 train-test split. As this training set is much smaller than what would normally be expected for developing a deep learning model, experimentation was undertaken to evaluate the hypothesis that a simpler model structure is best when low volumes of catalogue data is available during training. To this end, the dataset splits were reversed such that the test set was used for model training and the train set was used for evaluation. For consistency, the same model backbones and data augmentation strategies were utilised during training, as were the optimal NDD AU SMRU hyperparameters. 
+
+ \begin{figure}
+ 	\begin{center}
+ 		\includegraphics[scale=0.4]{Chapter6/figs/SDRP-reversed-split-model-comparison.png}
+ 	\end{center}
+ 	\caption{Results of SNN training for the task of most likely catalogue matching on the reversed SDRP dataset.}
+ 	\label{fig:SDRP-reversed-split-model-comparison}
+ \end{figure}
+
+The top-1, top-5, and top-10 accuracies for the trained models can be seen in Figure \ref{fig:SDRP-reversed-split-model-comparison}. By reversing the train-test split, a drop in performance is observed for all bar one of the models trained using an EmbeddingNet backbone. For the single model where performance improves, increases of  11.92\% top-1 and 0.18\%  top-10 accuracies are observed, however a drop of 1.80\% top-5 accuracy is also seen. For those models trained using a VarvaraNet backbone increases in performance are observed for all models, with only two reporting slight drops in top-5 accuracy. 
+
+In general, it can be observed that the increase in training data has lead to an overall performance boost for models trained using a VarvaraNet backbone whilst those with an EmbeddingNet backbone observe a performance drop. As such, the best performing model for the reversed split SDRP dataset now makes use of a VarvaraNet backbone alongside both Colour Jitter and Perspective Shift data augmentation strategies. This supports the hypothesis that backbone architecture selection is influenced by the size of the initial training set, and that more complex models are required to fully capture the fine-grain nature of larger photo-id catalogues. These findings also provide further evidence to support the idea that data augmentation strategies are catalogue dependant. 
+
+It should be noted however that the best performing model achieves 100\% top-5 and top-10 accuracies. Whilst a model which fits sufficiently well may perform such that it always provides a match within the first five results, it is likely the small dataset size has inflated model performance. It is expected that these accuracies would decrease when utilising more data, either through an increase in the number of classes or examples per class.
+
+% Unseen individual thresholding:
+%% Struggles with the SDRP dataset
+%% The latent space created for the dataset is smaller than the one for NDD AU SMRU, leading to prototypes being closer together
+%% Whilst shortest Euclidena distance is influenced less by this, KNN begins to struggle
+%% May suggest that thresholds are catalogue dependant and may need to be tuned when a new model is created /retrained
+
+% Section looking at effect of background noise retention (may need to rename chapter?)
+
+% Conclusion
 
 
 
