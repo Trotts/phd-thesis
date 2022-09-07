@@ -290,7 +290,7 @@ The optimal SNN hyperparameters chosen through Bayesian optimisation for each ar
  
  One important takeaway from the use of Bayesian optimisation techniques is that for some hyperparameters which require a continuous input, such as learning rate or weight decay, the optimal value may be one which would likely not be selected by a human when performing a Grid Search. This highlights the effectiveness of Bayesian optimisation over a Grid Search as, whilst the difference between a learning rate of 2e-6 selected during a Grid Search and 2.578e-6 selected by Bayesian optimisation, may only be a few percentage points increase in test set accuracy, this still results in an overall more generalisable model. 
  
-\subsection{Uncatalogued Individual Thresholding}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding}
+\subsection{ NDD AU SMRU Uncatalogued Individual Thresholding}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding}
 
 Further evaluation was performed to examine the best performing model's ability to flag uncatalogued individuals to the user. Before training, some classes from the NDD AU SMRU dataset were removed. As these are classes which have not yet been seen by the model, they can be utilised as if they were uncatalogued individuals.
 
