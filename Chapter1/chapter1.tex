@@ -1,30 +1,52 @@
-\chapter{Introduction}
+\chapter{Introduction}\label{ch:intro}
 
-Modelling cetacean (whale, dolphin, and porpoise) population dynamics and behaviour is paramount to effective population management and conservation. Robust data is required for the design and implementation of conservation strategies and to assess the risks presented by anthropogenic activity such as offshore wind turbines and commercial fishing. Moreover, cetaceans make prime candidates for modelling ecosystem change under the ecosystem sentinel concept as they reflect the current state of the ecosystem and respond to change across different spatial and temporal scales \cite{moore_marine_2008}. As the global climate changes and urbanisation of coastal areas intensifies, it is imperative to develop methodologies for quick and effective assessment of the biological and ecological impact of rising sea temperatures, pollution, and habitat degradation. This can be achieved through modelling the population, behaviour, and health of large marine species such as dolphins.
+%%% Big Data intro
 
-Methodologies of cetacean research includes photo identification (photo-id). Photo-id involves collecting photographic data and identifying individuals based on unique permanent markings, and has been used for more than 40 years for modelling cetacean population dynamics and ecology \cite{connor_male_2015, wursig_photographic_1977}. Current identification techniques for cetaceans rely heavily on experts manually identifying individuals. This can often be costly due to the number of person-hours required for identification, as well as the large potential for error due to issues such as observer fatigue. Further, individual identification of dolphins within a species is time consuming due to the nature of the task. Intra-species dolphins have very similar markings and body types making identifying an individual within a pod very difficult. Prominent features must be identified, such as small nicks to the fins or scars left from injuries to identify an individual. If these features are only prominent on one side of the individual, the task of identification becomes even more difficult.
+In recent years there has been a concerted effort to apply computer vision techniques to challenging problems which can have a positive societal impact. A highly important area where computer vision can help is conservation \cite{weinstein_computer_2018}. One of the main goals of conservation research is to monitor animal populations in their distribution area, undertaking abundance estimates to inform policy change. This is most commonly performed using capture-recapture surveys where researchers identify the presence of individuals and estimate abundance of animals in an area to produce population estimates \cite{constantine_abundance_2012, bigg_assessment_1982, sharpe_indian_2019, van_bressem_visual_2018, arso_civil_changing_2019, cheney_long-term_2014}. These surveys can be classified as invasive where animals are physically trapped, tagged, and released \cite{norris_tagging_1970, hobbs_bowhead_1982, andrews_best_2019}, or non-invasive where monitoring is performed passively such as via the collection of vast numbers of images. 
 
-\begin{figure}[H]
+Photo-id is one of the main non-invasive capture-recapture methods utilised by cetacean researchers \cite{hammond_individual_1990, evans_monitoring_2004}. Surveys are usually undertaken from vessels at sea, although monitoring from coastlines or aircraft may also be utilised \cite{payne_long_1986, forney_seasonal_1998, wursig_methods_1990}. The methodology is employed for the monitoring of multiple cetacean species, with proven use cases in a range of studies \cite{sharpe_indian_2019, miragliuolo_rissos_2004, feyrer_origin_2021, bigg_assessment_1982}. Outside of cetaceans, photo-id has further found use studying other marine life \cite{holmberg_estimating_2009, reisser_photographic_2008} and terrestrial species \cite{goswami_application_2007, clapham_automated_2020}.
+
+All capture-recapture methodologies rely on the target species having some form of individually identifiable markings. Depending on the species, different parts of the body are the primary identifying feature; for dolphins this is usually the dorsal fin as this body part is most likely to be visible above the waterline \cite{sharpe_indian_2019, baird_population_2009}. During photo-id surveys, researchers often focus on long lasting stable markers such as dorsal fin shape, notches, scarring, and pigmentation \cite{wursig_photographic_1977, lockyer_observations_1990, mann_cetacean_2000}. These markings can be difficult to capture in detail due to the free roaming nature of the animals causing high variances in angles of approach, direction of travel, distance from camera, and surfacing elevation. This is exacerbated when dealing with cetacean species which travel in pods, making it difficult to distinguish the individuals present.
+
+Marine photo-id can be extremely labour and cost intensive compared to on-land surveys, which rely on the use of camera traps placed in stationary locations to capture images when they detect movement. This setup is not possible at sea due to a lack of stationary objects to attach devices to and rapid movement in the observed scene due to waves causing the camera to trigger -- producing a high false positive rate. 
+
+Upon survey completion, photo-id data must be analysed and individuals identified to produce a catalogue. Images collected during surveys are large in size and contain significant amounts of background noise. Historically curation of this data has been a manual process that often takes longer than the entire data collection period \cite{tyson_moore_rise_2022}, further increasing labour and costs. For example, previous efforts to create an individual photo-id catalogue from surveys undertaken by Newcastle University's School of Natural \& Environmental Science's Marine MEGAfauna Lab took around three months. As such, any techniques to speed up the cataloguing process would be welcomed both by researchers and their funding bodies, affording more time to work on the application of data, for example to inform mitigation and policy change, rather than curation. 
+
+\begin{figure}
 	\begin{center}
-		\includegraphics[width=\linewidth]{Chapter1/figs/map.png}
+		\includegraphics[width=\linewidth]{Chapter1/figs/pipeline_compact.png}
 	\end{center}
-	\caption{Map of the survey area, Northumberland, UK, from St. Mary's Lighthouse in the south to 25nm above Coquet Island in the north.}
-	\label{fig:map}
+	\caption{A high level overview of data flow through the proposed system.}
+	\label{fig:pipeline}
 \end{figure}
 
-With progressively more data being collected during fieldwork through increased use of technology, there is an urgent need for an automatic system for quick identification with reduced error rates. Previous efforts to photo-id individuals from underwater video stills from previous expeditions undertaken by Newcastle University's School of Natural \& Environmental Science's Marine MEGAfauna Lab took around three months from raw video file to be completely catalogued. This project addresses these limitations by applying the methodologies, techniques, and computational power of deep learning to the field of marine biology. Deep learning models, specifically Convolutional Neural Networks (CNNs), will be trained on high-end computer clusters using the Microsoft Azure Cloud\footnote{Microsoft Azure Cloud: \href{http://azure.microsoft.com}{azure.microsoft.com}} prior to field studies using existing data. Once trained, the models can be ran on field deployable computers to perform image analysis in real time from multiple data sources (underwater and above water images, and aerial drone footage). Methodologies incorporating these models are designed to quickly identify individuals, assess health, analyse behaviour and incorporate remote sensing techniques. 
+This thesis details a system for fully automatic catalogue matching based on unprocessed photo-id imagery. This is achieved through a pipeline of trained computer vision models and robust post-processing techniques capable of automatic fin detection and most likely catalogue matching based on latent space similarity, a visualisation of which can be seen in Figure \ref{fig:pipeline}. As photo-id surveys are not guaranteed to capture all individuals in a given geographic area, naive approaches such as training a simple image classifier on existing catalogue examples would not suffice as they are incapable of flagging previously uncatalogued individuals. Images are passed through a Mask R-CNN \cite{he_mask_2017} dorsal fin detector, removing the need for manual data pre-processing. Detections are then post-processed ready for fine-grain, few-shot catalogue matching utilising a Siamese Neural Network trained using triplet loss \cite{schroff_facenet_2015} and online semi-hard triplet mining to create a latent space based on the provided catalogue. Matches are obtained using the Euclidean distances between an input and class prototypes stored in the latent space, allowing for the flagging of potentially uncatalogued individuals to the researcher
 
-CNNs have for many years now been regarded as the main approach for solving image and computer vision related problems. More recently, the development of deep-layered CNNs and the availability of  high-powered GPUs have provided the perfect platform for solving fine-grained computer vision tasks. This project has developed a system to speed up marine cetacean photo-id using a pipeline of CNNs. Starting with a large high resolution image, this pipeline allows for the detection and identification of cetaceans in the image. This system can greatly aid marine biologists, speeding up the identification process allowing for more time to be spent on developing response strategies and health assessments. 
+\section{Research Aim \& Contributions}\label{ch:intro,sec:AimsAndContributions}
 
-Data collection for this project focussed on a population of white-beaked dolphins (\textit{Lagenorhynchus albirostris}) off the coast of North-East England (see Figure \ref{fig:map}). Recent research has identified sites where the species is regularly sighted \cite{galatius_lagenorhynchus_2016, hammond_cetacean_2013} and underwater image analysis has shown seasonal and multi-year residency. A health assessment based on underwater image analysis identified high incidence of skin disease and trauma suggesting conservation of this population should be high priority \cite{van_bressem_visual_2018}. The species would also serve as a prime sentinel for monitoring North Sea climatic changes as it shows preference for cold water with North-East UK coastal waters representing the southern limit of its range.
+The high level aim of this thesis is to:
 
-\section{Research Problem}
+\begin{flushleft}
+	\textbf{Design, implement, and evaluate a system for fully automatic catalogue matching based on unprocessed photo-id fieldwork imagery.}
+	\bigbreak\noindent Implicit in this aim are a number of research questions:
+\end{flushleft}
 
-\section{Contributions}
+\begin{enumerate}
+	\item Is coarse-grain detection of cetaceans in large-scale, noisy, above water photo-id imagery possible with high levels of accuracy? 
+	\item Can detections be automatically post-processed in such a way as to both reject likely false positives and remove noise, whilst retaining identifiable markings?
+	\item ls it possible to perform highly accurate most likely photo-id catalogue matching based on extreme fine-grain information, even when operating on few-shot data?
+	\item How generalisable are the above concepts to changes in species of interest and spatio-temporal shifts?
+\end{enumerate}
 
-\section{Thesis Structure}
+%TODO: Contributions, where they are in the thesis
 
-\section{Related Publications}
+\section{Thesis Structure}\label{ch:intro,sec:Structure}
+
+%TODO: Structure of thesis
+
+\section{Related Publications}\label{ch:intro,relatedPublications}
+
+%TODO: Publications
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
