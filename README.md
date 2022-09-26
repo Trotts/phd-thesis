@@ -10,8 +10,12 @@ Cetacean monitoring is frequently performed using capture-recapture surveys, thr
 
 This thesis details a framework for automatic photo-id catalogue matching based on unprocessed field imagery via a pipeline of computer vision models. The development of a coarse-grain dorsal fin detector and the use of post-processing techniques to aid downstream identification is first examined. Next, the creation of a photo-id catalogue for cetaceans resident in the waters of Northumberland, UK, is outlined. This catalogue is then utilised to facilitate the development of a model capable of fine-grain, few-shot catalogue matching via latent space similarity, allowing for the flagging of potentially uncatalogued individuals. At all stages the robustness of the developed techniques to spatio-temporal changes is evaluated, including their generalisability to multiple cetacean species. The automation of photo-id data curation outlined in this thesis affords researchers more time to work on application of their data, for example to inform mitigation and policy change, rather than administration.
 
-## Author: Cameron Trotter
+## Author: 
 
-## Supervisors: Nick Wright, A. Stephen McGough, Per Berggren
+Cameron Trotter
+
+## Supervisors: 
+
+Nick Wright, A. Stephen McGough, Per Berggren
 
 
