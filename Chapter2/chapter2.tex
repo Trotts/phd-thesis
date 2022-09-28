@@ -4,6 +4,8 @@ In recent years, deep learning has become a widely used technique to tackle prob
 
 One novel area where computer vision and deep learning can play an important role is in the world of marine conservation, helping to automate a currently labour intensive discipline. This project focusses on the automation of cetacean photo-identification, a process utilised by conservationists for tasks such as population estimates and health assessments \cite{holmberg_estimating_2009, cheney_long-term_2014, lockyer_observations_1990, van_bressem_visual_2018}. Before the research undertaken in this project is discussed, this Chapter will seek to provide an introduction to both photo-identification and deep learning, before expanding into how this has been applied to computer vision. Literature focussing on computer vision in a cetacean conservation space is explored, as well as the current state of fine-grained recognition - utilising computer vision algorithms to differentiate between visually similar classes.
 
+\newpage
+
 \section{A Brief Introduction to Photo-Identification}\label{ch:Background,sec:photo-id}
 
 One of the main goals of conservation research is to monitor resident animal populations in a given geographic area. This is most commonly performed using mark-recapture surveys in which researchers identify the number of unique individuals in an area at a given time, before returning to the same area at a later point in time and again identifying the number of individuals present \cite{constantine_abundance_2012, bigg_assessment_1982, sharpe_indian_2019}. These values allow for an estimate of the total population size to be obtained, with the accuracy of this value increasing proportionally to the number of surveys undertaken. These mark-recapture surveys can be classified as either invasive, where animals are physically trapped, tagged, and released, or non-invasive where monitoring is performed passively. 
@@ -168,6 +170,8 @@ LeNet \cite{lecun_gradient-based_1998} was the first well defined CNN architectu
 
 Finally ResNet was introduced a year later at ILSVRC15. This architecture can be up to 152 layers deep, and achieved a human-beating top-5 error rate of 3.57\% \cite{he_deep_2015}. Shallower versions of ResNet exist, such as ResNet50 and ResNet101, which are 50 and 101 layers deep respectively. This thesis makes use of ResNet50.
 
+\newpage
+
 \subsection{Object Detection}\label{ch:Background,sec:objectDetection}
 
 Thanks to advancements in deep learning technology and the creation of standardised architectures, CNNs are now utilised en masse to perform tasks such as object detection, attempting to identify distinct regions containing task-specific classified objects in images and video. Whilst this is often performed in one of two ways, it is important to note that all object detection is still in essence a series of tasks performed via network layers. 
@@ -176,9 +180,9 @@ Thanks to advancements in deep learning technology and the creation of standardi
 
 The first, known as a Region Proposal Network (RPN), attempts to find image regions likely to contain objects of given classes. Training data is usually provided in the form of bounding boxes drawn around objects of interest and labelled with the corresponding class. One of the most common and widely used RPN architectures is derived from the R-CNN, or Regions with CNN features, architecture \cite{girshick_rich_2014}. R-CNN utilises a selection search \cite{uijlings_selective_2013} to generate 2000 Regions of Interest (RoIs) representing the most likely areas of the input image to contain a class example. By limiting the number of RoIs generated this allows for fast computation compared to operating on every possible region in the image. The proposed RoIs are then fed through a CNN to be classified. See Figure \ref{fig:r-cnn} for a visual representation of the R-CNN pipeline. Example proposed RoIs can be seen in Figure \ref{fig:rpn-randoms}.
 
-\begin{figure}
+\begin{figure}[b]
 	\begin{center}
-		\includegraphics[scale=0.4]{Chapter2/figs/r-cnn.png}
+		\includegraphics[scale=0.3]{Chapter2/figs/r-cnn.png}
 	\end{center}
 	\caption{The R-CNN pipeline. Image from \cite{girshick_rich_2014}.}
 	\label{fig:r-cnn}
@@ -186,9 +190,9 @@ The first, known as a Region Proposal Network (RPN), attempts to find image regi
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.45]{Chapter2/figs/rpn-ten-random-orange.png}
+		\includegraphics[scale=0.3]{Chapter2/figs/rpn-ten-random-orange.png}
 	\end{center}
-	\caption{An example of RoIs generated on an image by an RPN, showing 10 random proposals. Note that two of the RoIs have been successfully classified as \texttt{fin}.}
+	\caption{An example of RoIs generated on an image by an RPN, showing 10 random proposals.}
 	\label{fig:rpn-randoms}
 \end{figure}
 
@@ -196,12 +200,12 @@ Utilising selection search leads to a high recall rate thanks to the large amoun
 
 Some of these time drawbacks were fixed in a later version of R-CNN, known as Fast-RCNN \cite{girshick_fast_2015}. Rather than feeding the region proposals generated to the CNN, this algorithm instead feeds the input image to the CNN and generates a convolutional feature map. RoIs can then be taken from the feature map using selection search and warped into a shape suitable for the pooling layer, before being reshaped again into a fixed size for the fully connected layer. This is advantageous as it allows us to reuse some computations and allows for backpropagation to occur throughout the network, greatly improving run times.  This also means however that the runtime is determined by how fast RoIs can be generated. 
 
-To fix this issue, Faster R-CNN was developed \cite{ren_faster_2015}. Now, instead of utilising selection search to generate the RoIs we can utilise a separate network to predict RoIs which can then be used to classify images within the regions. With this, we now train with four losses: 
+To fix this issue, Faster R-CNN was developed \cite{ren_faster_2015}. Now instead of utilising selection search to generate the RoIs, a separate network can be utilised to predict RoIs which are then used to classify images within the regions. As such, we now train with four losses: 
 
 \begin{enumerate*}
-	\item An object/not object classification from the RPN,
-	\item The RoI shift,
-	\item The object classification,
+	\item An object/not object classification from the RPN;
+	\item The RoI shift;
+	\item The object classification;
 	\item Final bounding box co-ordinates.
 \end{enumerate*}
 
@@ -217,7 +221,7 @@ Along with object detection, semantic segmentation is one of the key research ar
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter2/figs/masks-example.png}
 	\end{center}
-	\caption{An example of an image and its corresponding ground truth \texttt{fin} masks.}
+	\caption{An example of an image and its corresponding ground truth masks.}
 	\label{fig:masks-example}
 \end{figure}
 
@@ -261,7 +265,6 @@ Whilst fine-grained visual categorisation is still an area of new research, an e
 
 At first glance it may seem as though part segmentation would be useful for this thesis' work into automatic photo-identification. However, when analysing the target data it becomes apparent there would be little benefit to this approach over other segmentation techniques. As this work focusses on above water photo-identification the vast majority of images observed by the developed system only contain one part of the animal - the dorsal fin as it breaches the waterline.  As such there would be little advantage to the use of part segmentation here, as only one part is visible. If this work shifted focus to include underwater photo-id, part segmentation would be extremely useful. In this case there would be multiple parts of the animal visible such as the dorsal, tail stock, head, ventral, or sides. Each of these parts would have their own prominent markings useful for identification. However even if all parts of the animal are visible, it may be the case due to water conditions that not all prominent markings are. Algae bloom and light refraction can obscure an individual's identifying information, and so it would be very useful to be able to break down an individual using part segmentation, allowing for identification to be performed on each part rather than the whole animal, potentially increasing the chance of identification.  
 
-
 \subsection{Instance Segmentation}\label{ch:Background,sec:instanceSegmentation}
 
 Building on the concept of semantic segmentation, instance segmentation can be performed when further detail about an image is required by a developed system. Whilst many of the underlying processes are similar between the two segmentation types, instance segmentation allows for the model to distinguish between multiple objects which are of the same class; an example of this can be seen in Figure \ref{fig:instance-vs-semantic}. 
@@ -290,7 +293,9 @@ Whilst the majority of one stage approaches to instance segmentation rely on bou
 
 As discussed in previous Sections, there are multiple standardised architectures utilised for segmentation tasks. As such, when developing a system which utilises segmentation developers of these systems will, more often than not, use one of the many architectures from literature rather than developing their own custom architecture. Utilising one of the standard architectures has many advantages; for one, researchers do not need to spend time creating a model architecture for their task, allowing for development in other, novel areas. Further to this, utilising a standard architecture allows for research to be more easily understood and reproduced. As this thesis focusses on the automation of photo-identification systems rather than on the development of new novel architectures, it makes sense to make use of an architecture which is well known, has a track record of performing well when trained on non-benchmark or custom datasets, and is easily reproducible. As such, parts of this project's automation pipeline make use of Mask R-CNN \cite{he_mask_2017}. Because of this, it is important to understand Mask R-CNN in more detail compared to the other architectures discussed previously in this Chapter. 
 
-As we have seen previously, it is often the case that new architectures either extend or borrow features from older ones. This is also the case with Mask R-CNN. Developed in 2017 by He \textit{et al.} at Facebook AI Research, Mask R-CNN was developed on top of the existing 2016 Faster R-CNN architecture from Ren \textit{et al.} \cite{ren_faster_2015} (itself an extension of Fast R-CNN developed in 2015 \cite{girshick_fast_2015}). 
+\newpage
+
+As seen previously, it is often the case that new architectures either extend or borrow features from older ones. This is also the case with Mask R-CNN. Developed in 2017 by He \textit{et al.} at Facebook AI Research, Mask R-CNN was developed on top of the existing 2016 Faster R-CNN architecture from Ren \textit{et al.} \cite{ren_faster_2015} (itself an extension of Fast R-CNN developed in 2015 \cite{girshick_fast_2015}). 
 
 Faster R-CNN is a two stage architecture. The first stage utilises a standard backbone network, typically ResNet \cite{he_deep_2015}, VGG \cite{simonyan_very_2015}, or Inception \cite{szegedy_going_2015}, to convert an input image into a set of feature maps which are passed to an RPN for analysis (see Section \ref{ch:Background,sec:objectDetection,sub:RPN} for a breakdown of RPNs). This RPN generates region proposals which are passed to the second stage of Faster R-CNN, along with the previously generated feature maps, and fed to an RoI pooling layer.  Here, each proposed region and corresponding feature map is utilised to predict bounding boxes, classifications, and confidence scores. A visual representation of Faster R-CNN's architecture can be seen in Figure \ref{fig:faster-r-cnn-architecture}.
 
@@ -331,12 +336,13 @@ Often there will be very few prominent markings which will allow for an individu
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.08]{Chapter2/figs/2192.jpg}
+		\includegraphics[scale=0.05]{Chapter2/figs/2192.jpg}
 	\end{center}
 	\caption{An example image from a photo-id catalogue with one individual present. At a coarse-grain level, this individual is classed as \texttt{dolphin}, at a fine-grained level \texttt{WBD} (white-beaked dolphin), and at an extreme fine-grained level \texttt{32}, the individual's catalogue ID. Image and class labels from \cite{trotter_ndd20_2020}.}
 	\label{fig:granularity-differences}
 \end{figure}
 
+\newpage
 
 \section{Computer Vision for Conservation Technology}\label{ch:Background,sec:conTech}
 
@@ -346,9 +352,9 @@ Work into applying object detection and segmentation to conservation data mostly
 
  A second advantage of camera trap data is their high false positive rate. These traps capture a photo every time movement in the frame is detected, and as such a large proportion of the images a camera trap captures either do not contain any animals at all (e.g. wind has caused the surrounding vegetation to move), or contain animals which are not the primary species of investigation. This large false positive rate provides a key driver for the development of machine learning camera trap systems which could, for example, filter out these false positive captures automatically. Whilst these images may simply be discarded by the researchers, they have a use in the development of machine learning camera trap based systems, allowing the system to be trained on a wide variety of false positive examples. As such, machine learning systems developed for camera traps have found quick adoption in the conservation community with many systems now capable of performing fine-grained species classification with extremely high accuracy \cite{tabak_machine_2019, norouzzadeh_automatically_2018, willi_identifying_2019, beery_efficient_2019, norouzzadeh_deep_2019}. Recent work by Clapham \textit{et al.} has moved further to the extreme of fine-grained classification with BearID, a project which adapts human facial recognition systems for use with brown bears (\textit{Ursus arctos}) via metric embeddings, achieving an ``individual classification accuracy'' of 83.9\%. Here, BearID is not classifying the species \textit{Ursus arctos} but rather individuals within the population, a significant achievement given the challenge of identifying individuals within a species which do not have unique markings \cite{clapham_automated_2020}.
 
-Applying computer vision to marine environments is a greater challenge than on-land camera traps. This is, in part, due to the relative lack of available data to train systems. Camera traps work on movement taking a burst of images whenever the environment they observe changes, be this due to an animal walking through the scene or wind moving foliage. They must also be kept stationary, usually mounted to grounded objects such as trees. These requirements make camera traps unsuitable for marine environments, as the trap could not be attached to a stationary object at sea. Should it be possible to provide a stationary mount for the camera trap the environment would still be unsuitable due to the rapid changing of the observed scene due to factors such as waves, causing the camera to constantly produce image bursts. 
+As camera traps work through movement, taking a burst of images whenever the environment they observe changes - be this due to an animal walking through the scene or wind moving foliage - they must be kept stationary, usually mounted to grounded objects such as trees. These requirements make camera traps unsuitable for marine environments, as the trap could not be attached to a stationary object at sea. Should it be possible to provide a stationary mount for the camera trap, the environment would still be unsuitable due to the rapid changing of the observed scene due to factors such as waves, causing the camera to constantly produce image bursts. As a result, applying computer vision to marine environments is a greater challenge than on-land camera traps. This is also in part due to the relative lack of available data to train systems. Marine datasets such as FathomNet \cite{katija_fathomnet_2022} are available, although its focus is on underwater detection and classification.
 
-As such, marine conservationists traditionally rely on identification from photographs taken either from the coastline or from a vessel. As this requires a human operator, the size of datasets available is relatively small. Furthermore, given the high cost of data collection, marine conservation groups often keep a tight grip on their data. This has led to a lack of available open-source datasets for those who wish to train machine learning systems for use in marine conservation. Thanks to advances in UAV technology and their current inexpensiveness, some research groups have shifted focus to the use of drones for image capture. This new approach has seen success in areas such as photo-identification \cite{bogucki_applying_2019, gray_drones_2019}, microbial sampling \cite{centelleghe_use_2020}, and human-interaction response monitoring \cite{fiori_using_2020}. The use of drones for this type of work is not yet mainstream however, and some recently published work highlights the need to better understand how drones affect the behaviour and health of marine species \cite{giles_responses_2020, bevan_measuring_2018, ramos_bottlenose_2018, pomeroy_assessing_2015}. 
+Marine conservationists traditionally rely on identification from photographs taken either from the coastline or from a vessel. As this requires a human operator, the size of datasets available is relatively small. Furthermore, given the high cost of data collection, marine conservation groups often keep a tight grip on their data. This has led to a lack of available open-source datasets for those who wish to train machine learning systems for use in marine conservation. Thanks to advances in UAV technology and their current inexpensiveness, some research groups have shifted focus to the use of drones for image capture. This new approach has seen success in areas such as photo-identification \cite{bogucki_applying_2019, gray_drones_2019}, microbial sampling \cite{centelleghe_use_2020}, and human-interaction response monitoring \cite{fiori_using_2020}. The use of drones for this type of work is not yet mainstream however, and some recently published work highlights the need to better understand how drones affect the behaviour and health of marine species \cite{giles_responses_2020, bevan_measuring_2018, ramos_bottlenose_2018, pomeroy_assessing_2015}. 
 
 \subsection{Utilising Photo-id Aides in Cetacean Conservation}\label{ch:Background,sec:conTech,sub:photoIDAides}
 
@@ -396,6 +402,8 @@ FlukeBook\footnote{\label{footnote:flukeBook}FlukeBook: \href{https://www.flukeb
 
 As can be seen there is a wide variety of photo-id aides currently available to researchers, each fulfilling a different need depending on the researcher and how comfortable they are with automating parts of the photo-id process. If they prefer a fully manual approach to analysis but require storage solutions, FinScan and FinBase provide excellent catalogue management. DARWIN can then extend this through automating existing catalogue databases. 
 
+\newpage
+
 Manual analysis is extremely time consuming however, leading to modern systems allowing for some automation of processing. For fast cropping Photo-ID Ninja can be utilised, greatly reducing down the sizes of images and removing unneeded background. Algorithms like CurvRank and FinFindR can then be utilised to aid in identification. 
 
 Whilst all of these systems perform their intended task well, they are mostly stand-alone. This would require researchers to make their own data pipelines should they wish to host locally, such as Bouma \textit{et al}. and their use of Photo-ID Ninja for detection before embedding using deep learning to provide catalogue matching \cite{bouma_individual_2018}. Should researchers feel comfortable with open-sourcing their catalogues and matching process, whilst also working with a supported cetacean species, then systems like HappyWhale or FlukeBook are most appropriate, requiring little data preprocessing whilst not requiring researchers to host multiple algorithms or solutions locally, reducing the need to create their own custom data pipelines. 
@@ -416,7 +424,7 @@ It is the work undertaken by the aforementioned solutions which motivates this t
 
 An overview of how current photo-id aides meet these requirements can be seen in Table \ref{tab:Photo-IDAidesComparison}. Only Maglietta \textit{et al.} propose a fully automated photo-id aid which can be locally ran, requires no data preprocessing, and is capable of handling uncatalogued individuals. However as previously stated this solution utilises SURF \cite{bay_speeded-up_2008}. This algorithm, like its predecessor SIFT \cite{lowe_object_1999}, excel at detecting well defined features in images. This is appropriate for Maglietta \textit{et al.}'s data subjects, Risso's dolphins, due to the well defined scarring patterns present on their dorsal fins \cite{mariani_analysis_2016}. The algorithm would fail when used on other cetacean species however due to a lack of well defined features on the fin, where even prominent markings used for photo-id fail to be extracted. See Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SURF} for an investigation into the use of feature extraction algorithms on bottlenose dolphin dorsal fins. Furthermore, both SURF and SIFT are patented algorithms. As such this may increase the cost of developing or using a system based around these algorithms, an open source solution should be utilised if possible.
 
-\begin{table}[!ht]
+\begin{table}[!t]
 	\caption[A comparison of available photo-id aides.]{A comparison of available photo-id aides.}\label{tab:Photo-IDAidesComparison}
 	\begin{adjustbox}{width=\columnwidth, center}
 		\begin{tabular}{*{7}{c}}
