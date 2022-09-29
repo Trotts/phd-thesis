@@ -90,6 +90,8 @@ Further to this, it can be seen that SURF is incapable of extracting relevant pr
 
 Feature extraction methods such as SURF are also incapable of extracting other identifiable markers such as fin shape. As such, the use of feature extractors was deemed improper for this use case. It is important to note here that the use of feature extractors may be appropriate for cetacean species other than this project's data subjects of bottlenose and white-beaked dolphins. For example, the use of both SURF and SIFT have been shown to be appropriate to aid in identification of individual Risso's dolphins \cite{reno_sift-based_2019, maglietta_dolfin_2018}.
 
+\newpage 
+
 \subsubsection{Background Removal with GrabCut}\label{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:GrabCut}
 
 Testing the suitability of SURF as described in Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation,subsub:SURF} highlighted the need for complete background removal before identification would be possible with bottlenose and white-beaked dolphins. In order for bounding boxes to be a viable option in this scenario, a robust background removal process would need to be created. Further, the process would need to be capable of operating under unseen conditions in an unsupervised manner without pixel labelled data to train on. If the background removal process required training data to operate, this would increase the overall cost and labour required to use bounding boxes, and as such reduces the suitability of them compared to utilising pixel-wise mappings from the beginning.
@@ -121,7 +123,19 @@ Another factor which must be decided upon when starting development of a deep le
 
 Of the two main frameworks, the use of Tensorflow was decided for the project at this stage. Whilst this decision was made somewhat due to personal preference, Tensorflow was (at least at the time of starting this project) the primary framework for development of deep learning systems outside of academia. Rather than developing a custom Mask R-CNN in Tensorflow for this project, Matterport's Mask R-CNN implementation \cite{waleed_mask_2017} has been adapted.
 
+\newpage
+
 \section{Initial Testing of Mask R-CNN}\label{ch:cetDet,sec:initialTesting}
+
+The following Sections detail the creation of the Mask R-CNN based cetacean detector. Figure \ref{fig:pipeline-detector} highlights where in the system pipeline this model will be placed.
+
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=\linewidth]{Chapter3/figs/pipeline-detector.png}
+	\end{center}
+	\caption{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the Mask R-CNN component highlighted. It is this part of the pipeline which will be discussed in the following Sections.}
+	\label{fig:pipeline-detector}
+\end{figure}
 
 In order to build a Mask R-CNN detector which fulfilled the requirements as laid out in Section \ref{ch:cetDet,sec:requirements} an understanding of the framework needed to be achieved. Thankfully, the downloaded repository also includes some tutorial notebooks, most notably an example on balloon segmentation which proved invaluable for learning the basics of how Mask R-CNN operates both on a fundamental code level and at a higher level, understanding how the code can be adapted for other use-cases. In order to progress onto cetacean detection however, a dataset of cetaceans would be needed. 
 
@@ -228,6 +242,8 @@ When training a Mask R-CNN model there are a large range of hyperparameters, or 
 The vast majority of hyperparameters influence the training process. Selection of the optimal hyperparameters is however an extremely computationally and time expensive task, as the optimal values of the hyperparameters are not known before training begins. Indeed, even after training has finished and a model which produces satisfactory results has been found there is no guarantee that the hyperparameters of this model are the best, just that they were the best found so far. 
 
 As such, in order to determine the best hyperparameters for a given model and task, the search space of all possible hyperparameters must be searched. This is infeasible due to time and resource constraints however,  therefore a technique known as grid searching was performed. During a grid search, each of the possible hyperparameters will have a range of values defined. A model is then trained using the data and each combination of defined hyperparameter values. Once each model has been trained, they are then evaluated to determine the best hyperparameters. In some cases an acceptable model will be found during the initial grid search, however this may not be the case. In this situation the previous grid search may not be useless, as it may provide insight into how to refine the search space to increase the chances of an acceptable model being trained. This process of finding the optimal hyperparameters for the model is known as hyperparameter tuning. 
+
+\newpage
 
 \subsubsection{Learning Rate Scheduling \& Optimisers}\label{ch:cetDet,sec:ModelSelection,sub:TrainingHyperparameters,subsub:learningRateOptimisers}
 One of the most important hyperparameters to tune is the learning rate, which dictates how much the weights of the model should change in response to the estimated error calculated during backpropagation. If the learning rate is too large this will lead to an unstable training process whereby gradient descent can never reach the minimum value but rather bounce either side of it. If the learning rate is set too small the training process will take an extremely long time to converge. 
@@ -427,7 +443,15 @@ All of these mis-detections have an impact of the overall evaluation score of th
 
 \section{Mask Post-Processing Techniques}\label{ch:cetDet,sec:postProcessing}
 
-At this stage, the system is capable of detecting cetaceans at an individual pixel level. Before these detections can be passed to the identification module, some post-processing of the output must be performed to allow for both a reduction in the computational expense of operating on the detector's output as well as ensuring that no potentially important information which will assist in an identification is lost. 
+At this stage, the system is capable of detecting cetaceans at an individual pixel level. Before these detections can be passed to the identification module, some post-processing of the output must be performed to allow for both a reduction in the computational expense of operating on the detector's output as well as ensuring that no potentially important information which will assist in an identification is lost. As such, the following Section details the mask post-processing techniques implemented as required by the system pipeline, as shown in Figure \ref{fig:pipeline-post-processed}.
+
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=\linewidth]{Chapter3/figs/pipeline-post-processed.png}
+	\end{center}
+	\caption{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the post-processing techniques highlighted. It is this part of the pipeline which will be discussed in the following Section.}
+	\label{fig:pipeline-post-processed}
+\end{figure}
 
 \subsection{Handling Multiple Detections}\label{ch:cetDet,sec:postProcessing,sub:handlingMultipleDetections}
 
@@ -486,6 +510,8 @@ Whilst the background subtraction aims to reduce noise passed downstream to the 
 	\label{fig:fin-extraction-unclean}
 \end{figure}
 
+\newpage
+
 \subsection{Colour Thresholding Mask Components}\label{ch:cetDet,sec:postProcessing,sub:colourThresholdingMaskComponents}
 
 In some cases a single detection mask may consist of multiple components. This may occur if, for example, an area of splash has been erroneously included as part of a detection. As cetaceans cannot be made up of multiple disjoint components, it is known that some of these must be noise and can be removed. 
@@ -523,12 +549,14 @@ During testing however it was found that when checking detections at an individu
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.7]{Chapter3/figs/190723-001-MOLS0752_-fin-removed-at-90-kept-at-50.png}
+		\includegraphics[width=\linewidth]{Chapter3/figs/190723-001-MOLS0752_-fin-removed-at-90-kept-at-50.png}
 	\end{center}
 	\caption{Workflow showing how utilising the 90\% global threshold may lead to over-exposed detections being erroneously discarded. A \texttt{dolphin} object is detected whose mask consists of multiple components.  One of the components, which contains a valid area of detection, is shown in stage 3 of the workflow. Checking to see if 50\% of the pixels in the component are below the threshold retains the detection, whilst checking at 90\% discards it.}\label{fig:190723-001-MOLS0752_-fin-removed-at-90-kept-at-50}
 \end{figure}
 
 It may be the case that multiple components in an image meet the conditions set by the threshold to be kept. In this case, each component of the mask is split into its own image, in a similar process as outlined in Section \ref{ch:cetDet,sec:postProcessing,sub:handlingMultipleDetections}. If a mask only contains one component, then colour thresholding is not applied. This ensures no detections by the Mask R-CNN are completely ignored due to post-processing, preventing the discarding of a \texttt{dolphin} object mask which contains no disjoint components however is above the threshold, such as in the event of over-exposure. This condition also has the effect however of allowing fully erroneous detections to pass downstream, such as the flag detected in Figures \ref{fig:190730-001-MOLS0360_-detections} and \ref{fig:fin-extraction-unclean}. Any erroneous detections which pass downstream at this stage must now be handled by the identification module.
+
+\newpage
 
 \subsection{Cropping}\label{ch:cetDet,sec:postProcessing,su:cropping}
 
@@ -543,10 +571,13 @@ At this point outputs from the Mask R-CNN detector have been post-processed to r
 
 As a result, the images outputted from the background detector are now cropped down to contain just the object of interest. This has the effect of vastly reducing the image file size, which in turn reduces the computational expense of operating on them downstream. In Figure \ref{fig:190627-001-MOLS0028_-crop} for example, the input image to the detector is of size 3456x5184 pixels. After post-processing, the resulting output image is now of size 776x1350px, approximately a 94.2\% reduction in image size whilst still keeping identifying information,  such as the white pigmentation on the dorsal fin, present. This cropping also has the effect of centring the detected \texttt{dolphin} objects in the final output image. 
 
+\newpage
 
 \section{Summary}\label{ch:cetDet,sec:Summary}
 
-This Chapter discusses the project's need for a model capable of cetacean detection, both from a technical and environmental perspective. The key reasons behind the use of instance segmentation masks rather than the relatively less computational and time expensive bounding boxes is explained, with evidence showing how the difficulty of the task influenced this move. Once the system requirements and underlying model architecture have been identified, the Chapter then examines the use of model hyperparameter optimisation to train a model capable of cetacean detection via instance segmentation masks. The use of model pretraining is also explored, and highlights the benefits of this approach even when using a pretraining dataset who's domain and distribution are vastly different to the final model's goal. Finally, the Chapter examines the use of post-processing techniques to improve the output of the Mask R-CNN's detections for use in downstream tasks. 
+This Chapter discusses the project's need for a model capable of cetacean detection, both from a technical and environmental perspective. The key reasons behind the use of instance segmentation masks rather than the relatively less computational and time expensive bounding boxes is explained, with evidence showing how the difficulty of the task influenced this move. 
+
+Once the system requirements and underlying model architecture have been identified, the Chapter then examines the use of model hyperparameter optimisation to train a model capable of cetacean detection via instance segmentation masks. The use of model pretraining is also explored, and highlights the benefits of this approach even when using a pretraining dataset who's domain and distribution are vastly different to the final model's goal. Finally, the Chapter examines the use of post-processing techniques to improve the output of the Mask R-CNN's detections for use in downstream tasks. 
 
 The final result of this Chapter is a Mask R-CNN model capable of high mAP even at large IoU thresholds. The model's resulting detections are coupled with a post-processing pipeline capable of greatly reducing the amount, and improving the quality of, data which subcomponents further into the pipeline are required to operate on. This allows for greater computational efficiency downstream as well as ultimately more accurate and confident individual identifications.
 
