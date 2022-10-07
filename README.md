@@ -1,4 +1,4 @@
-# Towards Automatic Photo-Identification of Cetaceans: A Fine-Grain, Few-Shot Problem in Marine Conservation
+# Towards Automatic Photo-Identification of Cetaceans: A Fine-Grained, Few-Shot Problem in Marine Conservation
 
 A working PhD thesis to be submitted to the Department of Electrical and Electronic Engineering, Newcastle University.
 
