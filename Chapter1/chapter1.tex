@@ -2,17 +2,19 @@
 
 %%% Big Data intro
 
-In recent years there has been a concerted effort to apply computer vision techniques to challenging problems which can have a positive societal impact. A highly important area where computer vision can help is conservation \cite{weinstein_computer_2018}. One of the main goals of conservation research is to monitor animal populations in their distribution area, undertaking abundance estimates to inform policy change. This is most commonly performed using capture-recapture surveys where researchers identify the presence of individuals and estimate abundance of animals in an area to produce population estimates \cite{constantine_abundance_2012, bigg_assessment_1982, sharpe_indian_2019, van_bressem_visual_2018, arso_civil_changing_2019, cheney_long-term_2014}. These surveys can be classified as invasive where animals are physically trapped, tagged, and released \cite{norris_tagging_1970, hobbs_bowhead_1982, andrews_best_2019}, or non-invasive where monitoring is performed passively such as via the collection of vast numbers of images. 
+In recent years there has been a concerted effort to apply computer vision techniques to challenging problems which can have a positive societal impact. A highly important area where computer vision can help is conservation \cite{weinstein_computer_2018}. One of the main goals of conservation research is to monitor animal populations in their distribution area, undertaking abundance estimates to inform policy change. This is most commonly performed using capture-recapture surveys where researchers identify the presence of individuals and estimate abundance of animals in an area to produce population estimates \cite{constantine_abundance_2012, bigg_assessment_1982, sharpe_indian_2019, van_bressem_visual_2018, arso_civil_changing_2019, cheney_long-term_2014}. These surveys can be classified as invasive where animals are physically trapped, tagged, and released \cite{norris_tagging_1970, hobbs_bowhead_1982, andrews_best_2019}, or non-invasive where monitoring is performed passively such as via the collection of vast numbers of images \cite{vanbressem_visual_2018, urian_recommendations_2015, reisser_photographic_2008, langtimm_survival_2004, holmberg_estimating_2009}.
 
-Photo-id is one of the main non-invasive capture-recapture methods utilised by cetacean researchers \cite{hammond_individual_1990, evans_monitoring_2004}. Surveys are usually undertaken from vessels at sea, although monitoring from coastlines or aircraft may also be utilised \cite{payne_long_1986, forney_seasonal_1998, wursig_methods_1990}. The methodology is employed for the monitoring of multiple cetacean species, with proven use cases in a range of studies \cite{sharpe_indian_2019, miragliuolo_rissos_2004, feyrer_origin_2021, bigg_assessment_1982}. Outside of cetaceans, photo-id has found further use in study of other marine life \cite{holmberg_estimating_2009, reisser_photographic_2008} and terrestrial species \cite{goswami_application_2007, clapham_automated_2020}.
+Photo-id is one of the main non-invasive capture-recapture methods utilised by cetacean (dolphin, porpoises, and whales) researchers \cite{hammond_individual_1990, evans_monitoring_2004}. Surveys are usually undertaken from vessels at sea, although monitoring from coastlines or aircraft may also be utilised \cite{payne_long_1986, forney_seasonal_1998, wursig_methods_1990}. The methodology is employed for the monitoring of multiple cetacean species, with proven use cases in a range of studies \cite{sharpe_indian_2019, miragliuolo_rissos_2004, feyrer_origin_2021, bigg_assessment_1982}. Outside of cetaceans, photo-id has found further use in study of other marine life \cite{holmberg_estimating_2009, reisser_photographic_2008} and terrestrial species \cite{goswami_application_2007, clapham_automated_2020}.
 
 All capture-recapture methodologies rely on the target species having some form of individually identifiable markings. Depending on the species, different parts of the body are the primary identifying feature; for dolphins this is usually the dorsal fin as this body part is most likely to be visible above the waterline \cite{sharpe_indian_2019, baird_population_2009}. During photo-id surveys, researchers often focus on long lasting stable markers such as dorsal fin shape, notches, scarring, and pigmentation \cite{wursig_photographic_1977, lockyer_observations_1990, mann_cetacean_2000}. These markings can be difficult to capture in detail due to the free roaming nature of the animals causing high variances in angles of approach, direction of travel, distance from camera, and surfacing elevation. This is exacerbated when dealing with cetacean species that travel in pods, making it difficult to distinguish the individuals present.
 
 Marine photo-id can be extremely labour and cost intensive compared to on-land surveys, which rely on the use of camera traps placed in stationary locations to capture images when they detect movement. This setup is not possible at sea due to a lack of stationary objects to attach devices to and rapid movement in the observed scene due to waves causing the camera to trigger -- producing a high false positive rate. 
 
-Upon survey completion, photo-id data must be analysed and individuals identified to produce a catalogue. Images collected during surveys are large in size and contain significant amounts of background noise. Historically, curation of this data has been a manual process that often takes longer than the entire data collection period \cite{tyson_moore_rise_2022}, further increasing labour and costs. For example, previous efforts to create an individual photo-id catalogue from surveys undertaken by Newcastle University's School of Natural \& Environmental Science's Marine MEGAfauna Lab took around three months. As such, any techniques to speed up the cataloguing process would be welcomed both by researchers and their funding bodies, affording more time to work on the application of data, for example to inform mitigation and policy change, rather than curation. 
+Upon survey completion, photo-id data must be analysed and individuals identified to produce a catalogue. Images collected during surveys are large in size and contain significant amounts of background noise. Historically, curation of this data has been a manual process that often takes longer than the entire data collection period \cite{tyson_moore_rise_2022}, further increasing labour and costs. As such, any techniques to speed up the cataloguing process would be welcomed both by researchers and their funding bodies, affording more time to work on the application of data, for example to inform mitigation and policy change, rather than curation. 
 
-\begin{figure}
+This thesis details a system for fully automatic catalogue matching based on unprocessed photo-id imagery. This is achieved through a pipeline of trained computer vision models and robust post-processing techniques capable of automatic fin detection and most likely catalogue matching based on latent space similarity, a visualisation of which can be seen in Figure \ref{fig:pipeline}. 
+
+\begin{figure}[b]
 	\begin{center}
 		\includegraphics[width=\linewidth]{Chapter1/figs/pipeline_compact.png}
 	\end{center}
@@ -20,7 +22,7 @@ Upon survey completion, photo-id data must be analysed and individuals identifie
 	\label{fig:pipeline}
 \end{figure}
 
-This thesis details a system for fully automatic catalogue matching based on unprocessed photo-id imagery. This is achieved through a pipeline of trained computer vision models and robust post-processing techniques capable of automatic fin detection and most likely catalogue matching based on latent space similarity, a visualisation of which can be seen in Figure \ref{fig:pipeline}. As photo-id surveys are not guaranteed to capture all individuals in a given geographic area, naive approaches such as training a simple image classifier on existing catalogue examples would not suffice as they are incapable of flagging previously uncatalogued individuals. Images are passed through a Mask R-CNN \cite{he_mask_2017} dorsal fin detector, removing the need for manual data pre-processing. Detections are then post-processed ready for fine-grained, few-shot catalogue matching utilising a Siamese Neural Network trained using triplet loss \cite{schroff_facenet_2015} and online semi-hard triplet mining to create a latent space based on the provided catalogue. Matches are obtained using the Euclidean distances between an input and class prototypes stored in the latent space, allowing for the flagging of potentially uncatalogued individuals to the researcher.
+As photo-id surveys are not guaranteed to capture all individuals in a given geographic area, naive approaches such as training a simple image classifier on existing catalogue examples would not suffice as they are incapable of flagging previously uncatalogued individuals. Images are passed through a Mask R-CNN \cite{he_mask_2017} dorsal fin detector, removing the need for manual data pre-processing. Detections are then post-processed ready for fine-grained, few-shot catalogue matching utilising a Siamese Neural Network trained using triplet loss \cite{schroff_facenet_2015} and online semi-hard triplet mining to create a latent space based on the provided catalogue. Matches are obtained using the Euclidean distances between an input and class prototypes stored in the latent space, allowing for the flagging of potentially uncatalogued individuals to the researcher.
 
 \section{Research Aim and Contributions}\label{ch:intro,sec:AimsAndContributions}
 
@@ -57,8 +59,6 @@ The structure of this thesis is as follows:
 	
 	\item[Chapter \ref{ch:Background}] presents the required background knowledge for understanding the work presented in future chapters. An introduction to both photo-id and deep learning is provided, alongside a discussion of key computer vision concepts and their recent use in conservation. Existing photo-id aids are also examined.
 	
-	\newpage
-	
 	\item[Chapter \ref{ch:cetDet}] outlines the approach adopted to create a computer vision model capable of coarse-grained cetacean detection in noisy, above water photo-id fieldwork imagery. Initial model testing is discussed, including the use of transfer learning, data augmentation, and hyperparameter tuning via a grid search. Next, the use of post-processing techniques to reduce the passing of false-positives downstream through the system pipeline is explored. 
 	
 	\item[Chapter \ref{ch:NDD}] describes the data collection fieldwork undertaken off the coast of Northumberland, UK, during Summer 2019. The curation of this data into a useable dataset for the training of computer vision models is explained. The robustness of work outlined in Chapter \ref{ch:cetDet} is evaluated using the dataset. 
@@ -71,8 +71,6 @@ The structure of this thesis is as follows:
 	 
 \end{description}
 
-\newpage
-
 \section{Related Publications}\label{ch:intro,relatedPublications}
 
 The work outlined in this thesis has led to the publication of the following peer-reviewed papers:
@@ -82,6 +80,8 @@ The work outlined in this thesis has led to the publication of the following pee
 	
 	\item[\cite{trotter_ndd20_2020}] Trotter, C., Atkinson, G., Sharpe, M., Richardson, K., McGough, A.S., Wright, N., Burville, B. and Berggren, P., 2020. NDD20: A large-scale few-shot dolphin dataset for coarse and fine-grained categorisation. In \textit{The 7\textsuperscript{th} Workshop on Fine-Grained Visual Categorization, CVPR 2020}. Available: \href{https://doi.org/10.48550/arXiv.2005.13359}{doi.org/10.48550/arXiv.2005.13359}.
 \end{description}
+
+\newpage
 
 \noindent The following work into the application of computer vision to conservation was produced during, but does not form a part of, this thesis:
 
