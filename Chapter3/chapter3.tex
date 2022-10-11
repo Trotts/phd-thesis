@@ -226,13 +226,13 @@ When training a Mask R-CNN model there are a large range of hyperparameters, or 
 
 \subsection{Detection Hyperparameters}\label{ch:cetDet,sec:ModelSelection,sub:DetectionHyperparameters}
  
- With regards to the detection hyperparameters, only the minimum confidence of the model was changed from the default of 0.7 to 0.9. This was changed as during initial trials it was found models trained on the Zanzibar data would often produce a high number of false positives (for example detecting a wave as a fin) or create duplicate detections (one fin detected twice). By increasing the minimum confidence of the model to 0.9, we increase the threshold at which the model returns a detection to 90\%, or in other words for every detection the model must be 90\% sure that the detection is actually a fin before notifying the user. This reduced both the false positive rate and duplicate detection rate of the model. An example of this can be seen in Figure \ref{fig:min-conf}. Note how in the left image more detections are present than in the right image, however the extra detections are either part of an existing detection (yellow) or do not contain enough fin to identify the individual (red).
+ With regards to the detection hyperparameters, only the minimum confidence of the model was changed from the default of 0.7 to 0.9. This was changed as during initial trials it was found that models trained on the Zanzibar data would often produce a high number of false positives (for example detecting a wave as a fin) or create duplicate detections (one fin detected twice). By increasing the minimum confidence of the model to 0.9, the threshold at which the model returns a detection is increased to 90\% -- or in other words, for every detection the model must be 90\% sure that the detection is actually a cetacean before notifying the user. This has the effect of reducing the number of erroneous detections passed downstream, such as in Figure \ref{fig:min-conf} where increasing the minimum confidence from 0.7 (Left) to 0.9 (Right) has removed a low confidence, erroneous, detection. 
  
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[scale=0.55]{Chapter3/figs/min-conf-eg.png}
 	\end{center}
-	\caption{An example image showing the effect of minimum detection confidence thresholding in Mask R-CNN detections. Left: A threshold of 0.7. Right: A threshold of 0.9.}
+	\caption{An example image showing the effect of changing the Mask R-CNN's minimum detection confidence. Left: A threshold of 0.7. Right: A threshold of 0.9.}
 	\label{fig:min-conf}
 \end{figure}
  
@@ -425,11 +425,11 @@ The model also struggles in cases where the image contains an animal under the w
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-underwater.png}
 	\end{center}
-	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the blue detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
+	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the green detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
 	\label{fig:model-fail-underwater}
 \end{figure}
 
-The Zanzibar dataset contains a large number of images which contain other vessels as well as dolphins. This is due to the large marine eco-tourism industry within Zanzibar \cite{sharpe_indian_2019-1, berggren_sustainable_2007}. Whilst this issue may not be present in other survey areas where this model may be deployed, it still denotes an example of the model failing. In this case often parts of the boat, or a combination of the boat and the humans on the boat, may cause the model to incorrectly identify a grouping of pixels as a dolphin. An example of this can be seen in Figure \ref{fig:model-fail-boat}.
+The Zanzibar dataset contains a large number of images which contain other vessels as well as dolphins. This is due to the large marine eco-tourism industry within Zanzibar \cite{sharpe_indian_2019, berggren_sustainable_2007}. Whilst this issue may not be present in other survey areas where this model may be deployed, it still denotes an example of the model failing. In this case often parts of the boat, or a combination of the boat and the humans on the boat, may cause the model to incorrectly identify a grouping of pixels as a dolphin. An example of this can be seen in Figure \ref{fig:model-fail-boat}.
  
 \begin{figure}[h]
 	\begin{center}
