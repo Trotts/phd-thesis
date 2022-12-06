@@ -14,7 +14,7 @@ Next a second model was trained using the NDD AU SMRU dataset, limited to the 17
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter6/figs/effect-of-au-smru.png}
 	\end{center}
-	\caption{Comparison between two SNNs trained for most likely catalogue matching, one using the Segmented NDD20 dataset, and the other using the NDD AU SMRU dataset. Evaluation is performed using the NDD AU SMRU test set. All datasets limited to the 17 Segmented NDD20 classes suitable for SNN training with semi-hard triplet mining.}
+	\caption[Comparison between two SNNs trained for most likely catalogue matching, one using the Segmented NDD20 dataset, and the other using the NDD AU SMRU dataset.]{Comparison between two SNNs trained for most likely catalogue matching, one using the Segmented NDD20 dataset, and the other using the NDD AU SMRU dataset. Evaluation is performed using the NDD AU SMRU test set. All datasets limited to the 17 Segmented NDD20 classes suitable for SNN training with semi-hard triplet mining.}
 	\label{fig:effect-of-au-smru}
 \end{figure}
 
@@ -34,7 +34,7 @@ Analysis of the Euclidean distances between bounding boxed dorsal fins and corre
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter6/figs/embedding-check-images.jpg}
 	\end{center}
-	\caption{Example data used to examine the effect of retained background on most likely catalogue matching. Left: Bounding box detection containing both a dorsal fin and background. Centre: Corresponding dorsal fin mask. Right: Corresponding background mask.}
+	\caption[Example data used to examine the effect of retained background on most likely catalogue matching.]{Example data used to examine the effect of retained background on most likely catalogue matching. Left: Bounding box detection containing both a dorsal fin and background. Centre: Corresponding dorsal fin mask. Right: Corresponding background mask.}
 	\label{fig:bboxvsmask}
 \end{figure}
 
@@ -46,7 +46,7 @@ As outlined in Chapter \ref{ch:ID}, an automatic approach to most likely catalog
 
 \subsection{The SDRP Dataset}\label{ch:SNNEvaluation,sec:SDRP,sub:SDRPDataset}
 
-To evaluate SNN generalisability, a subset of photo-id catalogue data was obtained from the Chicago Zoological Society's Sarasota Dolphin Research Program (SDRP). The subset consisted of 250 images of 23 individual common bottlenose dolphins captured in the waters around Naples, FL, USA \cite{tyson_moore_final_2020}. Unlike the datasets collected from fieldwork in Northumberland, UK, the SDRP dataset was provided in a pre-processed form as the dataset had been previously utilised to compare photo-id methodologies \cite{tyson_moore_rise_2022}. Images provided were cropped to remove a large amount of background noise and centre the dorsal fin, examples of which can be seen in Figure \ref{fig:sdrp-example}. 
+To evaluate SNN generalisability, a subset of photo-id catalogue data was obtained from the Chicago Zoological Society's Sarasota Dolphin Research Program (SDRP)\nomenclature[z-SDRP]{SDRP}{Sarasota Dolphin Research Program}. The subset consisted of 250 images of 23 individual common bottlenose dolphins captured in the waters around Naples, FL, USA \cite{tyson_moore_final_2020}. Unlike the datasets collected from fieldwork in Northumberland, UK, the SDRP dataset was provided in a pre-processed form as the dataset had been previously utilised to compare photo-id methodologies \cite{tyson_moore_rise_2022}. Images provided were cropped to remove a large amount of background noise and centre the dorsal fin, examples of which can be seen in Figure \ref{fig:sdrp-example}. 
 
 \begin{figure}
 	\begin{center}
@@ -64,7 +64,7 @@ To generate a train-test split capable of training an SNN, the catalogue set was
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter6/figs/SDRP-double-mask-eg-indv-13.png}
 	\end{center}
-	\caption{Left: Image of individual \texttt{13} from the original SDRP catalogue set. Right: Example masks generated for the Left image. Both masks are kept for use in training as they were deemed to be sufficiently different.}
+	\caption[Left: Image of individual \texttt{13} from the original SDRP catalogue set. Right: Example masks generated for the Left image.]{Left: Image of individual \texttt{13} from the original SDRP catalogue set. Right: Example masks generated for the Left image. Both masks are kept for use in training as they were deemed to be sufficiently different.}
 	\label{fig:sdrp-double-mask-eg}
 \end{figure}
 
@@ -113,7 +113,7 @@ For the SDRP dataset, whilst an uncertainty of 30\% was found to be sufficient f
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter6/figs/uncatalogued-individual-thresholding.png}
 	\end{center}
-	\caption{Example uncatalogued individual thresholding for the SDRP dataset using an individual not present during training (image taken from the NDD AU SMRU dataset). The resultant Euclidean distances between the input image's embedding and the existing class prototypes are shown. No warning has been generated when the minimum distance threshold is set to 4.0, however one has been when the threshold is set to 0.15. Uncertainty scores generated using K-Nearest Neighbours clustering are also shown. Warnings have been displayed both when $K = 10$ and $K = 5$ using an uncertainty threshold of $>=30\%$.}
+	\caption[Example uncatalogued individual thresholding for the SDRP dataset using an individual not present during training.]{Example uncatalogued individual thresholding for the SDRP dataset using an individual not present during training (image taken from the NDD AU SMRU dataset). The resultant Euclidean distances between the input image's embedding and the existing class prototypes are shown. No warning has been generated when the minimum distance threshold is set to 4.0, however one has been when the threshold is set to 0.15. Uncertainty scores generated using K-Nearest Neighbours clustering are also shown. Warnings have been displayed both when $K = 10$ and $K = 5$ using an uncertainty threshold of $>=30\%$.}
 	\label{fig:uncatalogued-individual-example-sdrp}
 \end{figure}
 
@@ -123,7 +123,7 @@ Example warning generation using both prototype distance measurement and KNN for
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter6/figs/catalogued-individual-thresholding.png}
 	\end{center}
-	\caption{Example uncatalogued individual thresholding for the SDRP dataset using an individual present during training. The resultant Euclidean distances between the input image's embedding and the existing class prototypes are shown. No warning has been generated when the minimum distance threshold is set to either 4.0 or 0.15. Uncertainty scores generated using K-Nearest Neighbours clustering are also shown. A warning is displayed when $K = 10$ but not when $K = 5$, with both using an uncertainty threshold of 30\%.}
+	\caption[Example uncatalogued individual thresholding for the SDRP dataset using an individual present during training.]{Example uncatalogued individual thresholding for the SDRP dataset using an individual present during training. The resultant Euclidean distances between the input image's embedding and the existing class prototypes are shown. No warning has been generated when the minimum distance threshold is set to either 4.0 or 0.15. Uncertainty scores generated using K-Nearest Neighbours clustering are also shown. A warning is displayed when $K = 10$ but not when $K = 5$, with both using an uncertainty threshold of 30\%.}
 	\label{fig:catalogued-individual-example-sdrp}
 \end{figure}
 

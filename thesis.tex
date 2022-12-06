@@ -13,13 +13,16 @@
 \usepackage[T1]{fontenc}
 \usepackage{tablefootnote}
 \usepackage[scaled=0.85]{beramono} %bold texttt in Appendix
-\usepackage[intoc]{nomencl}
+\usepackage[refpage]{nomencl}
 \usepackage[raggedright]{titlesec}
 \usepackage{float}
 
 \newcommand{\cmark}{\ding{51}}% ticks
 \newcommand{\xmark}{\ding{55}}% crosses
 
+% Nomenclature with page nums of first use
+ \def\pagedeclaration#1{\dotfill\hyperlink{page.#1}{\nobreakspace#1}}
+ \makenomenclature
 
 % ********************************** Preamble **********************************
 % Preamble: Contains packages and user-defined commands and settings
@@ -55,7 +58,7 @@
 
 \end{titlepage}
 
-\include{Acknowledgement/acknowledgement} %Citizen scientists of the facebook groups
+\include{Acknowledgement/acknowledgement}
 \include{Abstract/abstract}
 
 % *********************** Adding TOC and List of Figures ***********************

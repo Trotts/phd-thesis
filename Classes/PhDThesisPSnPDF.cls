@@ -1033,7 +1033,7 @@ wish to left align your text}
 
 
 % ******************************* Nomenclature *********************************
-\RequirePackage[intoc]{nomencl}
+\RequirePackage[refpage]{nomencl}
 \makenomenclature
 \renewcommand{\nomgroup}[1]{%
 \ifthenelse{\equal{#1}{A}}{\item[\textbf{Roman Symbols}]}{%

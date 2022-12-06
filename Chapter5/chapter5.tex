@@ -42,13 +42,13 @@ This is the main reason why Bayesian dropout was not utilised for automated most
 
 \subsection{Siamese Neural Networks}\label{ch:ID,sec:deciding,sub:SNN}
 
-Rather than producing a classification and measuring uncertainty as is the case with Bayesian dropout, Siamese Neural Networks (SNNs) aim to incorporate the notion of similarity into the model. This is achieved by connecting two or more identical CNNs in parallel, each sharing the same backbone architecture, initial and updated weights, and hyperparameters. Each CNN in the SNN is designed to produce an embedding, or a  $d$-dimensional representation, of the input. The size of this embedding is set via hyperparameter and dictates how many $d$ dimensions the output of the SNN will be. For example, if an SNN is created with an embedding size of 10, each CNN may take a high dimensional input of size \textit{width} * \textit{height} * \textit{channels} and output a 10-dimensional embedding, a float vector of size 10 which represents the input image. A visualisation of a two branch SNN can be seen in Figure \ref{fig:signet-SNN-architecture}.
+Rather than producing a classification and measuring uncertainty as is the case with Bayesian dropout, Siamese Neural Networks (SNNs) aim to incorporate the notion of similarity into the model. This is achieved by connecting two or more identical CNNs in parallel, each sharing the same backbone architecture, initial and updated weights, and hyperparameters. Each CNN in the SNN is designed to produce an embedding, or a $d$-dimensional representation, of the input. The size of this embedding is set via hyperparameter and dictates how many $d$ dimensions the output of the SNN will be. For example, if an SNN is created with an embedding size of 10, each CNN may take a high dimensional input of size \textit{width} * \textit{height} * \textit{channels} and output a 10-dimensional embedding, a float vector of size 10 which represents the input image. A visualisation of a two branch SNN can be seen in Figure \ref{fig:signet-SNN-architecture}.
 
 \begin{figure}
 	\begin{center}
 		\includegraphics[scale=0.4]{Chapter5/figs/signet-SNN-architecture.png}
 	\end{center}
-	\caption{An example SNN architecture for signature verification. Image from \cite{dey_signet_2017}.}
+	\caption[An example SNN architecture for signature verification.]{An example SNN architecture for signature verification. Image from \cite{dey_signet_2017}.}
 	\label{fig:signet-SNN-architecture}
 \end{figure}
 
@@ -99,7 +99,7 @@ SNNs which make use of two branches can be optimised using a Pairwise Ranking Lo
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter5/figs/pairwise_ranking_loss_faces.png}
 	\end{center}
-	\caption{SNN optimisation using Pairwise Ranking Loss. Image from \cite{gomez_understanding_2019}.}
+	\caption[SNN optimisation using Pairwise Ranking Loss.]{SNN optimisation using Pairwise Ranking Loss. Image from \cite{gomez_understanding_2019}.}
 	\label{fig:pairwise_ranking_loss_faces}
 \end{figure}
 
@@ -126,7 +126,7 @@ Triplet Ranking Loss aims to avoid this issue by training on triplets of data po
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter5/figs/triplet-loss-eg.png}
 	\end{center}
-	\caption{SNN optimisation using Triplet Ranking Loss. Each input is passed to a branch of the SNN and an embedding is produced. These embeddings are used to optimise future embedding generation, aiming to pull the Anchor and Positive together whilst pushing the Positive and Negative apart. Example Anchor, Positive, and Negative from the MNIST dataset \cite{lecun_gradient-based_1998}.}
+	\caption[SNN optimisation using Triplet Ranking Loss.]{SNN optimisation using Triplet Ranking Loss. Each input is passed to a branch of the SNN and an embedding is produced. These embeddings are used to optimise future embedding generation, aiming to pull the Anchor and Positive together whilst pushing the Positive and Negative apart. Example Anchor, Positive, and Negative from the MNIST dataset \cite{lecun_gradient-based_1998}.}
 	\label{fig:triplet-loss-eg}
 \end{figure}
 
@@ -157,7 +157,7 @@ The goal of Semi-Hard Triplet Mining is to locate as many Semi-Hard triplets fro
 	\begin{center}
 		\includegraphics[scale=0.7]{Chapter5/figs/semi-hard-triplet-mining.png}
 	\end{center}
-	\caption{A visualisation of the areas in the latent space where Easy, Hard, and Semi-Hard triplets can occur, where $a$ is the location of the Anchor and $p$ is the location of the Positive. Image from \cite{moindrot_triplet_2018}.}
+	\caption[A visualisation of the areas in the latent space where Easy, Hard, and Semi-Hard triplets can occur.]{A visualisation of the areas in the latent space where Easy, Hard, and Semi-Hard triplets can occur, where $a$ is the location of the Anchor and $p$ is the location of the Positive. Image from \cite{moindrot_triplet_2018}.}
 	\label{fig:semi-hard-triplet-mining}
 \end{figure}
 
@@ -215,7 +215,7 @@ The following sections detail the creation of the SNN-based catalogue matcher. F
 	\begin{center}
 		\includegraphics[width=\linewidth]{Chapter5/figs/pipeline-SNN.png}
 	\end{center}
-	\caption{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the SNN component highlighted. It is this part of the pipeline that will be discussed in the following sections.}
+	\caption[The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the SNN component highlighted.]{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the SNN component highlighted. It is this part of the pipeline that will be discussed in the following sections.}
 	\label{fig:pipeline-SNN}
 \end{figure}
 
@@ -229,7 +229,7 @@ Two backbone architectures were tested during SNN development. The first of thes
 
 Like all models, SNNs have multiple hyperparameters which must be tuned. As such, work began to select which hyperparameters should be tuned and how. Since developing the Mask R-CNN fin detector, discussed in Chapter \ref{ch:cetDet}, the area of hyperparameter optimisation has advanced considerably. Multiple frameworks now exist which take a Bayesian approach to finding the optimal hyperparameter values. Unlike optimisation through a Grid Search whereby all combinations of user-defined hyperparameter values are evaluated (see Section \ref{ch:cetDet,sec:ModelSelection,sub:HyperparameterTuning} for an example of this), with Bayesian Optimisation the user only needs to define the upper and lower bounds for each hyperparameter. The search space is then explored using a probabilistic methodology, locating the optimal set of hyperparameters within the ranges provided. This speeds up the optimisation process as values unlikely to yield promising results are ignored. As such, a larger number of hyperparameters can be optimised when compared to a Grid Search, and this can be achieved in a smaller amount of time. 
 
-The Optuna framework \cite{akiba_optuna_2019}  was utilised to facilitate hyperparameter tuning through Bayesian optimisation. Whilst Optuna allows users to make use of custom optimisation algorithms, this work specifically made use of the built-in Tree-structured Parzen Estimator (TPE) algorithm. Optuna performs optimisation iteratively. This means that, for each iteration and for each hyperparameter, TPE fits one Gaussian Mixture Model to the set of hyperparameter values, $x$, associated with the current optimal values, $l(x)$, and another to the remaining hyperparameter values, $g(x)$. Optimal values for each iteration are selected by maximising the ratio $l(x)/g(x)$, with the final trial producing the current optimal hyperparameter values. For a more in-depth discussion of TPE, see Bergstra \textit{et al.} \cite{bergstra_algorithms_2011}.
+The Optuna framework \cite{akiba_optuna_2019}  was utilised to facilitate hyperparameter tuning through Bayesian optimisation. Whilst Optuna allows users to make use of custom optimisation algorithms, this work specifically made use of the built-in Tree-structured Parzen Estimator (TPE)\nomenclature[z-TPE]{TPE}{Tree-structured Parzen Estimator}	 algorithm. Optuna performs optimisation iteratively. This means that, for each iteration and for each hyperparameter, TPE fits one Gaussian Mixture Model to the set of hyperparameter values, $x$, associated with the current optimal values, $l(x)$, and another to the remaining hyperparameter values, $g(x)$. Optimal values for each iteration are selected by maximising the ratio $l(x)/g(x)$, with the final trial producing the current optimal hyperparameter values. For a more in-depth discussion of TPE, see Bergstra \textit{et al.} \cite{bergstra_algorithms_2011}.
 
 Through Optuna, TPE was utilised to set the learning rate to a \texttt{log uniform} value between 1e-6 and 1e-3, for use with either the SGD or Adam optimiser.  Weight decay was set to a \texttt{log uniform} value between 1e-6 and 1e-1. Step size was set to an \texttt{int} value between 5 and 10, with the $\gamma$ value for this set to a \texttt{log uniform} between 1e-3 and 1e-1. The margin \textit{m} defined in the Triplet Ranking Loss (see Equation \ref{eq:tripletLoss}) was set to a \texttt{log uniform} value between 0.1 and 1.0. The final embedding layer was tuned to produce an \texttt{int} value between 16 and 128.
 
@@ -290,7 +290,7 @@ The optimal SNN hyperparameters chosen through Bayesian optimisation for each ar
 			VarvaraNet                                                         & \begin{tabular}[t]{@{}c@{}}Colour Jitter \& \\ Perspective Shift\end{tabular}    & 2                                                                 & 35                                                                                     & 5                                                                                             & 0.286            & 4.093e-4                                                          & SGD                & 5.352e-4                                                                             & 9                                                                                 & 0.068             & 28                                                                & 0.826                       \\
 			\bottomrule                                                      
 	\end{tabular}}
-	\caption{Optimal SNN hyperparameters for each architecture-augmentation combination located using Bayesian optimisation over 100 iterations. Results given to 3 decimal places where applicable. Best model parameters presented in bold.}
+	\caption[Optimal SNN hyperparameters for each architecture-augmentation combination located using Bayesian optimisation over 100 iterations.]{Optimal SNN hyperparameters for each architecture-augmentation combination located using Bayesian optimisation over 100 iterations. Results given to 3 decimal places where applicable. Best model parameters presented in bold.}
 	\label{tab:optunaBestParamsPerSNN}
 \end{table}
 
@@ -316,7 +316,7 @@ To decide on a threshold value for the NDD AU SMRU dataset, each image not utili
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter5/figs/uncatalogued-individual-example-ndd-au-smru.png}
 	\end{center}
-	\caption{Example uncatalogued individual thresholding. Left: The input image seen by the model, of class \texttt{3}. The model has not been trained using this class. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the distance to the closest prototype is above the threshold, the fin has been flagged for manual review. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's most confident class is below the threshold, and thus the fin has been flagged for manual review.}
+	\caption[Example uncatalogued individual thresholding.]{Example uncatalogued individual thresholding. Left: The input image seen by the model, of class \texttt{3}. The model has not been trained using this class. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the distance to the closest prototype is above the threshold, the fin has been flagged for manual review. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's most confident class is below the threshold, and thus the fin has been flagged for manual review.}
 	\label{fig:uncatalogued-individual-example-ndd-au-smru}
 \end{figure}
 
@@ -326,13 +326,13 @@ The use of class prototypes proved especially useful for determining noise. Thro
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter5/figs/noise-example-ndd-au-smru.png}
 	\end{center}
-	\caption{Example noise thresholding. Left: The input image seen by the model, of class \texttt{noise}. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the closest prototype is \texttt{noise}, the input has been flagged. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's \texttt{noise} confidence is above the threshold, and thus the input has been flagged.}
+	\caption[Example noise thresholding.]{Example noise thresholding. Left: The input image seen by the model, of class \texttt{noise}. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the closest prototype is \texttt{noise}, the input has been flagged. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's \texttt{noise} confidence is above the threshold, and thus the input has been flagged.}
 	\label{fig:noise-individual-example-ndd-au-smru}
 \end{figure}
 
 \subsubsection{Thresholding via K-Nearest Neighbours}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding,subsub:KNN}
 
- During experimentation it was found that when only utilising class prototypes, the model struggled to highlight uncatalogued individuals if some class clusters were spread over a large area in the latent space. To combat this, the use of K-Nearest Neighbours (KNN) to flag potentially uncatalogued individuals was examined. KNN works by comparing each input image's embedding to the $K$ closest embeddings in the latent space, where $K$ is some user defined value. 
+ During experimentation it was found that when only utilising class prototypes, the model struggled to highlight uncatalogued individuals if some class clusters were spread over a large area in the latent space. To combat this, the use of K-Nearest Neighbours (KNN)\nomenclature[z-KNN]{KNN}{K-Nearest Neighbours} to flag potentially uncatalogued individuals was examined. KNN works by comparing each input image's embedding to the $K$ closest embeddings in the latent space, where $K$ is some user defined value. 
  
  If, for example, $K = 8$ then the closest eight embeddings to that of the input image are examined. If seven embeddings are of class \texttt{1} and one embedding is of class \texttt{2}, then we have an 88\% certainty that the input image is an example of class \texttt{2}. However, if the image is embedded and three of the closest eight embeddings are of class \texttt{1}, two are class \texttt{2}, one of class \texttt{3}, one of class \texttt{4}, and one of class \texttt{10}, then the uncertainty score for any classification of the input image would be high. This could then be flagged to the user. As such, the use of an uncertainty score allows for greater interpretability when compared to a similarity score based on distances between points in the latent space, especially for those without an understanding of the underlying concepts behind SNNs like cetacean researchers. 
 

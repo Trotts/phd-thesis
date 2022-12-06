@@ -31,7 +31,7 @@ Before a system for automatic cetacean detection can be developed, it is importa
  	\begin{center}
  		\includegraphics[scale=0.6]{Chapter3/figs/angle-size-example.png}
  	\end{center}
- 	\caption{Two images of the same individual taken from different angles of approach, directions of travel, and distances from the vessel. Note how this changes the make-up of the dorsal fin but keeps the identifying notch visible. 
+ 	\caption[Two images of the same individual taken from different angles of approach, directions of travel, and distances from the vessel.]{Two images of the same individual taken from different angles of approach, directions of travel, and distances from the vessel. Note how this changes the make-up of the dorsal fin but keeps the identifying notch visible. 
  	}
  	\label{fig:angle-eg}
  \end{figure}
@@ -129,7 +129,7 @@ The following sections detail the creation of the Mask R-CNN based cetacean dete
 	\begin{center}
 		\includegraphics[width=\linewidth]{Chapter3/figs/pipeline-detector.png}
 	\end{center}
-	\caption{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the Mask R-CNN component highlighted. It is this part of the pipeline that will be discussed in the following Sections.}
+	\caption[The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the Mask R-CNN component highlighted.]{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the Mask R-CNN component highlighted. It is this part of the pipeline that will be discussed in the following Sections.}
 	\label{fig:pipeline-detector}
 \end{figure}
 
@@ -198,7 +198,7 @@ As well as transfer learning the use of data augmentation was also explored to h
 	\begin{center}
 		\includegraphics[scale=0.45]{Chapter3/figs/data-augs.png}
 	\end{center}
-	\caption{Examples of data augmentations found in the literature. Left: Randomly erasing parts of images, from Zhong \textit{et al}. \cite{zhong_random_2017}. Right: Augmentations to simulate screenshot capture. Defocus blur (top), motion blur (bottom) from Atapour-Abarghouei \textit{et al}. \cite{atapour-abarghouei_kings_2019}.}
+	\caption[Examples of data augmentations found in the literature.]{Examples of data augmentations found in the literature. Left: Randomly erasing parts of images, from Zhong \textit{et al}. \cite{zhong_random_2017}. Right: Augmentations to simulate screenshot capture. Defocus blur (top), motion blur (bottom) from Atapour-Abarghouei \textit{et al}. \cite{atapour-abarghouei_kings_2019}.}
 	\label{fig:data-aug-examples}
 \end{figure}
 
@@ -228,7 +228,7 @@ When training a Mask R-CNN model there are a large range of hyperparameters, or 
 	\begin{center}
 		\includegraphics[scale=0.55]{Chapter3/figs/min-conf-eg.png}
 	\end{center}
-	\caption{An example image showing the effect of changing the Mask R-CNN's minimum detection confidence. Left: A threshold of 0.7. Right: A threshold of 0.9.}
+	\caption[An example image showing the effect of changing the Mask R-CNN's minimum detection confidence.]{An example image showing the effect of changing the Mask R-CNN's minimum detection confidence. Left: A threshold of 0.7. Right: A threshold of 0.9.}
 	\label{fig:min-conf}
 \end{figure}
  
@@ -264,7 +264,7 @@ As discussed in Section \ref{ch:Background,sec:objectDetection,sub:RPN}, Region 
 
 Although only a few hyperparameters have been chosen to tune, the size of the possible search space to evaluate is still extremely large. As mentioned previously, it is not feasible both from a time and resource perspective to evaluate the entire space and find the truly optimal value for each hyperparameter. Instead the search space is discretised using a grid search, for each hyperparameter a subset of possible values is selected. Each combination of hyperparameter values is then evaluated to determine which set of values produces a satisfactory model. 
 
-The list of possible hyperparameter combinations and model name, determined by the date-time value at the start of the model's training run, can be seen in Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}. This reduced hyperparameter tuning run still required a significant amount of time and resources, running over three NC12 Microsoft Azure virtual machines (VMs), each with two Tesla K80 GPUs, taking approximately one week to complete the grid search producing a total of 50 models. Model runs were split between the VMs based on augmentation strategy with one VM running only \textit{aug1}, the other \textit{aug2}, and the final with no augmentation strategy. It should be noted here that this computational and time expense would most likely be reduced should the images used to train the Mask R-CNN not be so large, although the reasons for this decision are discussed in Section \ref{ch:cetDet,sec:requirements,sub:technical}.
+The list of possible hyperparameter combinations and model name, determined by the date-time value at the start of the model's training run, can be seen in Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}. This reduced hyperparameter tuning run still required a significant amount of time and resources, running over three NC12 Microsoft Azure virtual machines (VMs)\nomenclature[z-VM]{VM}{Virtual Machine}, each with two Tesla K80 GPUs, taking approximately one week to complete the grid search producing a total of 50 models. Model runs were split between the VMs based on augmentation strategy with one VM running only \textit{aug1}, the other \textit{aug2}, and the final with no augmentation strategy. It should be noted here that this computational and time expense would most likely be reduced should the images used to train the Mask R-CNN not be so large, although the reasons for this decision are discussed in Section \ref{ch:cetDet,sec:requirements,sub:technical}.
 
 \begin{table}[!ht]
 	\tiny
@@ -345,7 +345,7 @@ This effect is even greater when comparing map@IOU[0.85] scores, with the worst 
 	\begin{center}
 		\includegraphics[scale=0.3]{Chapter3/figs/comparison_graph_all_diff_colours.png}
 	\end{center}
-	\caption{mAP@IOU[0.5:0.95] scores for all models trained in the Mask R-CNN Zanzibar dataset grid search. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
+	\caption[mAP@IOU{[0.5:0.95]} scores for all models trained in the Mask R-CNN Zanzibar dataset grid search.]{mAP@IOU[0.5:0.95] scores for all models trained in the Mask R-CNN Zanzibar dataset grid search. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
 	\label{fig:mAP-graph}
 \end{figure}
 
@@ -357,7 +357,7 @@ When filtering, the top five performing models at each threshold were extracted 
 	\begin{center}
 		\includegraphics[scale=0.55]{Chapter3/figs/mask-RCNN-model-bar-chart.png}
 	\end{center}
-	\caption{mAP@IOU[0.5, 0.75, 0.85] scores for the best performing Mask R-CNN models trained on the Zanzibar dataset. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
+	\caption[mAP@IOU{[0.5, 0.75, 0.85]} scores for the best performing Mask R-CNN models trained on the Zanzibar dataset.]{mAP@IOU[0.5, 0.75, 0.85] scores for the best performing Mask R-CNN models trained on the Zanzibar dataset. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
 	\label{fig:mAP-best-models-bar-chart}
 \end{figure}
 
@@ -389,7 +389,7 @@ As discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBase
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
-	\caption{Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset. Subset of Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}.}
+	\caption[Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset.]{Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset. Subset of Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}.}
 	\label{tab:best-mask-rcnn-models}
 \end{table}
 
@@ -409,7 +409,7 @@ Figure \ref{fig:model-fail-bad-detection-and-split-individual} also shows anothe
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-split-individual.png}
 	\end{center}
-	\caption{Left: The input image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the cetacean on the right has been split over two masks due to occlusion from a small wave.}
+	\caption[Left: The input image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image.]{Left: The input image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the cetacean on the right has been split over two masks due to occlusion from a small wave.}
 	\label{fig:model-fail-bad-detection-and-split-individual}
 \end{figure}
  
@@ -419,7 +419,7 @@ The model also struggles in cases where the image contains an animal under the w
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-underwater.png}
 	\end{center}
-	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the green detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
+	\caption[Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image.]{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the green detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
 	\label{fig:model-fail-underwater}
 \end{figure}
 
@@ -429,7 +429,7 @@ The Zanzibar dataset contains a large number of images which contain other vesse
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-boat.png}
 	\end{center}
-	\caption{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the red detection is a misclassification. The model believes a section of the boat's hull and the leg of the human to be a dolphin.}
+	\caption[Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image.]{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the red detection is a misclassification. The model believes a section of the boat's hull and the leg of the human to be a dolphin.}
 	\label{fig:model-fail-boat}
 \end{figure}
 
@@ -443,7 +443,7 @@ At this stage, the system is capable of detecting cetaceans at an individual pix
 	\begin{center}
 		\includegraphics[width=\linewidth]{Chapter3/figs/pipeline-post-processed.png}
 	\end{center}
-	\caption{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the post-processing techniques highlighted. It is this part of the pipeline that will be discussed in the following section.}
+	\caption[The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the post-processing techniques highlighted.]{The high level pipeline overview, shown in Figure \ref{fig:pipeline}, with the post-processing techniques highlighted. It is this part of the pipeline that will be discussed in the following section.}
 	\label{fig:pipeline-post-processed}
 \end{figure}
 
@@ -457,7 +457,7 @@ Thanks to the tendency for cetaceans to travel in pods however, it is unlikely a
 	\begin{center}
 		\includegraphics[scale=0.45]{Chapter3/figs/190730-001-MOLS0360_-detections.png}
 	\end{center}
-	\caption{A visualisation of the three \texttt{dolphin} detections for an input image produced by the Mask R-CNN detector. The detections are highlighted by the blue, green, and red overlays on the input image, top. The resultant detection masks once split are shown bottom, where a \texttt{dolphin} object is displayed in white.}
+	\caption[A visualisation of the three \texttt{dolphin} detections for an input image produced by the Mask R-CNN detector.]{A visualisation of the three \texttt{dolphin} detections for an input image produced by the Mask R-CNN detector. The detections are highlighted by the blue, green, and red overlays on the input image, top. The resultant detection masks once split are shown bottom, where a \texttt{dolphin} object is displayed in white.}
 	\label{fig:190730-001-MOLS0360_-detections}
 \end{figure}
 
@@ -470,7 +470,7 @@ In some situations a detected mask may contain an area of background inside the 
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter3/figs/before-and-after-morphing-masks-only.png}
 	\end{center}
-	\caption{Left: A detection mask before closing has been applied. The detected \texttt{dolphin} object is displayed in white. Note the cluster of black background pixels inside. Right: The same detection mask after closing. Note the pixels which make up the hole have been converted to \texttt{dolphin}.}
+	\caption[Left: A detection mask before closing has been applied. Right: The same detection mask after closing.]{Left: A detection mask before closing has been applied. The detected \texttt{dolphin} object is displayed in white. Note the cluster of black background pixels inside. Right: The same detection mask after closing. Note the pixels which make up the hole have been converted to \texttt{dolphin}.}
 	\label{fig:before-and-after-morphing-masks-only}
 \end{figure}
 
@@ -490,7 +490,7 @@ An example of background subtraction utilising cleaned masks can be seen in Figu
 	\begin{center}
 		\includegraphics[scale=0.45]{Chapter3/figs/190730-001-MOLS0360_-bg-subtraction.png}
 	\end{center}
-	\caption{A visualisation of the three \texttt{dolphin} detections from Figure \ref{fig:190730-001-MOLS0360_-detections} before and after background subtraction.A border has been added to the background subtracted images for clarity.}
+	\caption[A visualisation of the three \texttt{dolphin} detections from Figure \ref{fig:190730-001-MOLS0360_-detections} before and after background subtraction.]{A visualisation of the three \texttt{dolphin} detections from Figure \ref{fig:190730-001-MOLS0360_-detections} before and after background subtraction. A border has been added to the background subtracted images for clarity.}
 	\label{fig:190730-001-MOLS0360_-bg-subtraction}
 \end{figure}
 
@@ -500,7 +500,7 @@ Whilst the background subtraction aims to reduce noise passed downstream to the 
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter3/figs/fin-extraction-unclean-uncropped.png}
 	\end{center}
-	\caption{Top Left: A visualisation of the \texttt{dolphin} detection for an input image produced by the Mask R-CNN detector, alongside the confidence score. The detector has incorrectly labelled some pixels as \texttt{dolphin}. Top Right: The resultant detection mask after morphological transformation. Bottom: The resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask. Note the mislabelled pixels are present after cleaning and background subtraction. A border has been added for clarity.}
+	\caption[Top Left: A visualisation of the \texttt{dolphin} detection for an input image produced by the Mask R-CNN detector, alongside the confidence score. Top Right: The resultant detection mask after morphological transformation. Bottom: The resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask.]{Top Left: A visualisation of the \texttt{dolphin} detection for an input image produced by the Mask R-CNN detector, alongside the confidence score. The detector has incorrectly labelled some pixels as \texttt{dolphin}. Top Right: The resultant detection mask after morphological transformation. Bottom: The resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask. Note the mislabelled pixels are present after cleaning and background subtraction. A border has been added for clarity.}
 	\label{fig:fin-extraction-unclean}
 \end{figure}
 
@@ -527,14 +527,14 @@ Using the global distribution histograms, a \textit{dolphin-like} threshold was 
 	\begin{center}
 		\includegraphics[scale=0.3]{Chapter3/figs/148-148-159.png}
 	\end{center}
-	\caption{A representation of the RGB threshold for \textit{dolphin-like}, colour [148, 148, 159]. In the Zanzibar dataset, 90\% of pixels detected as \texttt{dolphin} have intensities below this threshold.}\label{fig:colour-threshold}
+	\caption[A representation of the RGB threshold for \textit{dolphin-like}, colour [148, 148, 159].]{A representation of the RGB threshold for \textit{dolphin-like}, colour [148, 148, 159]. In the Zanzibar dataset, 90\% of pixels detected as \texttt{dolphin} have intensities below this threshold.}\label{fig:colour-threshold}
 \end{figure}
 
 \begin{figure}
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter3/figs/190827-001-MOLS0078_-colour-thresholding-splash-removed.png}
 	\end{center}
-	\caption{Workflow detailing colour thresholding to remove an area of disjoint splash which has been detected as part of a \texttt{dolphin} object. The detection mask is split into each component. The resultant background subtracted images are then colour thresholded. As a result, the erroneous splash is discarded. }\label{fig:190827-001-MOLS0078_-colour-thresholding-splash-removed}
+	\caption[Workflow detailing colour thresholding to remove an area of disjoint splash which has been detected as part of a \texttt{dolphin} object.]{Workflow detailing colour thresholding to remove an area of disjoint splash which has been detected as part of a \texttt{dolphin} object. The detection mask is split into each component. The resultant background subtracted images are then colour thresholded. As a result, the erroneous splash is discarded. }\label{fig:190827-001-MOLS0078_-colour-thresholding-splash-removed}
 \end{figure}
 
 During testing however it was found that when checking detections at an individual image level rather than globally, considering a mask component to be \textit{dolphin-like} if 90\% of the pixels were below the colour threshold was too restrictive. Utilising such a high percentage bar sometimes rejected valid detections which may have been over-exposed due to lighting conditions. As such, whilst the colour threshold was kept the same, it was found that reducing the percentage check to 50\% provided enough leeway such that over-exposed but valid detections were kept whilst still rejecting a large portion of erroneous ones. Figure \ref{fig:190723-001-MOLS0752_-fin-removed-at-90-kept-at-50} shows an example detection which would be discarded if the 90\% global threshold was used per image, but is retained if this is dropped to a 50\% check.
@@ -543,7 +543,7 @@ During testing however it was found that when checking detections at an individu
 	\begin{center}
 		\includegraphics[width=\linewidth]{Chapter3/figs/190723-001-MOLS0752_-fin-removed-at-90-kept-at-50.png}
 	\end{center}
-	\caption{Workflow showing how utilising the 90\% global threshold may lead to over-exposed detections being erroneously discarded. A \texttt{dolphin} object is detected whose mask consists of multiple components.  One of the components, which contains a valid area of detection, is shown in stage 3 of the workflow. Checking to see if 50\% of the pixels in the component are below the threshold retains the detection, whilst checking at 90\% discards it.}\label{fig:190723-001-MOLS0752_-fin-removed-at-90-kept-at-50}
+	\caption[Workflow showing how utilising the 90\% global threshold may lead to over-exposed detections being erroneously discarded.]{Workflow showing how utilising the 90\% global threshold may lead to over-exposed detections being erroneously discarded. A \texttt{dolphin} object is detected whose mask consists of multiple components.  One of the components, which contains a valid area of detection, is shown in stage 3 of the workflow. Checking to see if 50\% of the pixels in the component are below the threshold retains the detection, whilst checking at 90\% discards it.}\label{fig:190723-001-MOLS0752_-fin-removed-at-90-kept-at-50}
 \end{figure}
 
 It may be the case that multiple components in an image meet the conditions set by the threshold to be kept. In this case, each component of the mask is split into its own image, in a similar process as outlined in Section \ref{ch:cetDet,sec:postProcessing,sub:handlingMultipleDetections}. If a mask only contains one component, then colour thresholding is not applied. This ensures no detections by the Mask R-CNN are completely ignored due to post-processing, preventing the discarding of a \texttt{dolphin} object mask which contains no disjoint components but is above the threshold, such as in the event of over-exposure. This condition also has the effect however of allowing fully erroneous detections to pass downstream, such as the flag detected in Figures \ref{fig:190730-001-MOLS0360_-detections} and \ref{fig:fin-extraction-unclean}. Any erroneous detections which pass downstream at this stage must now be handled by the identification module.
@@ -556,7 +556,7 @@ At this point outputs from the Mask R-CNN detector have been post-processed to r
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter3/figs/190627-001-MOLS0028_-crop.png}
 	\end{center}
-	\caption{Left: An input image and overlaid detection mask. Right: The corresponding cropped output image after post-processing. Original image sizes are displayed above each image. Images have been resized for clarity.}\label{fig:190627-001-MOLS0028_-crop}
+	\caption[Left: An input image and overlaid detection mask. Right: The corresponding cropped output image after post-processing.]{Left: An input image and overlaid detection mask. Right: The corresponding cropped output image after post-processing. Original image sizes are displayed above each image. Images have been resized for clarity.}\label{fig:190627-001-MOLS0028_-crop}
 \end{figure}
 
 As a result, the images outputted from the background detector are now cropped down to contain just the object of interest. This has the effect of vastly reducing the image file size, which in turn reduces the computational expense of operating on them downstream. In Figure \ref{fig:190627-001-MOLS0028_-crop} for example, the input image to the detector is of size 3456x5184 pixels. After post-processing, the resulting output image is now of size 776x1350px, approximately a 94.2\% reduction in image size whilst still keeping identifying information,  such as the white pigmentation on the dorsal fin, present. This cropping also has the effect of centring the detected \texttt{dolphin} objects in the final output image. 

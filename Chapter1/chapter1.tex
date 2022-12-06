@@ -4,11 +4,11 @@
 
 In recent years there has been a concerted effort to apply computer vision techniques to challenging problems which can have a positive societal impact. A highly important area where computer vision can help is ecology \cite{weinstein_computer_2018}. One of the main goals of ecological research is to monitor animal populations in their distribution area, undertaking abundance estimates to inform policy change. This is most commonly performed using capture-recapture surveys where researchers identify the presence of individuals and estimate abundance of animals in an area to produce population estimates \cite{constantine_abundance_2012, bigg_assessment_1982, sharpe_indian_2019, van_bressem_visual_2018, arso_civil_changing_2019, cheney_long-term_2014}. These surveys can be classified as invasive where animals are physically trapped, tagged, and released \cite{norris_tagging_1970, hobbs_bowhead_1982, andrews_best_2019}, or non-invasive where monitoring is performed passively such as via the collection of images -- referred to as photo-id \cite{vanbressem_visual_2018, urian_recommendations_2015, reisser_photographic_2008, langtimm_survival_2004, holmberg_estimating_2009}.
 
-Photo-id is one of the main non-invasive capture-recapture methods utilised by cetacean (dolphin, porpoises, and whales) researchers \cite{hammond_individual_1990, evans_monitoring_2004}. Surveys are usually undertaken from vessels at sea, although monitoring from coastlines or aircraft may also be utilised \cite{payne_long_1986, forney_seasonal_1998, wursig_methods_1990}. The methodology is employed for the monitoring of multiple cetacean species, with a range of studies demonstrating its efficacy \cite{sharpe_indian_2019, miragliuolo_rissos_2004, feyrer_origin_2021, bigg_assessment_1982}. Outside of cetaceans, photo-id has found further use in study of other marine life \cite{holmberg_estimating_2009, reisser_photographic_2008} and terrestrial species \cite{goswami_application_2007, clapham_automated_2020}.
+Photo-id is one of the main non-invasive capture-recapture methods utilised by cetacean (dolphin, porpoises, and whales) researchers \cite{hammond_individual_1990, evans_monitoring_2004}. Surveys are usually undertaken from vessels at sea, although monitoring from coastlines or aircraft may also be utilised \cite{payne_long_1986, forney_seasonal_1998, wursig_methods_1990}. The methodology is employed for the monitoring of multiple cetacean species, with a range of studies demonstrating its efficacy \cite{sharpe_indian_2019, miragliuolo_rissos_2004, feyrer_origin_2021, bigg_assessment_1982}. Outside of cetaceans, photo-id has found further use in the study of other marine life \cite{holmberg_estimating_2009, reisser_photographic_2008} and terrestrial species \cite{goswami_application_2007, clapham_automated_2020}.
 
 All non-invasive capture-recapture methodologies rely on the target species having some form of individually identifiable markings. Depending on the species, different parts of the body are the primary identifying feature; for dolphins this is usually the dorsal fin as this body part is most likely to be visible above the waterline \cite{sharpe_indian_2019, baird_population_2009}. During photo-id surveys, researchers often focus on long lasting stable markers such as dorsal fin shape, notches, scarring, and pigmentation \cite{wursig_photographic_1977, lockyer_observations_1990, mann_cetacean_2000}. These markings can be difficult to capture in detail due to the free roaming nature of the animals causing high variances in angles of approach, direction of travel, distance from camera, and surfacing elevation. This is exacerbated when dealing with cetacean species that travel in pods, making it difficult to distinguish the individuals present.
 
-Marine photo-id can be extremely labour and cost intensive compared to on-land surveys, which rely on the use of camera traps placed in stationary locations to capture images when they detect movement. This setup is not possible at sea due to a lack of stationary objects to attach devices to and rapid movement in the observed scene due to waves causing the camera to trigger -- producing a high false positive rate. 
+Marine photo-id, which necessitates the use of human-operated cameras generally onboard a vessel, can be extremely labour and cost intensive compared to on-land surveys, which rely on the use of camera traps placed in stationary locations to capture images when they detect movement. This setup is not possible at sea due to a lack of stationary objects to attach devices to and rapid movement in the observed scene due to waves causing the camera to trigger -- producing a high false positive rate. 
 
 Upon survey completion, photo-id data must be analysed and individuals identified to produce a catalogue. Images collected during surveys are large in size and contain significant amounts of background noise. Historically, curation of this data has been a manual process that often takes longer than the entire data collection period \cite{tyson_moore_rise_2022}, further increasing labour and costs. As such, any techniques to speed up the cataloguing process would be welcomed both by researchers and their funding bodies, affording more time to work on the application of data, for example to inform mitigation and policy change, rather than curation. 
 
@@ -22,7 +22,7 @@ This thesis details a system for fully automatic catalogue matching based on unp
 	\label{fig:pipeline}
 \end{figure}
 
-As photo-id surveys are not guaranteed to capture all individuals in a given geographic area, naive approaches such as training a simple image classifier on existing catalogue examples would not suffice as they are incapable of flagging previously uncatalogued individuals. Images are passed through a Mask R-CNN \cite{he_mask_2017} dorsal fin detector, removing the need for manual data pre-processing. Detections are then post-processed ready for fine-grained, few-shot catalogue matching utilising a Siamese Neural Network trained using triplet loss \cite{schroff_facenet_2015} and online semi-hard triplet mining to create a latent space based on the provided catalogue. Matches are obtained using the Euclidean distances between an input and class prototypes stored in the latent space, allowing for the flagging of potentially uncatalogued individuals to the researcher.
+As photo-id surveys are not guaranteed to capture all individuals in a given geographic area, naive approaches such as training a simple image classifier on existing catalogue examples would not suffice as they are incapable of flagging previously uncatalogued individuals. First, the raw images are passed through a Mask R-CNN \cite{he_mask_2017} dorsal fin detector, removing the need for manual data pre-processing. Detections are then post-processed ready for fine-grained, few-shot catalogue matching utilising a Siamese Neural Network (SNN)\nomenclature[z-SNN]{SNN}{Siamese Neural Network} \cite{dey_signet_2017} trained using triplet loss \cite{schroff_facenet_2015} and online semi-hard triplet mining to create a latent space based on the provided catalogue. Matches are obtained using the Euclidean distances between an input and class prototypes, which represent generalised embeddings generated from the examples for each class. This also allows for the flagging of potentially uncatalogued individuals to the researcher, identified as samples in the embedding space far from the known classes.
 
 \section{Research Aim and Contributions}\label{ch:intro,sec:AimsAndContributions}
 
@@ -47,7 +47,7 @@ The high level aim of this thesis is to:
 	\item A highly accurate Mask R-CNN \cite{he_mask_2017} based coarse-grained cetacean detector, capable of generating pixel-wise mask predictions from above water photo-id survey imagery. The detector is invariant to both the extreme variation in RoI shape inherently present due to the free roaming nature of cetaceans, and the large amount of noise generated as a result of operating in marine environments.  This is presented in Chapter \ref{ch:cetDet}.
 	\item A framework for the robust post-processing of predicted RoIs produced by the cetacean detector with the aim of preventing false-positives from moving downstream. Predictions are automatically cleaned, allowing for removal of noise and enhancement of the prominence of individually identifying markings and removing the need for manual data pre-processing. This is presented in Chapter \ref{ch:cetDet}.
 	\item An open-source dataset, called \textit{The Northumberland Dolphin Dataset 2020}, for use in the evaluation of photo-id aides. Curated from imagery collected during fieldwork undertaken off the coast of Northumberland, UK, this dataset allows for the generalisability of the aforementioned coarse-grained cetacean detector to be tested, examining its robustness to changes in species of interest and spatio-temporal shifts. The dataset is released publicly to aid in the development of future photo-id aides, providing open-source data to a research area where this is not yet commonplace. This is presented in Chapter \ref{ch:NDD}.
-	\item A Siamese Neural Network (SNN) based computer vision model capable of fine-grained, few-shot catalogue matching using the post-processed detections passed downstream by previous system components. Inputs to the model are embedded into a latent space to generate a list of most likely catalogue matches using class prototypes and Euclidean distance measurements, which also allows the model to flag potentially previously uncatalogued individuals to the user. Implementation work is presented in Chapter \ref{ch:ID}, with generalisability evaluation using a second real-life photo-id catalogue presented in Chapter \ref{ch:SNNEvaluation}.
+	\item An SNN based computer vision model capable of fine-grained, few-shot catalogue matching using the post-processed detections passed downstream by previous system components. Inputs to the model are embedded into a latent space to generate a list of most likely catalogue matches using class prototypes and Euclidean distance measurements, which also allows the model to flag potentially previously uncatalogued individuals to the user. Implementation work is presented in Chapter \ref{ch:ID}, with generalisability evaluation using a second real-life photo-id catalogue presented in Chapter \ref{ch:SNNEvaluation}.
 \end{enumerate}
 
 \section{Thesis Structure}\label{ch:intro,sec:Structure}
@@ -61,7 +61,7 @@ The structure of this thesis is as follows:
 	
 	\newpage
 	
-	\item[Chapter \ref{ch:cetDet}] outlines the approach adopted to create a computer vision model capable of coarse-grained cetacean detection in noisy, above water photo-id fieldwork imagery. Initial model testing is discussed, including the use of transfer learning, data augmentation, and hyperparameter tuning via a grid search. Next, the use of post-processing techniques to reduce the passing of false-positives downstream through the system pipeline is explored. 
+	\item[Chapter \ref{ch:cetDet}] outlines the approach adopted to create a computer vision model capable of coarse-grained cetacean detection in noisy, above water photo-id fieldwork imagery. Initial model testing is discussed, including the use of transfer learning, data augmentation, and hyperparameter tuning via a grid search. The use of post-processing techniques to reduce the passing of false-positives downstream through the system pipeline is also explored. 
 	
 	\item[Chapter \ref{ch:NDD}] describes the data collection fieldwork undertaken off the coast of Northumberland, UK, during Summer 2019. The curation of this data into a useable dataset for the training of computer vision models is explained. The robustness of work outlined in Chapter \ref{ch:cetDet} is evaluated using the dataset. 
 	
@@ -77,14 +77,17 @@ The structure of this thesis is as follows:
 
 The work outlined in this thesis has led to the publication of the following peer-reviewed papers:
 
+%%TODO: Figure out how best to say where in thesis work is as per Steve's comments
+
 \begin{description}
-	\item[\cite{trotter_northumberland_2019}] Trotter, C., Atkinson, G., Sharpe, M., McGough, A.S., Wright, N. and Berggren, P., 2019. The Northumberland Dolphin Dataset: A Multimedia Individual Cetacean Dataset for Fine-Grained Categorisation. In \textit{The 6\textsuperscript{th} Workshop on Fine-Grained Visual Categorization, CVPR 2019}. Available: \href{https://doi.org/10.48550/arXiv.1908.02669}{doi.org/10.48550/arXiv.1908.02669}.
+	
+	\item[\cite{trotter_northumberland_2019}] Trotter, C., Atkinson, G., Sharpe, M., McGough, A.S., Wright, N. and Berggren, P., 2019. The Northumberland Dolphin Dataset: A Multimedia Individual Cetacean Dataset for Fine-Grained Categorisation. In \textit{The 6\textsuperscript{th} Workshop on Fine-Grained Visual Categorization, CVPR 2019}. Available: \href{https://doi.org/10.48550/arXiv.1908.02669}{doi.org/10.48550/arXiv.1908.02669}. %\textbf{The contents of this work is discussed primarily in chapter \ref{ch:NDD}}.
 	
 	\newpage
 	
-	\item[\cite{trotter_ndd20_2020}] Trotter, C., Atkinson, G., Sharpe, M., Richardson, K., McGough, A.S., Wright, N., Burville, B. and Berggren, P., 2020. NDD20: A large-scale few-shot dolphin dataset for coarse and fine-grained categorisation. In \textit{The 7\textsuperscript{th} Workshop on Fine-Grained Visual Categorization, CVPR 2020}. Available: \href{https://doi.org/10.48550/arXiv.2005.13359}{doi.org/10.48550/arXiv.2005.13359}.
+	\item[\cite{trotter_ndd20_2020}] Trotter, C., Atkinson, G., Sharpe, M., Richardson, K., McGough, A.S., Wright, N., Burville, B. and Berggren, P., 2020. NDD20: A large-scale few-shot dolphin dataset for coarse and fine-grained categorisation. In \textit{The 7\textsuperscript{th} Workshop on Fine-Grained Visual Categorization, CVPR 2020}. Available: \href{https://doi.org/10.48550/arXiv.2005.13359}{doi.org/10.48550/arXiv.2005.13359}. %The contents of this work is discussed primarily in chapter \ref{ch:NDD}.
 	
-	\item [\cite{trotter_towards_2022}] Trotter, C., Wright, N., McGough, A.S., Sharpe, M., Cheney, B., Arso Civil, M., Tyson Moore, R., Allen, J., and Berggren, P., 2022. Towards Automatic Cetacean Photo-Identification: A Framework for Fine-Grain, Few-Shot Learning in Marine Ecology. In 2022 IEEE International Conference on Big Data (Big Data). IEEE.
+	\item [\cite{trotter_towards_2022}] Trotter, C., Wright, N., McGough, A.S., Sharpe, M., Cheney, B., Arso Civil, M., Tyson Moore, R., Allen, J., and Berggren, P., 2022. Towards Automatic Cetacean Photo-Identification: A Framework for Fine-Grain, Few-Shot Learning in Marine Ecology. In 2022 IEEE International Conference on Big Data (Big Data). IEEE. %The contents of this work is discussed primarily in chapters \ref{ch:cetDet}, \ref{ch:ID}, and \ref{ch:SNNEvaluation}.
 \end{description}
 
 \noindent The following work into the application of computer vision to ecology was produced during, but does not form a part of, this thesis:
@@ -96,32 +99,3 @@ The work outlined in this thesis has led to the publication of the following pee
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% All nomenclature here for ease
-\nomenclature[z-CNN]{CNN}{Convolutional Neural Networks}
-\nomenclature[z-CPU]{CPU}{Central Processing Unit}
-\nomenclature[z-GPU]{GPU}{Graphical Processing Unit}
-\nomenclature[z-SGD]{SGD}{Stochastic Gradient Descent}
-\nomenclature[z-SGDR]{SGDR}{Stochastic Gradient Descent with Restarts}
-\nomenclature[z-ReLU]{ReLU}{Rectified Linear Unit}
-\nomenclature[z-FCN]{FCN}{Fully Convolutional Network}
-\nomenclature[z-RPN]{RPN}{Region Proposal Network}
-\nomenclature[z-VM]{VM}{Virtual Machine}
-\nomenclature[z-MCZ]{MCZ}{Marine Conservation Zone}
-\nomenclature[z-RIB]{RIB}{Rigid Inflatable Boat}
-\nomenclature[z-NDD20]{NDD20}{Northumberland Dolphin Dataset 2020}
-\nomenclature[z-SMRU]{SMRU}{Sea Mammal Research Unit}
-\nomenclature[z-PCA]{PCA}{Principle Component Analysis}
-\nomenclature[z-SURF]{SURF}{Speeded-Up Robust Features}
-\nomenclature[z-SIFT]{SIFT}{Scale-Invariant Feature Transform}
-\nomenclature[z-TPE]{TPE}{Tree-structured Parzen Estimator}	
-\nomenclature[z-KNN]{KNN}{K-Nearest Neighbours}
-\nomenclature[z-SDRP]{SDRP}{Sarasota Dolphin Research Program}
-\nomenclature[z-RoI]{RoI}{Region of Interest}
-\nomenclature[z-mAP]{mAP}{Mean Average Precision}
-\nomenclature[z-IOU]{IOU}{Intersection Over Union}
-\nomenclature[z-NLP]{NLP}{Natural Language Processing}
-\nomenclature[z-ViT]{ViT}{Vision Transformer}
-\nomenclature[z-GUI]{GUI}{Graphical User Interface}
-\nomenclature[z-UAV]{UAV}{Unmanned Aerial Vehicle}
-\nomenclature[z-MLOps]{MLOps}{Machine Learning Operations}
-\nomenclature[z-RPN]{RPN}{Region Proposal Network}

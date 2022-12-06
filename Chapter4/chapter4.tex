@@ -14,13 +14,13 @@ The following section provides context for the data collection survey, beginning
 
 \subsection{The Survey Area}\label{ch:NDD,sec:dataCollection,sub:surveyArea}
 
-Data collection was conducted in and around the Coquet to St. Mary's Marine Conservation Zone (MCZ), located off the coast of Northumberland, UK. The MCZ, established in January 2016 through powers granted by the Marine and Coastal Access Act 2009 \cite{noauthor_marine_2009}, covers approximately 40km of coastline from Alnmouth in the north to Whitley Bay in the south, extending outwards 7.5km at its greatest to cover an area around 192km$^{2}$. A map of the survey area and MCZ can be seen in Figure \ref{fig:survey-map}.
+Data collection was conducted in and around the Coquet to St. Mary's Marine Conservation Zone (MCZ)\nomenclature[z-MCZ]{MCZ}{Marine Conservation Zone}, located off the coast of Northumberland, UK. The MCZ, established in January 2016 through powers granted by the Marine and Coastal Access Act 2009 \cite{noauthor_marine_2009}, covers approximately 40km of coastline from Alnmouth in the north to Whitley Bay in the south, extending outwards 7.5km at its greatest to cover an area around 192km$^{2}$. A map of the survey area and MCZ can be seen in Figure \ref{fig:survey-map}.
 
  \begin{figure}
 	\begin{center}
 		\includegraphics[scale=0.7]{Chapter4/figs/survey_map.pdf}
 	\end{center}
-	\caption{Map of the survey area, with the Coquet to St. Mary's MCZ highlighted. Track lines for all survey days are overlaid.}
+	\caption[Map of the survey area, with the Coquet to St. Mary's MCZ highlighted.]{Map of the survey area, with the Coquet to St. Mary's MCZ highlighted. Track lines for all survey days are overlaid.}
 	\label{fig:survey-map}
 \end{figure}
 
@@ -28,7 +28,7 @@ The area is of high importance, supporting a wide variety of marine life thanks 
 
 \subsection{Survey Effort}\label{ch:NDD,sec:dataCollection,sub:surveyEffort}
 
-Dedicated bottlenose and white-beaked dolphin photo-identification surveys were conducted in the MCZ between 19/07/2019 and 10/10/2019, with a total of 27 surveys undertaken. These were performed using a 5.6m rigid inflatable boat (RIB) with a 50 horsepower four-stroke outboard engine. All surveys began from Newcastle University's Blyth Marine Station, located in the Port of Blyth, before entering the MCZ.
+Dedicated bottlenose and white-beaked dolphin photo-identification surveys were conducted in the MCZ between 19/07/2019 and 10/10/2019, with a total of 27 surveys undertaken. These were performed using a 5.6m rigid inflatable boat (RIB)\nomenclature[z-RIB]{RIB}{Rigid Inflatable Boat} with a 50 horsepower four-stroke outboard engine. All surveys began from Newcastle University's Blyth Marine Station, located in the Port of Blyth, before entering the MCZ.
 
 Surveys initially began by following set transect lines, traversing between the northern and southern-most points of the MCZ. Thanks to limited success encountering individuals strictly following transect lines however, the survey switched to more opportunistic surveying based on reports from two citizen science groups: the Newbiggin-by-the-Sea Dolphin Watch\footnote{Newbiggin-by-the-Sea Dolphin Watch: \href{https://en-gb.facebook.com/groups/NEWILDDOLPHINMONITORINGPROJECT/}{facebook.com/groups/NEWILDDOLPHINMONITORINGPROJECT}} and the North East Cetacean Project\footnote{North East Cetacean Project: \href{https://en-gb.facebook.com/groups/NorthEastCetaceanProject/about/}{facebook.com/groups/NorthEastCetaceanProject}}. The use of citizen scientists for photo-id surveys has seen increased prevalence in recent years, with multiple studies producing promising results if access to groups of dedicated citizen scientists is available, as in Northumberland \cite{araujo_population_2017, currie_conservation_2018, armstrong_photographic_2019, araujo_photo-id_2019}. Track lines showing movement of the vessel were recorded via GPS tracking, and can be seen in Figure \ref{fig:survey-map}. When dolphins were encountered, the time stamp was recorded alongside other effort data such as direction of travel, sea state, species, group size, and demographic composition.
 
@@ -46,7 +46,7 @@ Images collected were processed for use in the photo-identification catalogue to
 
 \section{The Northumberland Dolphin Dataset 2020}\label{ch:NDD,sec:NDD20}
 
-The fieldwork season and data processing undertaken resulted in a photo-identification catalogue of bottlenose and white-beaked dolphins currently inhabiting the Coquet to St. Mary's MCZ. Photo-identification catalogues utilised in marine biology however are not in the form required for training or validating a computer vision model. As such, further processing was required to transform the catalogue into a dataset capable of both validating the instance segmentation model developed in Chapter \ref{ch:cetDet}, as well as training a model for fine-grained individual identification. This section discusses the creation of the Northumberland Dolphin Dataset 2020 (NDD20) \cite{trotter_ndd20_2020}, the computer vision dataset created from the photo-identification catalogue.
+The fieldwork season and data processing undertaken resulted in a photo-identification catalogue of bottlenose and white-beaked dolphins currently inhabiting the Coquet to St. Mary's MCZ. Photo-identification catalogues utilised in marine biology however are not in the form required for training or validating a computer vision model. As such, further processing was required to transform the catalogue into a dataset capable of both validating the instance segmentation model developed in Chapter \ref{ch:cetDet}, as well as training a model for fine-grained individual identification. This section discusses the creation of the Northumberland Dolphin Dataset 2020 (NDD20)\nomenclature[z-NDD20]{NDD20}{Northumberland Dolphin Dataset 2020} \cite{trotter_ndd20_2020}, the computer vision dataset created from the photo-identification catalogue.
 
 \subsection{Above Water Data}\label{ch:NDD,sec:NDD20,sub:aboveWaterData}
 
@@ -62,7 +62,7 @@ Data was labelled at a pixel level using the VGG Image Annotator \cite{dutta_via
 	\begin{center}
 		\includegraphics[scale=0.3]{Chapter4/figs/aweg-tiled.png}
 	\end{center}
-	\caption{Example above water images from NDD20 with filenames displayed. Class labels for masks in each image are noted in Appendix \ref{app:NDD20AwegLabels}.}
+	\caption[Example above water images from NDD20 with filenames displayed.]{Example above water images from NDD20 with filenames displayed. Class labels for masks in each image are noted in Appendix \ref{app:NDD20AwegLabels}.}
 	\label{fig:above-water-example}
 \end{figure}
 
@@ -76,7 +76,7 @@ To mirror the above water section, there are 2201 below water images included in
 	\begin{center}
 		\includegraphics[scale=0.3]{Chapter4/figs/bweg-tiled.png}
 	\end{center}
-	\caption{Example below water images from NDD20 with filenames displayed. Class labels for masks in each image are noted in Appendix \ref{app:NDD20BwegLabels}.}
+	\caption[Example below water images from NDD20 with filenames displayed.]{Example below water images from NDD20 with filenames displayed. Class labels for masks in each image are noted in Appendix \ref{app:NDD20BwegLabels}.}
 	\label{fig:below-water-example}
 \end{figure}
 
@@ -179,7 +179,7 @@ Example images from Segmented NDD20 are shown in Figure \ref{fig:segmented-ndd20
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter4/figs/segmented-ndd20-tiled.png}
 	\end{center}
-	\caption{Example images from Segmented NDD20. The individual class label is displayed above each image.}
+	\caption[Example images from Segmented NDD20.]{Example images from Segmented NDD20. The individual class label is displayed above each image.}
 	\label{fig:segmented-ndd20-example}
 \end{figure}
 
@@ -197,7 +197,7 @@ In total, Segmented NDD20 contains 1243 images representing 43 classes including
 
 After post-processing the data collected during fieldwork into the Segmented NDD20 dataset, it was clear from the class distribution present that it may be beneficial to increase the number of examples per individual, providing a photo-id model more data to learn from. As it was not possible due to sea state conditions to continue data collection in the Coquet to St. Mary's MCZ after 10/10/2019, work was undertaken to procure data from other external sources. 
 
-As a result of the large range traversed by cetaceans \cite{shane_ecology_1986} there was a chance that the individuals catalogued in the MCZ had also been recorded in other areas. The underwater habitat found in the MCZ extends upwards as far as the Moray Firth in Scotland. This, along with the knowledge the animals prefer colder waters, led to the assumption that the animals found in Northumberland would likely also be found in catalogues maintained further north. Examination of photo-id catalogues from the University of Aberdeen, provided after discussions with the manager of the University's long-term bottlenose dolphin studies Dr. Barbara Cheney, confirmed a catalogue overlap. It was determined that 23 individuals (all bottlenose dolphins) were present in both catalogues. As a result of this analysis, Dr. Cheney provided 1827 additional images of the overlapping individuals to complement Segmented NDD20. Images provided were collected by both the University of Aberdeen and the University of St. Andrews' Sea Mammal Research Unit (SMRU) with the approval of Dr. Monica Arso Civil. These images were captured during surveys undertaken between 2003-2019 and were of the highest quality rating on the scale used by the institutions. All images contained only a single individual. 
+As a result of the large range traversed by cetaceans \cite{shane_ecology_1986} there was a chance that the individuals catalogued in the MCZ had also been recorded in other areas. The underwater habitat found in the MCZ extends upwards as far as the Moray Firth in Scotland. This, along with the knowledge the animals prefer colder waters, led to the assumption that the animals found in Northumberland would likely also be found in catalogues maintained further north. Examination of photo-id catalogues from the University of Aberdeen, provided after discussions with the manager of the University's long-term bottlenose dolphin studies Dr. Barbara Cheney, confirmed a catalogue overlap. It was determined that 23 individuals (all bottlenose dolphins) were present in both catalogues. As a result of this analysis, Dr. Cheney provided 1827 additional images of the overlapping individuals to complement Segmented NDD20. Images provided were collected by both the University of Aberdeen and the University of St. Andrews' Sea Mammal Research Unit (SMRU)\nomenclature[z-SMRU]{SMRU}{Sea Mammal Research Unit} with the approval of Dr. Monica Arso Civil. These images were captured during surveys undertaken between 2003-2019 and were of the highest quality rating on the scale used by the institutions. All images contained only a single individual. 
 
 The additional external data procured was passed through the Mask R-CNN detector and post-processing algorithm, producing images similar to those already present in Segmented NDD20. The post-processed Aberdeen and SMRU data was combined with Segmented NDD20 to produce \textit{NDD AU SMRU}. This dataset consists of 2626 images, 1383 more than Segmented NDD20, representing 44 classes including \texttt{noise}. Individual \texttt{6}, whilst not present in Segmented NDD20 is accounted for in NDD AU SMRU, however individual \texttt{27} still remains absent. Like Segmented NDD20, NDD AU SMRU is heavily skewed towards \texttt{noise} as seen in Figure \ref{fig:segmented-ndd20-and-ndd20-au-smru-dist} (orange) with 61\% of images labelled as this class. Non-\texttt{noise} classes however now have a median of 22 examples per class, providing a larger number of example images to train an automatic photo-id model from. 
 
