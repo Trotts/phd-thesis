@@ -90,12 +90,13 @@ In recent years there have been efforts to modify SGD in an attempt to improve m
 
 \subsection{Backpropagation}\label{ch:Background,sec:DLIntro,sub:backprop}
 
-As discussed in Section \ref{ch:Background,sec:DLIntro,sub:stochasticgradientdescent}, the weights and biases in each neuron can be learnt and optimised using optimisers such as SGD. However, it is also important to understand how the effect an individual weight or bias has on the gradient is computed. This computation can be performed relatively quickly using backpropagation, or the backward propagation of errors algorithm. Before delving \textit{too deep} into deep learning, it is of imperative importance to understand backpropagation; it is after all often cited as one of the cornerstones of deep learning \cite{alber_backprop_2018}.
+As discussed in Section \ref{ch:Background,sec:DLIntro,sub:stochasticgradientdescent}, the weights and biases in each neuron can be learnt and optimised using optimisers such as SGD. However, it is also important to understand how a weight's or bias' effect on the gradient is computed. This can be performed relatively quickly using backpropagation, or the backward propagation of errors algorithm. Before delving \textit{too deep} into deep learning, it is of imperative importance to understand backpropagation; it is after all often cited as one of the cornerstones of deep learning \cite{alber_backprop_2018}.
 
 Backpropagation was originally described in Linnainmaa's Masters thesis from 1970 \cite{linnainmaa_representation_1970}, although its effect was not fully realised until 1986, when Rumelhart \textit{et al.} discussed the advantages to using backpropagation over other learning approaches \cite{rumelhart_learning_1986}. In recent years multiple works have provided updates and improvements to the original backpropagation algorithm, however none have seen wide-scale adoption \cite{bengio_use_1994, lillicrap_random_2014, lee_difference_2015, nokland_direct_2016, liao_how_2016}. 
 
-%%TODO: Rewrite wrt Steve's comments.
-The standard backpropagation algorithm to compute the gradient of the loss function with respect to a model's layers is, in essence, the chain rule (a formula for computing the derivative of multiple functions). Working backwards through the network, the last layer's gradient is first calculated providing a partial calculation of the overall network's gradient. This is then used to efficiently calculate the layer above's gradient, propagating information regarding the loss and how weights should be changed throughout the network. This backwards propagation is a far more computationally efficient way of calculating the overall loss gradient compared to calculating each layer's gradient loss in isolation. Further efficiencies have been made thanks to deep learning frameworks implementing backpropagation in a way that takes advantage of GPUs, leading to extremely efficient computations when performing deep learning tasks such as object detection and other computer vision tasks.
+During each training step, the output for each example input is predicted using the weights and biases of each node in the network. Any error in the output prediction can be represented as a weighted sum of the error in the node's weights and biases. As such, this error can be corrected by changing these weights and biases on a per node basis. However, as nodes between layers can be connected together and influence each other (network architecture depending), it can be computationally expensive to determine the change required for each node in isolation.
+
+The backpropagation algorithm provides a computationally efficient way of calculating the change required with respect to the gradient of the loss function. Operating on a per node basis, the algorithm works backwards through the network determining how each node's weights and biases should be updated. For each node, the calculated changes are passed backwards through the network to preceding directly connected nodes to be used in their calculations, up until the input layer. As such, the standard backpropagation algorithm is, in essence, the chain rule (a formula for computing the derivative of multiple functions), and provides a far more computationally efficient way of calculating the overall loss gradient compared to calculating each layer's gradient loss in isolation. Further efficiencies have been made thanks to deep learning frameworks implementing backpropagation in a way that takes advantage of GPUs, leading to extremely efficient computations when performing deep learning tasks.
 
 \section{Deep Learning for Computer Vision}\label{ch:Background,sec:DLforCV}
 
@@ -118,9 +119,7 @@ The convolutional layer is the workhorse of the CNN, performing the vast majorit
 
 In the case where there are multiple input dimensions (such as an RGB image), kernels are required to operate over all dimensions. As such, the resulting feature maps are summed element-wise, along with some bias term, to produce a single output map. The size of the kernel determines the number of input features which are combined to give the new output feature map, although the size of the resulting map is determined also by two other properties; stride and padding. Stride refers to the distance in pixels the kernel will move when performing the next input mapping. For example, a stride of 1 would result in the kernel sliding along one pixel value each time, resulting in an output feature map of equal size to the input, whereas a stride of 2 would skip every other pixel, reducing the output feature map by half. Figure \ref{fig:kernels} shows a visualisation of the kernel process with a stride of 2.
 
-%%TODO: Add in other paddings, see Steve's comments.
-
-A problem can arise during convolution when the kernel reaches the edges of the input matrix. As there is nothing past the edge values, these values must be trimmed as they can never be in the centre of the kernel. This can cause a reduction of the matrix, as some values are never utilised, which may be detrimental when we require an output feature map which is the same size as that of the input. As such, zero padding can be performed \cite{albawi_understanding_2017}. This technique places zeros around the edges of the input matrix, expanding its size and allowing pixel values formerly at the edges to be utilised by the kernel. This also prevents the size of the input shrinking between multiple convolution operations, allowing for deep networks to operate on small input images. 
+A problem can arise during convolution when the kernel reaches the edges of the input matrix. As there is nothing past the edge values, these must be trimmed as they can never be in the centre of the kernel. This is known as `valid' padding, and can cause a reduction in the size of the matrix which may be detrimental when an output feature map of equal or greater size than that of the input is required. To avoid this, `same' or zero padding can be utilised whereby zeros are added to the edges of the matrix, allowing the input and output feature maps to be of the same size. `Full' padding can also be utilised, whereby multiple rows and columns of zeros are added such that all non-padding values are visited equal amounts of times by the kernel. This has the effect of increasing the size of the output feature map.
 
 \begin{figure}
 	\begin{center}
@@ -137,13 +136,13 @@ Pooling layers help reduce the computational complexity of the convolutions perf
 
 Pooling as such inevitably leads to a reduction in the amount of information available to subsequent layers; this is advantageous however as it leads to less computational complexity, aiding in the minimisation of overfitting in the model. 
 
-A number of different pooling layer architectures exist in the literature, such as max pooling which only keeps the maximum pixel value in the batch, average pooling \cite{boureau_theoretical_2010} which outputs the mean of all pixel values in the batch, and stochastic pooling \cite{zeiler_stochastic_2013} which selects an output pixel value from each batch based on a probability distribution. For a review of current pooling methods, see \cite{gholamalinezhad_pooling_2020}.
+A number of different pooling layer architectures exist in the literature, such as max pooling which only keeps the maximum pixel value in the batch, average pooling \cite{boureau_theoretical_2010} which outputs the mean of all pixel values in the batch, and stochastic pooling \cite{zeiler_stochastic_2013} which selects an output pixel value from each batch based on a probability distribution. For a review of current pooling methods, see Gholamalinezhad \textit{et al.} \cite{gholamalinezhad_pooling_2020}.
 
 \subsubsection{Fully Connected Layers}\label{ch:Background,sec:CNN,sub:CNN,subsubsec:fullyConnected}
 
-%%TODO: See Steve's comments re: regression, softmax, multiple hidden dense layers
+Fully connected layers take feature maps produced by the preceding convolutional and pooling layers and reduce these down to a single $N$-dimensional vector. In the case of the last layer of a network geared towards a classification problem, $N$ represents the total number of possible classes the network was trained to identify, with the values in the vector representing the input's class probabilities.
 
-Fully connected layers take feature maps produced by the preceding convolutional and pooling layers and reduce these down to a single $N$-dimensional vector, where $N$ represents the total number of classes and each dimension's value is the probability of the class. These probabilities are achieved using a softmax activation function. The activation function is responsible for deciding which neuron in the layer passes its value to the layer below by computing the weighted sum of the inputs and passing the result through a non-linear function. Softmax takes the exponents of each input and normalises them by the sum of all inputs, giving values between 0 and 1. Outputted $N$-dimensional vectors can then be considered a feature map in their own right for further processing \cite{krizhevsky_imagenet_2012} or as a category for classification as the last layer of the network \cite{girshick_rich_2014}.
+An activation function is responsible for deciding which neuron in the layer passes its value to the layer below by computing the weighted sum of the inputs and passing the result through some non-linear function. This has the effect of scaling the layer's output to within some defined limits. Multiple common activation functions exist in the literature, such as the tanh function which scales values to between -1 and 1. The use of the softmax activation function is commmonly used in the last layer of a classification network in order to determine the class probabilities mentioned previously. Softmax takes the exponents of each input and normalises them by the sum of all inputs, giving values between 0 and 1. Outputted $N$-dimensional vectors can then be considered a feature map in their own right for further processing \cite{krizhevsky_imagenet_2012} or as a category for classification as the last layer of the network \cite{girshick_rich_2014}.
 
 \begin{figure}[!hb]
 	\begin{center}
@@ -153,7 +152,7 @@ Fully connected layers take feature maps produced by the preceding convolutional
 	\label{fig:fully-connected}
 \end{figure}
 
-Figure \ref{fig:fully-connected} shows a network whose aim is to classify an image into one of four classes. At the end of this network is a fully connected layer which takes a feature map from the preceding hidden layer, and produces as output four values between 0 and 1. Each of these values is required to be outputted by its own neuron, resulting in a fully connected layer with four neurons where each neuron represents a possible class for the input image. The image's classification is provided by whichever neuron outputs the highest value. 
+Figure \ref{fig:fully-connected} shows the final layers of a network whose aim is to classify an image into one of four classes. At the end of this network is a fully connected layer which takes a feature map from the preceding hidden layer, and produces as output four values between 0 and 1. Each of these values is required to be outputted by its own neuron, resulting in a fully connected layer with four neurons where each neuron represents a possible class for the input image. The image's classification is provided by whichever neuron outputs the highest value. 
 
 \subsubsection{Layer Architectures}\label{ch:Background,sec:CNN,sub:CNN,subsub:layerArchitecture}
 
@@ -199,9 +198,7 @@ The first, known as a Region Proposal Network (RPN)\nomenclature[z-RPN]{RPN}{Reg
 
 Utilising selection search leads to a high recall rate thanks to the large amount of proposals, as there is a high probability that some of these proposals will contain RoIs with objects being searched for. However, this can be time consuming and computationally expensive (although less computationally expensive than just sliding a window over the full image) as the network needs to classify the 2000 region proposals generated. Detection can also be slow using an R-CNN and, with the selection search being fixed, no adaptive learning takes place here which may lead to bad region proposal generation. 
 
-%%TODO: Define convolutional feature map as per Steve's comment.
-
-Some of these time drawbacks were fixed in a later version of R-CNN, known as Fast-RCNN \cite{girshick_fast_2015}. Rather than feeding the region proposals generated to the CNN, this algorithm instead feeds the input image to the CNN and generates a convolutional feature map. RoIs can then be taken from the feature map using selection search and warped into a shape suitable for the pooling layer, before being reshaped again into a fixed size for the fully connected layer. This is advantageous as it allows us to reuse some computations and allows for backpropagation to occur throughout the network, greatly improving run times.  This also means however that the runtime is determined by how fast RoIs can be generated. 
+Some of these time drawbacks were fixed in a later version of R-CNN, known as Fast-RCNN \cite{girshick_fast_2015}. Rather than feeding the region proposals generated to the CNN, this algorithm instead feeds the input image to the CNN and generates a feature map. RoIs can then be taken from the feature map using selection search and warped into a shape suitable for the pooling layer, before being reshaped again into a fixed size for the fully connected layer. This is advantageous as it allows us to reuse some computations and allows for backpropagation to occur throughout the network, greatly improving run times.  This also means however that the runtime is determined by how fast RoIs can be generated. 
 
 To fix this issue, Faster R-CNN was developed \cite{ren_faster_2015}. Now instead of utilising selection search to generate the RoIs, a separate network can be utilised to predict RoIs which are then used to classify images within the regions. As such, we now train with four losses: 
 
@@ -216,18 +213,17 @@ To fix this issue, Faster R-CNN was developed \cite{ren_faster_2015}. Now instea
 
 One issue with all RPNs is that they generally take a significant amount of time in order to classify objects in images, with the bottleneck being the region proposal generation. Because of this, there are algorithms which attempt to remove the region proposals altogether and instead look at the whole image. The input image is divided into an equal size grid. Within each square of the grid, we take a set number of bounding boxes which the CNN provides classification confidences for. Any above a set threshold are used to locate the object within the image. These algorithms are essentially one large CNN rather than splitting into a CNN and an RPN and are thus much faster although are not as accurate, especially on smaller objects due to the spatial constraints of the algorithm. Examples of detection without proposal systems include YOLO \cite{redmon_you_2016} and SSD \cite{liu_ssd:_2016}. 
 
-%%TODO: Rejig this section. Start with a brief mention that segmentation is a key research area (like in semantic segmentation below but make general). Then explain instance segmentation (with fig: masks-examples), then semantic seg, then part seg. 
-
 \subsection{Semantic Segmentation}\label{ch:Background,sec:semanticSegmentation}
 
-Along with object detection, semantic segmentation is one of the key research areas in computer vision. Rather than provide RoI bounding boxes as output, semantic segmenters instead output a class label for each pixel in the image. A group of connected pixels of the same class is known as a mask. An example of an image and its masks can be seen in Figure \ref{fig:masks-example}.
+Along with object detection, semantic segmentation is one of the key research areas in computer vision. Rather than provide RoI bounding boxes as output, semantic segmenters instead output a class label for each pixel in the image. A group of connected pixels of the same class is known as a mask. An example semantic segmentation mask can be seen in Figure \ref{fig:semantic-eg}.
+
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter2/figs/masks-example.png}
+		\includegraphics[scale=0.5]{Chapter2/figs/semantic_segmentation.png}
 	\end{center}
-	\caption{An example of an image and its corresponding ground truth masks.}
-	\label{fig:masks-example}
+	\caption[An example of semantic segmentation.]{An example of semantic. All pixels which belong to the \texttt{person} class have been classified as one \texttt{person} object. Image from \cite{sharma_image_2019}.}
+	\label{fig:semantic-eg}
 \end{figure}
 
 In general, semantic segmenters can be thought of as having two main components; an encoder, usually a pretrained classifier built with a standard detection architecture such as ResNet, and a decoder whose job is to project the coarse-grained features learnt by the encoder to a fine-grained pixel space. There are two main ways to approach this decoding step.
@@ -238,9 +234,7 @@ The first is to use an RPN to perform region based semantic segmentation, extrac
 IOU = \frac{\text{Area of overlap}(B_p, B_g)}{\text{Area of union}(B_p, B_g)}.
 \end{equation}
 
-%%TODO: What happens to the negative anchors?
-
-Anchors with an $IOU >= 0.7$ with any ground truth are denoted as positive anchors and are passed on for classification. Those with an $IOU < 0.3$ are considered negative anchors, and those where $0.3 <= IOU < 0.7$ are denoted as neutral anchors and are not used for training. An example of generated negative, neutral, and positive anchors for an image can be seen in Figure \ref{fig:anchor-types}.
+Anchors with an $IOU >= 0.7$ with any ground truth are denoted as positive anchors and are passed on for classification. Those with an $IOU < 0.3$ are considered negative anchors, and are utilised during the training process as negative class examples. Those where $0.3 <= IOU < 0.7$ are denoted as neutral anchors and are not used for training. An example of generated negative, neutral, and positive anchors for an image can be seen in Figure \ref{fig:anchor-types}.
 
 \begin{figure}
 	\begin{center}
@@ -274,14 +268,14 @@ At first glance it may seem as though part segmentation would be useful for this
 
 \subsection{Instance Segmentation}\label{ch:Background,sec:instanceSegmentation}
 
-Building on the concept of semantic segmentation, instance segmentation can be performed when further detail about an image is required by a developed system. Whilst many of the underlying processes are similar between the two segmentation types, instance segmentation allows for the model to distinguish between multiple objects which are of the same class; an example of this can be seen in Figure \ref{fig:instance-vs-semantic}. 
+Building on the concept of semantic segmentation, instance segmentation can be performed when further detail about an image is required by a developed system. Whilst many of the underlying processes are similar between the two segmentation types, instance segmentation allows for the model to distinguish between multiple objects which are of the same class; an example of this can be seen in Figure \ref{fig:masks-example}.
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter2/figs/semantic_vs_instance_segmentation.png}
+		\includegraphics[scale=0.5]{Chapter2/figs/masks-example.png}
 	\end{center}
-	\caption[An example showing the difference between semantic and instance segmentation.]{An example showing the difference between semantic and instance segmentation. In semantic segmentation, all pixels which belong to the \texttt{person} class have been classified as one \texttt{person} object. In instance segmentation, five \texttt{person} objects have been detected, and all \texttt{person} pixels have been assigned to one of the objects. Image from \cite{sharma_image_2019}.}
-	\label{fig:instance-vs-semantic}
+	\caption{An example of an image and its corresponding ground truth instance segmentation masks.}
+	\label{fig:masks-example}
 \end{figure}
 
 As such, instance segmentation provides a far more detailed explanation of the input image. This information can be invaluable if the developed system is required not only to understand what pixel classes are present in the input image, but also how many of these class instances there are. These systems are often expensive to develop, however, due to the increased workload of data labelling required. Compared to data labelled for object detection, which only requires a bounding box ground truth, instance segmented data is required to be labelled on a pixel basis in a similar manner as semantically segmented data. However instance segmented data requires each pixel be assigned a specific object if there are multiple objects of the same class in the image which is not the case for semantically segmented data.
@@ -361,11 +355,11 @@ Marine biologists traditionally rely on identification from photographs taken ei
 
 \subsection{Utilising Photo-id Aids in Cetacean Research}\label{ch:Background,sec:conTech,sub:photoIDAides}
 
-%%TODO: Explain in more detail the manual photo-id process. Multiple experts, etc. in between first and second sentence.
+Performing manual analysis of photo-id surveys with the goal of creating a catalogue can be extremely time consuming and labour intensive. Images collected during fieldwork are brought back to the lab and filtered, removing images which do not contain cetaceans. The remaining images are then often pre-processed through a combination of manual orientation shifts and crops to centre and isolate the dorsal fin -- any with more than one fin are split into multiple images at this stage. Next, the fins present in the images are identified by multiple researchers, either using an existing catalogue to compare against or building this using the data if one does not currently exist. These researchers are often experts in their field, having performed photo-id catalogue matching for many years, with multiple experts utilised to reduce the risk of misidentifications. 
 
-Performing manual analysis of photo-id surveys with the goal of creating a catalogue can be extremely time consuming and labour intensive. As such, over the years there have been multiple photo-id aids developed. These have advanced at pace, gradually reducing the amount of human interaction and pre-processing of the data seen by these systems. A description of existing programs and academic literature is provided below, with an overview in Table \ref{tab:Photo-IDAidesComparison}.
+Due to the lengthy and expensive nature of manual photo-id, multiple aids have been developed over the years to ease the process. These have advanced at pace, gradually reducing the amount of human interaction and manual pre-processing of the data seen by these systems. A description of existing programs and academic literature is provided below, with an overview in Table \ref{tab:Photo-IDAidesComparison}.
 
-\begin{table}[!h]
+\begin{table}
 	\caption[A comparison of available photo-id aids.]{A comparison of available photo-id aids.}\label{tab:Photo-IDAidesComparison}
 	\begin{adjustbox}{width=\columnwidth, center}
 		\begin{tabular}{*{7}{c}}
@@ -393,10 +387,10 @@ Performing manual analysis of photo-id surveys with the goal of creating a catal
 	{\raggedright\footnotesize {* CurvRank is included in Flukebook\textsuperscript{\ref{footnote:flukeBook}}, a website for cross-catalogue matching. In this scenario, Flukebook performs automatic data pre-processing and fin detection before passing to CurvRank, but the algorithm itself does not facilitate this. \\ ? It is unclear whether the system is capable of flagging previously uncatalogued individuals to the researcher based on the literature available. \\ $\dagger$ Utilises Photo-ID Ninja\textsuperscript{\ref{footnote:photo-idNinja}} for detection. \\$\ddagger$ Sparse on detail regarding photo-id performance. \\ $\mathsection$ Utilises SURF for photo-id, thus unsuitable for cetacean species without well-defined markings.} \par}
 \end{table}
 
-%%TODO: FIX FOOTNOTE PLACEMENT!!!
-
-\footnote{\label{footnote:photo-idNinja}Photo-ID Ninja: \href{http://photoid.ninja}{photoid.ninja}}
-\footnote{\label{footnote:flukeBook}FlukeBook: \href{https://www.flukebook.org/}{flukebook.org}}
+{
+\stepcounter{footnote}\footnotetext{\label{footnote:photo-idNinja}Photo-ID Ninja: \href{http://photoid.ninja}{photoid.ninja}}
+\stepcounter{footnote}\footnotetext{\label{footnote:flukeBook}FlukeBook: \href{https://www.flukebook.org/}{flukebook.org}}
+}
 
 \subsubsection{Catalogue Management Systems}\label{ch:Background,sec:conTech,sub:photoIDAides,subsub:databases}
 
