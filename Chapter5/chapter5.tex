@@ -54,7 +54,7 @@ Rather than producing a classification and measuring uncertainty as is the case 
 
 At train time, each CNN branch receives a different image and generates an embedding. These embeddings are compared to one another in order to optimise a loss function, whereby input images of the same class have similar embeddings but those of different classes are dissimilar. In this way the SNN can be tuned to provide a measure of image similarity. Once trained only one branch of the model is retained, allowing a single image to be embedded by the model into the same embedding space and compared to previously embedded images.
 
-It is this ability that has resulted in the widespread use of SNNs for verification or identification problems in computer vision \cite{dey_signet_2017, wang_discriminative_2020}. Specifically in ecology, SNNs have found use in fine-grained species identification problems \cite{vetrova_hidden_2018, araujo_two-view_2022} as well as in more extreme fine-grained individual animal identification \cite{clapham_automated_2020}. 
+It is this ability that has resulted in the widespread use of SNNs for verification or identification problems in computer vision \cite{dey_signet_2017, wang_discriminative_2020}. Specifically in ecology, SNNs have found use in fine-grained species identification problems \cite{vetrova_hidden_2018, araujo_two-view_2022} as well as in more extreme fine-grained individual animal identification \cite{clapham_automated_2020} and behaviour classification \cite{brookes_triple-stream_2023}. 
 
 \subsubsection{Clustering Embeddings in a Latent Space}\label{ch:ID,sec:deciding,sub:SNN,subsub:ClusteringEmbeddings}
 
