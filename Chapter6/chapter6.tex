@@ -147,6 +147,52 @@ In general, it can be observed that the increase in training data has led to an 
 
 It should be noted however that the best performing model achieves 100\% top-5 and top-10 accuracies, suggesting the possibility of model overfitting. Whilst the model may be capable of always providing a match within the first five results, this is likely a product of dataset size causing an inflation in model performance. It is expected that these accuracies would decrease when utilising more data, either through an increase in the number of classes or examples per class, as this would provide an increase in data variation.
 
+\section{Considering Catalogue Matching as a Standard Classification Task}\label{ch:SNNEvaluation,sec:comparsion}
+
+In order to better understand the performance of SNNs for the task of most likely catalogue matching, an evaluation was undertaken whereby the task was approached as a standard image classification problem. Using the NDD AU SMRU dataset, standard architectures (ResNet50, ResNet101 \cite{he_deep_2015}, and VGG16 \cite{simonyan_very_2015}) were trained and evaluated against top-1, top-5, and top-10 accuracy metrics. This range was chosen to provide help identify whether model depth or setup has an effect on classification performance. 
+
+As these models only require a single example image per training step, rather than a triplet of images as required when training SNNs with Triplet Ranking Loss, Cross Entropy Loss was instead utilised. This function compares the predicted class probabilities outputted by the model to those of the ground truths (either $0$ or $1$ in this case). A loss is computed using Equation \ref{eq:crossEntropyLoss} (where $n$ is the number of classes, $t$ is the ground truth label probability, and $p$ is the Softmax probability for the $i^{th}$ class) which in turn can be used to inform how the weights of the model should be changed. A model which performs perfectly would yield a Cross Entropy Loss of 0. 
+
+\begin{equation}
+	\label{eq:crossEntropyLoss}
+	L = -\sum_{i=1}^{n} t_{i} log(p_{i})
+\end{equation}
+
+Bayesian hyperparameter optimisation during model training was performed using the Optuna framework \cite{akiba_optuna_2019}, as in Section \ref{ch:ID,sec:SNNDevelopment,sub:Optuna}. Due to the required change in loss function, the total number of hyperparameters required by the models was reduced. The search aimed to find an optimal \texttt{log uniform} learning rate between $1\times10^{-6}$ and $1\times10^{-3}$, a dropout \cite{srivastava_dropout:_2014} \texttt{uniform} probability between 0.1 and 0.7, a \texttt{log uniform} weight decay between $1\times10^{-6}$ and $1\times10^{-1}$, an \texttt{int} step size between 5 and 10, and a $\gamma$ \texttt{log uniform} value between $1\times10^{-3}$ and $1\times10^{-1}$. The learning rate optimiser was also tuned, allowing for a \texttt{categorical} choice between SGD or Adam \cite{kingma_adam:_2014}, as well as whether the model started from a pre-trained state or not, with ImageNet \cite{krizhevsky_learning_2009} weights utilised if pre-training was required. A total of 100 iterations were undertaken, with the optimal hyperparameters for each final model architecture decided by its best performing trial. The optimal hyperparameters for each model architecture can be seen in Appendix \ref{app:standard}. In order to fit the models in memory, the number of samples per class for each training batch was reduced from 9 when training SNNs, to 3 for ResNet50, 2 for ResNet101, and XXX for VGG16.
+
+The top-1, top-5, and top-10 accuracies for the best performing models can be seen in Table \ref{tab:optunaBestParamsStandard}. Compared to the best performing SNN, these models all struggle to accurately classify the individuals present in the NDD AU SMRU dataset, hypothesised to be due to the extreme fine-grained nature and high intra-class variability of the classes. For comparison, the best performing SNN trained on this dataset achieves XXX\%, XXX\%, and XXX\% higher top-1, top-5, and top-10 accuracies respectively. 
+
+%TODO Comparison between the models and accs
+
+\begin{table}[]
+	\centering
+	\small
+		\begin{tabular}{cccc}
+			\cline{2-4}
+			 & \multicolumn{3}{c}{\textbf{Accuracy (\%)}} \\ \hline
+			\textbf{Architecture}                    &  \textbf{Top-1} & \textbf{Top-5} & \textbf{Top-10} \\ \hline
+			ResNet50 \cite{he_deep_2015}   &  3.455                 & 11.789            & 27.033                  \\
+			ResNet101 \cite{he_deep_2015}   &  4.065                  &   14.431               &  27.846                     \\
+			VGG16 \cite{simonyan_very_2015} &                   &                  &                      \\\bottomrule
+	\end{tabular}
+	\caption[Top-$N$ accuracies of the best performing image classification models on the NDD AU SMRU dataset.]{Top-$N$ accuracies of the best performing image classification models on the NDD AU SMRU dataset. Accuracies given to 3 decimal places.}
+	\label{tab:optunaBestParamsStandard}
+\end{table}
+
+Examining the Bayesian optimised hyperparameter tuning runs suggests that starting from a pre-trained state is the most important indicator of model performance. An example of this can be seen in Figure \ref{fig:resnet50baseline-hyperparam-importance-optuna} which shows the hyperparameter importances for the ResNet50 tuning run, with pretraining importance shown as 0.81. For ResNet101 this value was 0.72, and XXX for VGG16. Whilst it is expected that this hyperparameter would have high importance due to the relatively small size of the NDD AU SMRU dataset, the lack of importance for all other hyperparameters may suggest that this model setup is incapable of identifying meaningful features which allow it to consistently differentiate between classes. 
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.4]{Chapter6/figs/resnet50baseline-hyperparam-importance-optuna.png}
+	\end{center}
+	\caption{Importance scores for the hyperparameter tuning of the ResNet50 model.}
+	\label{fig:resnet50baseline-hyperparam-importance-optuna}
+\end{figure}
+
+As such, this indicates that the use of an SNN to generate embeddings, plotting these into a latent space, and utilising clusters to provide most likely matches is a superior approach to training a standard image classifier, notwithstanding the difficulties which would arise if individuals not seen at train time were required to be classified.
+
+% TODO Add new section to summary
+
 \section{Summary}\label{ch:SNNEvaluation,sec:Summary}
 
 This chapter examines the robustness of SNNs for the task of automatic most likely catalogue matching. To begin, the effect on model performance of additional photo-id data is examined. This work shows that while the additional data improves overall generalisability, a model capable of vastly reducing the search space can be obtained utilising only the data collected in a single fieldwork study, even when running inference on data from a different spatio-temporal environment.

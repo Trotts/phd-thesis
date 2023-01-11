@@ -171,6 +171,22 @@
 			EmbeddingNet                                                       & None                                                                        & 2                                                                 & 19                                                                                     & 8                                                                                             & 0.162            & 6.430e-5                                                          & SGD               & 0.010                                                                            & 9                                                                                & 0.018             & 38                                                               & 0.818                                                                              \\
 			\bottomrule                                                      
 	\end{tabular}}
-	\caption[Optimal SNN hyperparameters for the best performing SNN trained on the per-side NDD AU SMRU dataset located using Bayesian optimisation over 100 iterations.]{Optimal SNN hyperparameters for the best performing SNN trained on the per-side NDD AU SMRU dataset located using Bayesian optimisation over 100 iterations. Results given to three decimal places where applicable. See Section \ref{ch:ID,sec:perSide}}
+	\caption[Optimal SNN hyperparameters for the best performing SNN trained on the per-side NDD AU SMRU dataset located using Bayesian optimisation over 100 iterations.]{Optimal SNN hyperparameters for the best performing SNN trained on the per-side NDD AU SMRU dataset located using Bayesian optimisation over 100 iterations. Results given to three decimal places where applicable. See Section \ref{ch:ID,sec:perSide}.}
+\end{table}
+
+\section{Optimal Hyperparameters for Standard Classification Task Architectures}\label{app:standard}
+
+\begin{table}[!ht]
+	\centering
+	\resizebox{!}{0.9\height}{
+		\small
+		\begin{tabular}{cccccccc}
+			\hline
+			\textbf{Architecture}                    & \textbf{Dropout} & \textbf{\begin{tabular}[c]{@{}c@{}}Learning\\Rate\end{tabular}} & \textbf{Optimiser} & \textbf{\begin{tabular}[c]{@{}c@{}}Weight\\Decay\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Step\\Size\end{tabular}} & \textbf{$\gamma$} & \textbf{Pre-Trained?} \\ \hline
+			ResNet50 \cite{he_deep_2015}   & 0.654            & $1.225\times10^{-4}$    & Adam               & $3.948\times10^{-4}$   & 8                  & 0.054            & True                  \\
+			ResNet101 \cite{he_deep_2015}   &                  &                         &                    &                        &                    &                  &                       \\
+			VGG16 \cite{simonyan_very_2015} &                  &                         &                    &                        &                    &                  &                      \\\bottomrule
+		\end{tabular}}
+	\caption[Optimal SNN hyperparameters for the best performing models trained on the NDD AU SMRU dataset for the task of image classification.]{Optimal SNN hyperparameters for the best performing models trained on the NDD AU SMRU dataset for the task of image classification. Results given to three decimal places where applicable. See Section \ref{ch:SNNEvaluation,sec:comparsion}.}
 \end{table}
 
