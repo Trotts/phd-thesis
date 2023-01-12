@@ -184,8 +184,8 @@
 			\hline
 			\textbf{Architecture}                    & \textbf{Dropout} & \textbf{\begin{tabular}[c]{@{}c@{}}Learning\\Rate\end{tabular}} & \textbf{Optimiser} & \textbf{\begin{tabular}[c]{@{}c@{}}Weight\\Decay\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Step\\Size\end{tabular}} & \textbf{$\gamma$} & \textbf{Pre-Trained?} \\ \hline
 			ResNet50 \cite{he_deep_2015}   & 0.654            & $1.225\times10^{-4}$    & Adam               & $3.948\times10^{-4}$   & 8                  & 0.054            & True                  \\
-			ResNet101 \cite{he_deep_2015}   &                  &                         &                    &                        &                    &                  &                       \\
-			VGG16 \cite{simonyan_very_2015} &                  &                         &                    &                        &                    &                  &                      \\\bottomrule
+			ResNet101 \cite{he_deep_2015}   &  0.669                &  $1.408\times10^{-5}$   & Adam  & $1.471\times10^{-6}$   & 7   &  0.0185   & True                       \\
+			VGG16 \cite{simonyan_very_2015} &  0.532                &  $1.771\times10^{-6}$   & Adam   &  $9.045\times10^{-6}$    &   5    &   0.006               &  False       \\\bottomrule
 		\end{tabular}}
 	\caption[Optimal SNN hyperparameters for the best performing models trained on the NDD AU SMRU dataset for the task of image classification.]{Optimal SNN hyperparameters for the best performing models trained on the NDD AU SMRU dataset for the task of image classification. Results given to three decimal places where applicable. See Section \ref{ch:SNNEvaluation,sec:comparsion}.}
 \end{table}
