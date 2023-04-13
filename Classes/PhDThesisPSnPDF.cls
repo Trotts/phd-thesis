@@ -475,7 +475,7 @@ supported!}
 \ifPHD@authoryear
   \ifPHD@biblatex
     \RequirePackage[backend=biber, style=authoryear, citestyle=alphabetic, 
-      sorting=nty, natbib=true]{biblatex}
+      sorting = nty, natbib=true]{biblatex}, 
     \setBiBLaTeXtrue
   \else
     \RequirePackage[round, sort, numbers, authoryear]{natbib} %author year
@@ -484,7 +484,7 @@ supported!}
   \ifPHD@numbered
     \ifPHD@biblatex
       \RequirePackage[backend=biber, style=numeric-comp, 
-        citestyle=numeric, sorting=none, natbib=true]{biblatex}
+        citestyle=numeric, sorting=none, natbib=true, firstinits=true]{biblatex}
       \setBiBLaTeXtrue
     \else
       \RequirePackage[numbers,sort&compress]{natbib} % numbered citation

@@ -161,7 +161,7 @@ The process for labelling the data with VIA is rather straightforward. The softw
 	\label{fig:via-json-example-zanzibar}
 \end{figure}
 
-Once all 312 images had been labelled, it was then possible to create a train-test split. The 312 images were divided using an 80-20 split, where 80\% of the images are designated for training the Mask R-CNN model, known as the training set, and the remaining 20\% were held back for model evaluation, known as the test set. By evaluating on previously unseen data this affords researchers the ability to understand the generalisability of the trained model, mitigating overfitting. This newly created Zanzibar dataset would allow for prototyping to begin, determining the suitability of a Mask R-CNN based model for the task of a cetacean detector. 
+Once all 312 images had been labelled, it was then possible to create a train-test split. The 312 images were divided randomly using an 80-20 split, where 80\% of the images are designated for training the Mask R-CNN model, known as the training set, and the remaining 20\% were held back for model evaluation, known as the test set. By evaluating on previously unseen data this affords researchers the ability to understand the generalisability of the trained model, mitigating overfitting. This newly created Zanzibar dataset would allow for prototyping to begin, determining the suitability of a Mask R-CNN based model for the task of a cetacean detector. 
 
 \subsection{Transfer Learning}\label{ch:cetDet,sec:initialTesting,sub:transferLearning}
 
@@ -232,7 +232,7 @@ When training a Mask R-CNN model there are a large range of hyperparameters, or 
 
 The vast majority of hyperparameters influence the training process. Selection of the optimal hyperparameters is however an extremely computationally and time expensive task, as the optimal values of the hyperparameters are not known before training begins. Indeed, even after training has finished and a model which produces satisfactory results has been found there is no guarantee that the hyperparameters of this model are the best, just that they are the best found so far. 
 
-As such, in order to determine the best hyperparameters for a given model and task, the search space of all possible hyperparameters must be searched. This is infeasible due to time and resource constraints however,  therefore a technique known as grid searching was performed. During a grid search, each hyperparameter is defined as a range of possible values. A model is then trained using the data and each combination of defined hyperparameter values. Once each model has trained, they are then evaluated to determine the best hyperparameters.
+As such, in order to determine the best hyperparameters for a given model and task, the search space of all possible hyperparameters must be searched. This is infeasible due to time and resource constraints however, therefore a technique known as grid searching was performed. During a grid search, each hyperparameter is defined as a range of possible values. A model is then trained using the data and each combination of defined hyperparameter values. Once each model has trained, they are then evaluated using the test data to determine the best hyperparameters.
 
 \subsubsection{Learning Rate Scheduling and Optimisers}\label{ch:cetDet,sec:ModelSelection,sub:TrainingHyperparameters,subsub:learningRateOptimisers}
 One of the most important hyperparameters to tune is the learning rate, which dictates how much the weights of the model should change in response to the estimated error calculated during backpropagation. If the learning rate is too large this will lead to an unstable training process whereby gradient descent can never reach the minimum value but rather bounce either side of it. If the learning rate is set too small the training process will take an extremely long time to converge. 
@@ -340,7 +340,7 @@ This effect is even greater when comparing map@IOU[0.85] scores, with the worst 
 	\begin{center}
 		\includegraphics[scale=0.3]{Chapter3/figs/comparison_graph_all_diff_colours.png}
 	\end{center}
-	\caption[mAP@IOU{[0.5:0.95]} scores for all models trained in the Mask R-CNN Zanzibar dataset grid search.]{mAP@IOU[0.5:0.95] scores for all models trained in the Mask R-CNN Zanzibar dataset grid search. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
+	\caption[mAP@IOU{[0.5:0.95]} scores for all models in the Mask R-CNN grid search, evaluated on the Zanzibar test data.]{mAP@IOU{[0.5:0.95]} scores for all models in the Mask R-CNN grid search, evaluated on the Zanzibar test data. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
 	\label{fig:mAP-graph}
 \end{figure}
 
