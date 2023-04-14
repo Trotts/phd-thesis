@@ -34,7 +34,7 @@ The bounding boxed fin, fin mask, and background mask were then embedded into th
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter6/figs/embedding-check-images.jpg}
 	\end{center}
-	\caption[Example data used to examine the effect of retained background on most likely catalogue matching.]{Example data used to examine the effect of retained background on most likely catalogue matching. Left: Bounding box detection containing both a dorsal fin and background. Centre: Corresponding dorsal fin mask. Right: Corresponding background mask.}
+	\caption[Example data used to examine the effect of retained background on most likely catalogue matching.]{Example data used to examine the effect of retained background on most likely catalogue matching. (Left) Bounding box detection containing both a dorsal fin and background. (Centre) Corresponding dorsal fin mask. (Right) Corresponding background mask.}
 	\label{fig:bboxvsmask}
 \end{figure}
 
@@ -64,7 +64,7 @@ To generate a train-test split capable of training an SNN, the catalogue set was
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter6/figs/SDRP-double-mask-eg-indv-13.png}
 	\end{center}
-	\caption[Left: Image of individual \texttt{13} from the original SDRP catalogue set. Right: Example masks generated for the Left image.]{Left: Image of individual \texttt{13} from the original SDRP catalogue set. Right: Example masks generated for the Left image. Both masks are kept for use in training as they were deemed to be sufficiently different.}
+	\caption[Left: an image of individual \texttt{13} from the original SDRP catalogue set. Right: example masks generated for the Left image.]{Left: an image of individual \texttt{13} from the original SDRP catalogue set. Right: example masks generated for the Left image. Both masks are kept for use in training as they were deemed to be sufficiently different.}
 	\label{fig:sdrp-double-mask-eg}
 \end{figure}
 
@@ -181,7 +181,7 @@ Examining the Bayesian optimised hyperparameter tuning runs suggests that starti
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.4]{Chapter6/figs/resnet50baseline-hyperparam-importance-optuna.png}
+		\includegraphics[scale=0.4]{Chapter6/figs/resnet50baseline-hyperparam-importance-optuna-updated.png}
 	\end{center}
 	\caption{Importance scores for the hyperparameter tuning of the ResNet50 model.}
 	\label{fig:resnet50baseline-hyperparam-importance-optuna}
@@ -191,7 +191,7 @@ When training the VGG16 model however, the optimal model found did not require p
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.4]{Chapter6/figs/vgg16-baseline-hyperparam-importance-optuna.png}
+		\includegraphics[scale=0.4]{Chapter6/figs/vgg16-baseline-hyperparam-importance-optuna-updated.png}
 	\end{center}
 	\caption{Importance scores for the hyperparameter tuning of the VGG16 model.}
 	\label{fig:vgg16baseline-hyperparam-importance-optuna}

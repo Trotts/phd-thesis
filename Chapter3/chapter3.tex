@@ -62,10 +62,9 @@ As such, an investigation was undertaken to decide whether bounding boxes would 
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-example.png}
+		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-example-updated.png}
 	\end{center}
-	\caption{An example manual crop utilised in bounding box suitability testing.
-	}
+	\caption[Left: an example input image. Right: the corrsponding manual crop utilised in bounding box suitability testing.]{Left: an example input image. Right: the corrsponding manual crop utilised in bounding box suitability testing. The RoI used to produce the manual crop is highlighted red in the input image.}
 	\label{fig:manual-crop-example}
 \end{figure}
 
@@ -77,10 +76,9 @@ First SURF was performed over the entire cropped image. This proved unfruitful h
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-surf.png}
+		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-surf-updated.png}
 	\end{center}
-	\caption[An example manual crop showing the result of SURF feature extraction.]{An example manual crop showing the result of SURF feature extraction. The majority of features extracted are from the surrounding background water.
-	}
+	\caption[Left: an example input image. Right: the corresponding manual crop with the result of SURF feature extraction overlaid.]{Left: an example input image. Right: the corresponding manual crop with the result of SURF feature extraction overlaid. The majority of features extracted are from the surrounding background water. The RoI used to produce the manual crop is highlighted red in the input image.}
 	\label{fig:manual-crop-surf-example}
 \end{figure}
 
@@ -90,9 +88,9 @@ Further to this, it can be seen that SURF is incapable of extracting relevant pr
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-surf-colour-thresholding.png}
+		\includegraphics[scale=0.6]{Chapter3/figs/manual-crop-surf-colour-thresholding-axis.png}
 	\end{center}
-	\caption[An example manual crop showing the result of SURF feature extraction when thresholded based on RGB colour values.]{An example manual crop showing the result of SURF feature extraction when thresholded based on RGB colour values. A large number of features have been extracted from splash surrounding the dorsal fin, alongside few identifying features.
+	\caption[Left: an example input image. Right: the corresponding manual crop with the result of SURF feature extraction when thresholded based on RGB colour values overlaid.]{Left: an example input image. Right: the corresponding manual crop with the result of SURF feature extraction when thresholded based on RGB colour values overlaid. A large number of features have been extracted from splash surrounding the dorsal fin, alongside few identifying features. The RoI used to produce the manual crop is highlighted red in the input image.
 	}
 	\label{fig:manual-crop-surf-colour-thresholding-example}
 \end{figure}
@@ -107,9 +105,9 @@ GrabCut, an algorithm proposed by Microsoft Research \cite{rother_grabcut_2004},
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter3/figs/grabcut-example.png}
+		\includegraphics[scale=0.6]{Chapter3/figs/grabcut-example-updated.png}
 	\end{center}
-	\caption[An example manual crop showing the result of GrabCut background removal.]{An example manual crop showing the result of GrabCut background removal. A large portion of the dorsal fin has been discarded, having been deemed a background object due to the foreground splash.
+	\caption[Left: an example input image. Right: the corresponding manual crop with the result of GrabCut background removal overlaid.]{Left: an example input image. Right: the corresponding manual crop with the result of GrabCut background removal overlaid. A large portion of the dorsal fin has been discarded, having been deemed a background object due to the foreground splash. The RoI used to produce the manual crop is highlighted red in the input image.
 	}
 	\label{fig:grabcut-example}
 \end{figure}
@@ -195,7 +193,7 @@ As well as transfer learning, the use of data augmentation was also explored to 
 	\begin{center}
 		\includegraphics[scale=0.45]{Chapter3/figs/data-augs.png}
 	\end{center}
-	\caption[Examples of data augmentations found in the literature.]{Examples of data augmentations found in the literature. Left: Randomly erasing parts of images, from Zhong \textit{et al}. \cite{zhong_random_2017}. Right: Augmentations to simulate screenshot capture. Defocus blur (top), motion blur (bottom) from Atapour-Abarghouei \textit{et al}. \cite{atapour-abarghouei_kings_2019}.}
+	\caption[Examples of data augmentations found in the literature.]{Examples of data augmentations found in the literature. Left: randomly erasing parts of images, from Zhong \textit{et al}. \cite{zhong_random_2017}. Right: augmentations to simulate screenshot capture. Defocus blur (Top), motion blur (Bottom) from Atapour-Abarghouei \textit{et al}. \cite{atapour-abarghouei_kings_2019}.}
 	\label{fig:data-aug-examples}
 \end{figure}
 
@@ -223,7 +221,7 @@ When training a Mask R-CNN model there are a large range of hyperparameters, or 
 	\begin{center}
 		\includegraphics[scale=0.55]{Chapter3/figs/min-conf-eg.png}
 	\end{center}
-	\caption[An example image showing the effect of changing the Mask R-CNN's minimum detection confidence.]{An example image showing the effect of changing the Mask R-CNN's minimum detection confidence. Left: A threshold of 0.7. Right: A threshold of 0.9. The number of detections has reduced from four to three, with the erroneous left-most detection (highlighted green in the Left Figure) removed.}
+	\caption[An example image showing the effect of changing the Mask R-CNN's minimum detection confidence.]{An example image showing the effect of changing the Mask R-CNN's minimum detection confidence. Left: a threshold of 0.7. Right: a threshold of 0.9. The number of detections has reduced from four to three, with the erroneous left-most detection (highlighted green in the Left Figure) removed.}
 	\label{fig:min-conf}
 \end{figure}
  
@@ -402,7 +400,7 @@ Figure \ref{fig:model-fail-bad-detection-and-split-individual} provides a good e
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-split-individual.png}
 	\end{center}
-	\caption[Left: The input image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image.]{Left: The input image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the cetacean on the right has been split over two masks due to occlusion from a small wave.}
+	\caption[Left: the input image passed to the cetacean detector. Right: the detection masks produced by the model overlaid onto the image.]{Left: the input image passed to the cetacean detector. Right: the detection masks produced by the model overlaid onto the image. Note how the cetacean on the right has been split over two masks due to occlusion from a small wave.}
 	\label{fig:model-fail-bad-detection-and-split-individual}
 \end{figure}
  
@@ -412,7 +410,7 @@ The model also struggles in cases where the image contains an animal under the w
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-underwater.png}
 	\end{center}
-	\caption[Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image.]{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the green detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
+	\caption[Left: the image passed to the cetacean detector. Right: the detection masks produced by the model overlaid onto the image.]{Left: the image passed to the cetacean detector. Right: the detection masks produced by the model overlaid onto the image. Note how the green detection is of an individual under the waterline and only partly visible, and thus useless for identification purposes. }
 	\label{fig:model-fail-underwater}
 \end{figure}
 
@@ -422,7 +420,7 @@ The Zanzibar dataset contains a large number of images which contain other vesse
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter3/figs/model-fail-boat.png}
 	\end{center}
-	\caption[Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image.]{Left: The image passed to the cetacean detector. Right: The detection masks produced by the model overlaid onto the image. Note how the red detection is a misclassification. The model believes a section of the boat's hull and the leg of the human to be a dolphin.}
+	\caption[Left: the image passed to the cetacean detector. Right: the detection masks produced by the model overlaid onto the image.]{Left: the image passed to the cetacean detector. Right: the detection masks produced by the model overlaid onto the image. Note how the red detection is a misclassification. The model believes a section of the boat's hull and the leg of the human to be a dolphin.}
 	\label{fig:model-fail-boat}
 \end{figure}
 
@@ -463,7 +461,7 @@ In some situations a detected mask may contain an area of background inside the 
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter3/figs/before-and-after-morphing-masks-only.png}
 	\end{center}
-	\caption[Left: A detection mask before closing has been applied. Right: The same detection mask after closing.]{Left: A detection mask before closing has been applied. The detected \texttt{dolphin} object is displayed in white. Note the cluster of black background pixels inside. Right: The same detection mask after closing. Note the pixels which make up the hole have been converted to \texttt{dolphin}.}
+	\caption[Left: a detection mask before closing has been applied. Right: the same detection mask after closing.]{Left: a detection mask before closing has been applied. The detected \texttt{dolphin} object is displayed in white. Note the cluster of black background pixels inside. Right: the same detection mask after closing. Note the pixels which make up the hole have been converted to \texttt{dolphin}.}
 	\label{fig:before-and-after-morphing-masks-only}
 \end{figure}
 
@@ -493,7 +491,7 @@ Whilst the background subtraction aims to reduce noise passed downstream to the 
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter3/figs/fin-extraction-unclean-uncropped.png}
 	\end{center}
-	\caption[Top Left: A visualisation of the \texttt{dolphin} detection for an input image produced by the Mask R-CNN detector, alongside the confidence score. Top Right: The resultant detection mask after morphological transformation. Bottom: The resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask.]{Top Left: A visualisation of the \texttt{dolphin} detection for an input image produced by the Mask R-CNN detector, alongside the confidence score. The detector has incorrectly labelled some pixels as \texttt{dolphin}. Top Right: The resultant detection mask after morphological transformation. Bottom: The resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask. Note the mislabelled pixels are present after cleaning and background subtraction. A border has been added for clarity.}
+	\caption[Top Left: a visualisation of the \texttt{dolphin} detection for an input image produced by the Mask R-CNN detector, alongside the confidence score. Top Right: the resultant detection mask after morphological transformation. Bottom: the resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask.]{Top Left: a visualisation of the \texttt{dolphin} detection for an input image produced by the Mask R-CNN detector, alongside the confidence score. The detector has incorrectly labelled some pixels as \texttt{dolphin}. Top Right: the resultant detection mask after morphological transformation. Bottom: the resultant output image after \textit{bitwise and} operations performed between the input image and the cleaned detection mask. Note the mislabelled pixels are present after cleaning and background subtraction. A border has been added for clarity.}
 	\label{fig:fin-extraction-unclean}
 \end{figure}
 
@@ -520,7 +518,7 @@ Using the global distribution histograms, a \textit{dolphin-like} threshold was 
 	\begin{center}
 		\includegraphics[scale=0.3]{Chapter3/figs/148-148-159.png}
 	\end{center}
-	\caption[A representation of the RGB threshold for \textit{dolphin-like}, colour \[148, 148, 159\].]{A representation of the RGB threshold for \textit{dolphin-like}, colour [148, 148, 159]. In the Zanzibar dataset, 90\% of pixels detected as \texttt{dolphin} have intensities below this threshold.}\label{fig:colour-threshold}
+	\caption[A representation of the RGB threshold for \textit{dolphin-like}, colour {[}148, 148, 159{]}.]{A representation of the RGB threshold for \textit{dolphin-like}, colour {[}148, 148, 159{]}. In the Zanzibar dataset, 90\% of pixels detected as \texttt{dolphin} have intensities below this threshold.}\label{fig:colour-threshold}
 \end{figure}
 
 \begin{figure}
@@ -547,9 +545,9 @@ At this point outputs from the Mask R-CNN detector have been post-processed to r
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter3/figs/190627-001-MOLS0028_-crop.png}
+		\includegraphics[scale=0.5]{Chapter3/figs/fin-extraction-unclean-updated.png}
 	\end{center}
-	\caption[Left: An input image and overlaid detection mask. Right: The corresponding cropped output image after post-processing.]{Left: An input image and overlaid detection mask. Right: The corresponding cropped output image after post-processing. Original image sizes are displayed above each image. Images have been resized for clarity.}\label{fig:190627-001-MOLS0028_-crop}
+	\caption[Left: an input image and overlaid detection mask. Right: the corresponding cropped output image after post-processing.]{Left: an input image and overlaid detection mask. Right: the corresponding cropped output image after post-processing. Original image sizes are displayed above each image. Images have been resized for clarity.}\label{fig:190627-001-MOLS0028_-crop}
 \end{figure}
 
 As a result, the images outputted from the background detector are now cropped down to contain just the object of interest. This has the effect of vastly reducing the image file size, which in turn reduces the computational expense of operating on them downstream. In Figure \ref{fig:190627-001-MOLS0028_-crop} for example, the input image to the detector is of size 3456x5184 pixels. After post-processing, the resulting output image is now of size 776x1350px, approximately a 94.2\% reduction in image size whilst still keeping identifying information,  such as the white pigmentation on the dorsal fin, present. This cropping also has the effect of centring the detected \texttt{dolphin} objects in the final output image. 

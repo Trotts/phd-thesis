@@ -103,7 +103,7 @@ The convolutional layer is the workhorse of the CNN, performing the vast majorit
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.45]{Chapter2/figs/convolution.png}
+		\includegraphics[width=0.6\linewidth]{Chapter2/figs/convolution.png}
 	\end{center}
 	\caption[A visual representation of convolution.]{A visual representation of convolution. An image, left, is fed into a convolutional layer. The input is passed through a convolution operation, $*$. The greyscale blocks in the centre of the convolutional layer represent the kernels passed over the image. $\varphi$ represents the activation function the kernel output is fed to. This process results in multiple outputted feature maps. Image from \cite{kim_convolutional_2017}.}
 	\label{fig:convolution}
@@ -115,7 +115,7 @@ A problem can arise during convolution when the kernel reaches the edges of the 
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.45]{Chapter2/figs/kernel.png}
+		\includegraphics[width=\linewidth]{Chapter2/figs/kernel.png}
 	\end{center}
 	\caption[A kernel, represented by the grey squares, operates over a padded input matrix, blue, with a stride of 2 to produce an output feature map, green.]{A kernel, represented by the grey squares, operates over a padded input matrix, blue, with a stride of 2 to produce an output feature map, green. Note that the kernel's weights are denoted by the number in the lower right of each box and the input pixel value is denoted by the number in the middle of each box. Image from \cite{dumoulin_160307285_2018}.}
 	\label{fig:kernels}
@@ -150,13 +150,13 @@ Figure \ref{fig:fully-connected} shows the final layers of a network whose aim i
 
 Using the three layer types described previously it is possible to create an infinite number of CNN architectures. There is no guarantee that every possible architecture will perform well however (indeed, one possible combination would be a single fully connected layer, which would not perform well at all). Whilst it may be advantageous for certain areas of research to create their own custom CNN architecture, either through trial and error or the more recent approach of Neural Architecture Search \cite{elsken_neural_2018}, due to the computational expense of identifying good networks many choose not to perform this work. For the vast majority of cases, there exists in the literature well-defined generalised CNN architectures which have demonstrated that they produce good results, and it is often these architectures which are utilised for computer vision tasks. 
 
-LeNet \cite{lecun_gradient-based_1998} was the first well defined CNN architecture. LeNet was only seven layers deep, but performed well enough to be applied by some banks for automatic recognition of numbers on cheques. It was not until around 2012 that more attention was paid to these defined architectures however, thanks to AlexNet \cite{krizhevsky_imagenet_2012}. Utilising a similar but deeper architecture to LeNet, with more filters and a larger number of stacked convolutional layers, AlexNet also included now commonplace deep learning building blocks such as dropout whereby nodes in the model are intentionally not updated during a training step with some probability to aid model generalisability \cite{srivastava_dropout:_2014}, max pooling \cite{boureau_theoretical_2010}, and Rectified Linear Unit (ReLU)\nomenclature[z-ReLU]{ReLU}{Rectified Linear Unit} activation functions; the most popular non-linear activation function currently in deep learning, especially in computer vision \cite{he_delving_2015}. ReLU's non-linear function returns 0 for any negative value, or for any positive value $x$, it returns $x$. This can be written as $f(x) = max(0,x)$, and is visualised in Figure \ref{fig:relu}. It is this non-linearity that allows for backpropagation to occur.
+LeNet \cite{lecun_gradient-based_1998} was the first well defined CNN architecture. LeNet was only seven layers deep, but performed well enough to be applied by some banks for automatic recognition of numbers on cheques. It was not until around 2012 that more attention was paid to these defined architectures however, thanks to AlexNet \cite{krizhevsky_imagenet_2012}. Utilising a similar but deeper architecture to LeNet, with more filters and a larger number of stacked convolutional layers, AlexNet also included now commonplace deep learning building blocks such as dropout whereby nodes in the model are intentionally not updated during a training step with some probability to aid model generalisability \cite{srivastava_dropout:_2014}, max pooling \cite{boureau_theoretical_2010}, and Rectified Linear Unit (ReLU)\nomenclature[z-ReLU]{ReLU}{Rectified Linear Unit} activation functions; the most popular non-linear activation function currently in deep learning, especially in computer vision \cite{he_delving_2015}. ReLU's non-linear function returns 0 for any negative value, or for any positive value $z$, it returns $z$. This can be written as $f(z) = max(0, z)$, and is visualised in Figure \ref{fig:relu}. It is this non-linearity that allows for backpropagation to occur.
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter2/figs/relu.png}
+		\includegraphics[scale=0.8]{Chapter2/figs/relu.png}
 	\end{center}
-	\caption{A visualisation of the ReLU activation function.}
+	\caption[A visualisation of the ReLU activation function.]{A visualisation of the ReLU activation function. For any value $z$, returns $f(z) = max(0, z)$.}
 	\label{fig:relu}
 \end{figure}
 
@@ -174,9 +174,9 @@ The first, known as a Region Proposal Network (RPN)\nomenclature[z-RPN]{RPN}{Reg
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.3]{Chapter2/figs/r-cnn.png}
+		\includegraphics[scale=0.45]{Chapter2/figs/r-cnn.png}
 	\end{center}
-	\caption{The R-CNN pipeline. Image from \cite{girshick_rich_2014}.}
+	\caption[The R-CNN pipeline.]{The R-CNN pipeline. (1) Input images are passed to (2) a region proposal network, extracting around 2000 RoIs. (3) Each RoI is then resized and passed through some CNN backbone architecture. (4) The output of the CNN corresponds to the RoI's classification and confidence score. Any RoIs with confidences above some defined threshold are outputted by the model. Image from \cite{girshick_rich_2014}.}
 	\label{fig:r-cnn}
 \end{figure}
 
@@ -214,7 +214,7 @@ Along with object detection, semantic segmentation is one of the key research ar
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter2/figs/semantic_segmentation.png}
 	\end{center}
-	\caption[An example of semantic segmentation.]{An example of semantic. All pixels which belong to the \texttt{person} class have been classified as one \texttt{person} object. Image from \cite{sharma_image_2019}.}
+	\caption[An example of semantic segmentation.]{An example of semantic segmentation. All pixels which belong to the \texttt{person} class have been classified as one \texttt{person} object. Image from \cite{sharma_image_2019}.}
 	\label{fig:semantic-eg}
 \end{figure}
 
@@ -264,9 +264,9 @@ Building on the concept of semantic segmentation, instance segmentation can be p
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter2/figs/masks-example.png}
+		\includegraphics[scale=0.5]{Chapter2/figs/masks-example-updated-colours.png}
 	\end{center}
-	\caption{An example of an image and its corresponding ground truth instance segmentation masks.}
+	\caption[Left: an example of some input image. Right: the corresponding \texttt{dolphin} ground truth instance segmentation masks.]{Left: an example of some input image. Right: the corresponding \texttt{dolphin} ground truth instance segmentation masks. Each mask is highlighted a different colour, with background denoted black.}
 	\label{fig:masks-example}
 \end{figure}
 
@@ -293,9 +293,9 @@ Faster R-CNN is a two stage architecture. The first stage utilises a standard ba
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.3]{Chapter2/figs/faster-r-cnn-architecture.png}
+		\includegraphics[scale=0.5]{Chapter2/figs/faster-r-cnn-architecture.png}
 	\end{center}
-	\caption[The Faster R-CNN architecture \cite{ren_faster_2015}.]{The Faster R-CNN architecture \cite{ren_faster_2015}. The blue box represents operations in stage one, which includes a standard backbone CNN architecture and RPN. The green box represents operations in stage two, performing RoI pooling and classification.}
+	\caption[The Faster R-CNN architecture.]{The Faster R-CNN architecture \cite{ren_faster_2015}. The blue box represents operations in stage one, which includes a standard backbone CNN architecture and RPN. The green box represents operations in stage two, performing RoI pooling and classification.}
 	\label{fig:faster-r-cnn-architecture}
 \end{figure}
 
@@ -303,13 +303,13 @@ Mask R-CNN extends Faster R-CNN, allowing for instance segmentation through some
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.3]{Chapter2/figs/mask-r-cnn-changes.png}
+		\includegraphics[scale=0.5]{Chapter2/figs/mask-r-cnn-changes.png}
 	\end{center}
 	\caption[A visual representation of the changes made to stage two of Faster R-CNN to create Mask R-CNN.]{A visual representation of the changes made to stage two of Faster R-CNN to create Mask R-CNN. The RoI Pooling layer has been replaced with an RoI Align layer, along with the addition of a mask head. Image from \cite{he_mask_2017}.}
 	\label{fig:mask-r-cnn-changes}
 \end{figure}
 
-Thanks to these additions, Mask R-CNN is able to perform extremely accurate instance segmentation with a relatively small drop in inference speed, even when predicting on custom datasets. This speed is greatly valuable when a large number of images are required to be processed in a batch manner, such as overnight in between photo-id surveys. Indeed the use of Mask R-CNN for instance segmentation in the literature is far ranging, being utilised in medical \cite{rohit_malhotra_autonomous_2018, chiao_detection_2019, liu_segmentation_2018, anantharaman_utilizing_2018}, agricultural \cite{qiao_cattle_2019, zhao_comparing_2018, lee_potato_2020, chu_deepapple_2020}, sports \cite{buric_ball_2018, pobar_detection_2019, nguyen_hand_2018}, astronomical \cite{burke_deblending_2019}, and nautical \cite{nie_inshore_2018, hong_trashcan_2020} fields. Alongside being well known, Mask R-CNN is also extremely reproducible. An official PyTorch implementation is available through Facebook AI Research's Github \cite{wu_detectron2_2020}, whilst Matterport's Mask R-CNN implementation is most commonly utilised when working with Tensorflow (including in this project) \cite{waleed_mask_2017}.
+Thanks to these additions, Mask R-CNN is able to perform extremely accurate instance segmentation with a relatively small drop in inference speed, even when predicting on custom datasets. This speed is greatly valuable when a large number of images are required to be processed in a batch manner, such as overnight in between photo-id surveys. Indeed the use of Mask R-CNN for instance segmentation in the literature is far ranging, being utilised in medical \cite{rohit_malhotra_autonomous_2018, chiao_detection_2019, liu_segmentation_2018, anantharaman_utilizing_2018}, agricultural \cite{qiao_cattle_2019, zhao_comparing_2018, lee_potato_2020, chu_deepapple_2020}, sports \cite{buric_ball_2018, pobar_detection_2019, nguyen_hand_2018}, astronomical \cite{burke_deblending_2019}, and nautical \cite{nie_inshore_2018, hong_trashcan_2020} fields. Alongside being well known, Mask R-CNN is also extremely reproducible. An official PyTorch implementation is available through Facebook AI Research's Github \cite{wu_detectron2_2020}, whilst Matterport's Mask R-CNN implementation is most commonly utilised when working with Tensorflow (including in this thesis) \cite{waleed_mask_2017}.
 
 \subsection{Fine-Grained Visual Categorisation}\label{ch:Background,sec:Fine-grainedCV}
 

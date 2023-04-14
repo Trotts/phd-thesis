@@ -106,7 +106,7 @@ Like its above water counterpart, the below water set also contains 2201 images 
 
 NDD20 is small compared to traditional benchmarking computer vision datasets such as ImageNet \cite{deng_imagenet:_2009} or those which are domain specific such as iWildcam \cite{beery_iwildcam_2019} or Caltech-UCSD Birds 200 \cite{welinder_caltech-ucsd_2010}. Even when compared to other related non-benchmark marine ecology datasets such as The Fishnet Open Images dataset \cite{kay_fishnet_2021}, SEAMAPD21 \cite{boulais_seamapd21_2021}, or FathomNet \cite{katija_fathomnet_2022}, the number of images in NDD20 is much lower. Whilst it may be tempting to solely compare NDD20 to the above datasets however, it is important to note the difference in use-case. NDD20 is not designed for use as a large scale dataset for model pre-training like those considered benchmark. In contrast to the non-benchmark ecology datasets mentioned, NDD20 contains class labels which allow for more fine-grained classification. As such, it is better to compare the quality of NDD20 with other individual animal identification datasets.
 
-\begin{table}
+\begin{table}[h]
 	\caption[A comparison of computer vision datasets capable of training models for individual animal identification, sorted by number of individuals.]{A comparison of computer vision datasets capable of training models for individual animal identification, sorted by number of individuals.}\label{tab:animal-id-datasets-comparison}
 	\begin{adjustbox}{width=\columnwidth, center}
 		\begin{tabular}{*{4}{c}}
@@ -179,7 +179,7 @@ Example images from Segmented NDD20 are shown in Figure \ref{fig:segmented-ndd20
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter4/figs/segmented-ndd20-tiled.png}
+		\includegraphics[scale=0.6]{Chapter4/figs/segmented-ndd20-tiled-updated.png}
 	\end{center}
 	\caption[Example images from Segmented NDD20.]{Example images from Segmented NDD20. The individual class label is displayed above each image.}
 	\label{fig:segmented-ndd20-example}

@@ -14,9 +14,9 @@ Further, the system must also be capable of performing accurate catalogue matchi
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter5/figs/crop-with-unclassified-noise.jpg}
+		\includegraphics[scale=0.6]{Chapter5/figs/crop-with-unclassified-noise-updated.png}
 	\end{center}
-	\caption{An example post-processed crop which contains some misclassified noise.}
+	\caption{Left: An example input image. Right: The corresponding post-processed crop which contains some misclassified noise.}
 	\label{fig:crop-with-unclassified-noise}
 \end{figure}
 
@@ -30,9 +30,9 @@ Rather than producing a direct classification, Siamese Neural Networks (SNNs) ai
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.4]{Chapter5/figs/signet-SNN-architecture.png}
+		\includegraphics[width=0.8\linewidth]{Chapter5/figs/signet-SNN-architecture.png}
 	\end{center}
-	\caption[An example SNN architecture for signature verification.]{An example SNN architecture for signature verification. Image from \cite{dey_signet_2017}.}
+	\caption[An example two-branch SNN architecture for signature verification.]{An example two-branch SNN architecture for signature verification. Each branch takes as input an image of a signature and passes this through a CNN, where each branch's CNN is identical. A 128-dimensional embedding is produced as output by each branch. Embeddings are then compared using some loss function, $L$, to generate a similarity value. Image from \cite{dey_signet_2017}.}
 	\label{fig:signet-SNN-architecture}
 \end{figure}
 
@@ -42,7 +42,7 @@ It is this ability that has resulted in the widespread use of SNNs for verificat
 
 \subsection{Clustering Embeddings in a Latent Space}\label{ch:ID,sec:deciding,sub:SNN,subsub:ClusteringEmbeddings}
 
-By storing the embeddings generated for each trained class it is possible to produce a list of likely class predictions for a new image by measuring the Euclidean distance between the generated embedding and those previously produced when plotted into some $d$-dimensional latent space. If the SNN has trained in such a way as to produce low intra-class, high inter-class difference between generated embeddings then this will create class clusters when plotted in the latent space. 
+By storing the embeddings generated for each trained class it is possible to produce a list of likely class predictions for a new image by measuring the distance between the generated embedding and those previously produced when plotted into some $d$-dimensional latent space. This thesis makes use of Euclidean distance measurement, though the use of cosine distance measurement is also present in the literature \cite{maharani_improving_2020, pan_towards_2020, feng_triplet_2020}. If the SNN has trained in such a way as to produce low intra-class, high inter-class difference between generated embeddings then this will create class clusters when plotted in the latent space. 
 
 An example of this behaviour can be seen in Figure \ref{fig:mnist-class-clusters-PCA} which shows a 2-dimensional visualisation, produced using Principal Component Analysis (PCA), of the embedding locations for a subset of the MNIST dataset \cite{lecun_gradient-based_1998}. Here, an SNN has been trained for 100 epochs to generate embeddings of images for the 10 unique classes. As can be seen, the model is able to generate embeddings in such as way as to cluster those of the same class in the latent space. Note that some clusters are visualised on top of each other due to the dimensionality reduction performed in order to show the latent space on the page. 
 
@@ -50,7 +50,7 @@ An example of this behaviour can be seen in Figure \ref{fig:mnist-class-clusters
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter5/figs/mnist-class-clusters-PCA.png}
 	\end{center}
-	\caption{A 2-dimensional visualisation of a multi-dimensional latent space produced by an SNN trained on the MNIST dataset \cite{lecun_gradient-based_1998} for 100 epochs.}
+	\caption[A 2-dimensional visualisation of a multi-dimensional latent space produced by an SNN trained on the MNIST dataset for 100 epochs.]{A 2-dimensional visualisation of a multi-dimensional latent space produced by an SNN trained on the MNIST dataset \cite{lecun_gradient-based_1998} for 100 epochs.}
 	\label{fig:mnist-class-clusters-PCA}
 \end{figure}
 
@@ -88,18 +88,18 @@ Using these two input types Pairwise Ranking Loss can be used to optimise in suc
 	\label{eq:pairwiseLoss}
 	L =
 		\begin{cases}
-			D(A,P) & \text{if Positive Pair}\\
-			max(0, m - D(A,N)) & \text{if Negative Pair}\\
+			D(A, P) & \text{if Positive Pair}\\
+			max(0, m - D(A, N)) & \text{if Negative Pair}\\
 		\end{cases}       
 \end{equation}
 
-\noindent Where $L$ is the loss, $D(A,P)$ is the distance between the Anchor and the Positive, and $D(A,N)$ is the distance between the Anchor and the Negative. When optimising for Positive Pairs the loss function will only ever return 0 when the distance between the Anchor and the Positive is 0, ensuring these embeddings are nearly always pulled closer. When optimising for Negative Pairs, the loss function will return 0 when the distance between the Anchor and the Negative is greater than some margin $m$. As such, a weight update is not performed when the distance between the Anchor and the Negative is sufficiently large.
+\noindent Where $L$ is the loss, $D(A, P)$ is the distance between the Anchor and the Positive, and $D(A, N)$ is the distance between the Anchor and the Negative. When optimising for Positive Pairs the loss function will only ever return 0 when the distance between the Anchor and the Positive is 0, ensuring these embeddings are nearly always pulled closer. When optimising for Negative Pairs, the loss function will return 0 when the distance between the Anchor and the Negative is greater than some margin $m$. As such, a weight update is not performed when the distance between the Anchor and the Negative is sufficiently large.
 
 \subsubsection{Triplet Ranking Loss}\label{ch:ID,sec:SNNBackground,sub:lossFunction,subsub:Triplet}
 
 One of the main problems presented by Pairwise Ranking Loss is the issue of model collapse, occurring after a large amount of Positive Pair optimisations. In this scenario, the distance between Anchors and Positives is pushed so close together in the latent space as to produce the same embedding. This can in turn affect the model's ability to understand variation in input and similarity scoring. 
 
-Triplet Ranking Loss aims to avoid this issue by training on triplets of data points rather than pairs, with each triplet containing an Anchor, a Positive, and a Negative. SNNs which make use of Triplet Ranking Loss are often named Triplet Networks in the literature (such as in Hoffer \textit{et al.} \cite{hoffer_deep_2018} which first made use of them), however the only difference between the structure of an SNN using Pairwise Ranking Loss or Triplet Ranking Loss is the number of branches -- two or three respectively. 
+Triplet Ranking Loss aims to avoid this issue by training on triplets of data points rather than pairs, with each triplet containing an Anchor, a Positive, and a Negative. SNNs which make use of Triplet Ranking Loss are often named Triplet Networks in the literature (such as in Hoffer \textit{et al.} \cite{hoffer_deep_2018}), however the only difference between the structure of an SNN using Pairwise Ranking Loss or Triplet Ranking Loss is the number of branches -- two or three respectively. 
 
 \begin{figure}
 	\begin{center}
@@ -113,7 +113,7 @@ Just like with Pairwise Ranking Loss, Triplet Ranking Loss takes as input the ge
 
 \begin{equation}
 	\label{eq:tripletLoss}
-	L = max(0, D(A,P) - D(A,N) + m)
+	L = max(0, D(A, P) - D(A, N) + m)
 \end{equation}
 
 By utilising a triplet, the loss function evaluates to 0 when $D(A, N) > D(A, P) + m$. This occurs only when the triplet contains examples the model is already well trained on and no further optimisations can be gained. By enforcing $m$, where typically $m = 0.2$ thanks to work by Schroff \textit{et al.} \cite{schroff_facenet_2015}, the function ensures embedding variation between distinct inputs thus allowing for a similarity score to be computed between the Anchor and the Positive in all cases. Thanks to the advantages of Triplet Ranking Loss over its Pairwise counterpart, the decision was made to make use of this loss function and train an SNN with three branches. Further, Triplet Ranking Loss has been shown to perform well on individual identification tasks in both humans \cite{hermans_defense_2017} and animals \cite{vetrova_hidden_2018}, providing evidence to support its use for training a most likely catalogue matcher.
@@ -122,13 +122,17 @@ By utilising a triplet, the loss function evaluates to 0 when $D(A, N) > D(A, P)
 
 When training a model, care should be taken to ensure learning occurs at every step. When using Triplet Ranking Loss however, learning does not occur during training steps where the loss evaluates to 0, such as when $D(A, N) > D(A, P) + m$. Negatives provided should be sufficiently difficult such that the triplet allows the loss to evaluate to a non-zero value, ensuring the model learns and the training step is not wasted. However care should also be taken so as not to provide the model with triplets that are too difficult, as this will increase optimisation and thus overall training time. 
 
-This leads to somewhat of a Goldilocks problem. Triplets must be not so soft as to prevent learning, but not so hard as to dramatically increase training time. Semi-Hard Triplet Mining aims to fix this problem, providing triplets which are \textit{just right}. First, three types of triplets are defined:
+This leads to somewhat of a Goldilocks problem. Triplets must be not so soft as to prevent learning, but not so hard as to dramatically increase training time. Semi-Hard Triplet Mining aims to fix this problem, providing triplets which are \textit{just right}. A triplet, $T$, is defined using Equation \ref{eq:triplets}:
 
-\begin{itemize}
-	\item \textbf{Easy}: where $D(A, P) + m < D(A, N)$
-	\item \textbf{Hard}: where $D(A, N) < D(A, P)$
-	\item \textbf{Semi-Hard}: where $D(A, P) < D(A, N) < D(A, P) + m$
-\end{itemize}
+\begin{equation}
+	\label{eq:triplets}
+	T =
+	\begin{cases}
+		D(A, P) + m < D(A, N) & \text{if Easy}\\
+		D(A, N) < D(A, P) & \text{if Hard}\\
+		D(A, P) < D(A, N) < D(A, P) + m & \text{if Semi-Hard}
+	\end{cases}       
+\end{equation}
 
 The goal of Semi-Hard Triplet Mining is to locate as many Semi-Hard triplets from the training set as possible. These are triplets whereby the loss still evaluates to a positive value however the Anchor is closer to the Positive than the Negative when plotted in the latent space, as seen in Figure \ref{fig:semi-hard-triplet-mining}. This allows for fast training whilst still providing enough triplet difficulty for the model to learn during training. 
 
@@ -166,7 +170,7 @@ Figure \ref{fig:prototype-embedding-example} shows the same example two class la
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter5/figs/prototype-embedding-example.png}
 	\end{center}
-	\caption{An example latent space with two classes (\texttt{cross} and \texttt{square}) alongside a triangle which represents the embedding location of an unclassified inference image. The two class prototypes used to classify the triangle,$P_{\times}$ and $P_{\rule{0.8ex}{0.8ex}}$ respectively, are circled.}
+	\caption{An example latent space with two classes (\texttt{cross} and \texttt{square}) alongside a triangle which represents the embedding location of an unclassified inference image. The two class prototypes used to classify the triangle, $P_{\times}$ and $P_{\rule{0.8ex}{0.8ex}}$ respectively, are circled.}
 	\label{fig:prototype-embedding-example}
 \end{figure}
 
@@ -289,7 +293,7 @@ To decide on a threshold value for the NDD AU SMRU dataset, each image not utili
 	\begin{center}
 		\includegraphics[scale=0.6]{Chapter5/figs/uncatalogued-individual-example-ndd-au-smru.png}
 	\end{center}
-	\caption[Example uncatalogued individual thresholding.]{Example uncatalogued individual thresholding. Left: The input image seen by the model, of class \texttt{3}. The model has not been trained using this class. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the distance to the closest prototype is above the threshold, the fin has been flagged for manual review. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's most confident class is below the threshold, and thus the fin has been flagged for manual review.}
+	\caption[Example uncatalogued individual thresholding.]{Example uncatalogued individual thresholding. Left: the input image seen by the model, of class \texttt{3}. The model has not been trained using this class. Top Right: the resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the distance to the closest prototype is above the threshold, the fin has been flagged for manual review. Bottom Right: uncertainty scores generated using K-Nearest Neighbours clustering. The model's most confident class is below the threshold, and thus the fin has been flagged for manual review.}
 	\label{fig:uncatalogued-individual-example-ndd-au-smru}
 \end{figure}
 
@@ -299,7 +303,7 @@ The use of class prototypes proved especially useful for determining noise. Thro
 	\begin{center}
 		\includegraphics[scale=0.5]{Chapter5/figs/noise-example-ndd-au-smru.png}
 	\end{center}
-	\caption[Example noise thresholding.]{Example noise thresholding. Left: The input image seen by the model, of class \texttt{noise}. Top Right: The resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the closest prototype is \texttt{noise}, the input has been flagged. Bottom Right: Uncertainty scores generated using K-Nearest Neighbours clustering. The model's \texttt{noise} confidence is above the threshold, and thus the input has been flagged.}
+	\caption[Example noise thresholding.]{Example noise thresholding. Left: the input image seen by the model, of class \texttt{noise}. Top Right: the resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the closest prototype is \texttt{noise}, the input has been flagged. Bottom Right: uncertainty scores generated using K-Nearest Neighbours clustering. The model's \texttt{noise} confidence is above the threshold, and thus the input has been flagged.}
 	\label{fig:noise-individual-example-ndd-au-smru}
 \end{figure}
 
