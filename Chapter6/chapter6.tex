@@ -6,21 +6,24 @@ In this chapter the robustness of Siamese Neural Networks (SNNs) for the task of
 
 As outlined in Section \ref{ch:NDD,sec:NDD_AU_SMRU}, additional photo-id data for 23 individuals were provided by the Universities of Aberdeen and St Andrews upon completion of fieldwork in the Coquet to St. Mary's Marine Conservation Zone. Whilst this data was primarily utilised to better understand the home range of resident cetaceans, it was also used to provide additional training data for automatic most likely catalogue matching, creating the NDD AU SMRU dataset and providing a larger number of class examples for initial SNN feasibility studies. 
 
-Work undertaken throughout Chapter \ref{ch:ID} confirmed the ability of SNNs to perform most likely catalogue matching on the combined NDD AU SMRU dataset. To understand the effect of additional AU SMRU training data on model performance, two models were generated. First, a model was trained only on the data collected during the fieldwork season in Northumberland, UK. This data is contained within the Segmented NDD20 dataset discussed in Section \ref{ch:NDD,sec:postProcessingNDD20}. Due to the reduction in viable data for SNN training using semi-hard triplet mining, only 17 classes in Segmented NDD20 were utilised here in contrast to the 24 classes for model training on the full NDD AU SMRU dataset, discussed in Section \ref{ch:ID,sec:ModelSelection}. 
+Work undertaken throughout Chapter \ref{ch:ID} confirmed the ability of SNNs to perform most likely catalogue matching on the combined NDD AU SMRU dataset. To understand the effect of additional AU SMRU training data on model performance, two models were generated. First, a model was trained only on the data collected during the fieldwork season in Northumberland, UK. This data is contained within the Segmented NDD20 dataset discussed in Section \ref{ch:NDD,sec:postProcessingNDD20}. Due to the reduction in viable data for SNN training using semi-hard triplet mining, only 17 classes in Segmented NDD20 were utilised here (hereafter denoted as Segmented NDD20 17). This is in contrast to the 24 classes for model training on the full NDD AU SMRU dataset, discussed in Section \ref{ch:ID,sec:ModelSelection}. Next a second model was trained using the NDD AU SMRU dataset, limited to just the classes present in Segmented NDD20 17 (hereafter denoted as \textit{NDD AU SMRU 17}). If both models perform equally well on the test set, it can be deduced that the inclusion of the AU SMRU data during training has not aided model generalisability. 
 
-Next a second model was trained using the NDD AU SMRU dataset, limited to the 17 classes usable in Segmented NDD20. Evaluation of both models was performed using the 17 class NDD AU SMRU test set to allow for a like-for-like comparison. If both models perform equally well on the test set, it can be deduced that the inclusion of the AU SMRU data during training has not aided model generalisability. 
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[scale=0.5]{Chapter6/figs/effect-of-au-smru.png}
-	\end{center}
-	\caption[Comparison between two SNNs trained for most likely catalogue matching, one using the Segmented NDD20 dataset, and the other using the NDD AU SMRU dataset.]{Comparison between two SNNs trained for most likely catalogue matching, one using the Segmented NDD20 dataset, and the other using the NDD AU SMRU dataset. Evaluation is performed using the NDD AU SMRU test set. All datasets limited to the 17 Segmented NDD20 classes suitable for SNN training with semi-hard triplet mining.}
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cccccc}
+		\hline
+		\textbf{Dataset Split} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}} \\ \cline{4-6} 
+		&                                                                                    &                                                                                                & \textbf{Top-1}    & \textbf{Top-5}    & \textbf{Top-10}   \\ \hline
+		Segmented NDD20 17                          & VarvaraNet                                                                         & None                                                                                           & 42.26         & 60.44         & 78.13         \\
+		NDD AU SMRU 17                              & VarvaraNet                                                                       & None                                                                                           & 42.75         & 69.78        & 88.45         \\ \hline
+	\end{tabular}
+	\caption[Comparison between two SNNs trained for most likely catalogue matching, one using the Segmented NDD20 17 dataset, and the other using the NDD AU SMRU 17 dataset.]{Comparison between two SNNs trained for most likely catalogue matching, one using the Segmented NDD20 17 dataset, and the other using the NDD AU SMRU 17 dataset. Evaluation is performed using the NDD AU SMRU 17 test set.}
 	\label{fig:effect-of-au-smru}
-\end{figure}
+\end{table}
 
-Figure \ref{fig:effect-of-au-smru} shows the top-1, top-5, and top-10 accuracies for both models when evaluated on the 17 class NDD AU SMRU test set. As can be seen, utilising the additional AU SMRU data as opposed to training solely on the Segmented NDD20 dataset provided a boost of 0.49\%, 9.34\%, and 10.30\% to top-1, top-5, and top-10 accuracies respectively. This supports the hypothesis that additional training examples improve most likely catalogue matching performance, even though the data was obtained from a secondary source. As such, this provides evidence to suggest that models trained on multiple photo-id catalogues may perform better than those trained on a single study, assuming there is some individual overlap.
+Table \ref{fig:effect-of-au-smru} shows the top-1, top-5, and top-10 accuracies for both models when evaluated on the NDD AU SMRU 17 test set. As can be seen, utilising the additional AU SMRU data as opposed to training solely on the Segmented NDD20 17 dataset provided a boost of 0.49\%, 9.34\%, and 10.30\% to top-1, top-5, and top-10 accuracies respectively. This supports the hypothesis that additional training examples improve most likely catalogue matching performance, even though the data was obtained from a secondary source. As such, this provides evidence to suggest that models trained on multiple photo-id catalogues may perform better than those trained on a single study, assuming there is some individual overlap.
 
-However, performance of the model trained solely on the Segmented NDD20 dataset shows that even a model trained on the relatively small amount of data collected during the Northumberland fieldwork is able to greatly reduce the search space and can be utilised on data collected in a different spatio-temporal environment than the one on which it was trained, highlighting the robustness of the approach. 
+However, performance of the model trained solely on the Segmented NDD20 17 dataset shows that even a model trained on the relatively small amount of data collected during the Northumberland fieldwork is able to greatly reduce the search space and can be utilised on data collected in a different spatio-temporal environment than the one on which it was trained, highlighting the robustness of the approach. 
 
 \section{Effect of Background on Embedding Generation}\label{ch:SNNEvaluation,sec:EffectOfNoise}
 
@@ -70,7 +73,7 @@ To generate a train-test split capable of training an SNN, the catalogue set was
 
 After detection and processing the resultant SDRP dataset contained a total of 123 images, significantly smaller than the NDD AU SMRU dataset which was used to evaluate the SNN-based approach previously. Retaining the split provided by the SDRP, whereby the train set was generated from the catalogue and the test set from the encounter, leads to a 35-65 train-test split, an inversion of what would be expected when training machine learning models. The class distribution for the SDRP dataset can be seen in Figure \ref{fig:sdrp-dist}. As with the NDD AU SMRU dataset, the \texttt{noise} class is once again dominant. A colour threshold of 50\% was again utilised during post-processing with no correct detections erroneously discarded, suggesting this is an acceptable general value.
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\begin{center}
 		\includegraphics[scale=0.38]{Chapter6/figs/SDRP-class-dist.png}
 	\end{center}
@@ -84,16 +87,27 @@ These properties lead to the SDRP dataset being extremely challenging for an SNN
 
 Due to the small amount of data, it was not possible to create a meaningfully large and diverse validation set for the SDRP dataset. This prevented hyperparameter optimisation, and as such the decision was made to utilise the optimal hyperparameters located for the best performing SNN on the NDD AU SMRU dataset, alongside the same backbone architectures and data augmentation strategies defined in Section \ref{ch:ID,sec:SNNDevelopment}.
 
-\begin{figure}[h]
-	\begin{center}
-		\includegraphics[scale=0.4]{Chapter6/figs/SDRP-normal-split-model-comparison.png}
-	\end{center}
-	\caption{Results of SNN training for the task of most likely catalogue matching on the SDRP dataset.}
-	\label{fig:SDRP-normal-split-model-comparison}
-\end{figure}
-
-The results of model training on the SDRP dataset can be seen in Figure \ref{fig:SDRP-normal-split-model-comparison}, with each model evaluated using top-1, top-5, and top-10 accuracies.
+The results of model training on the SDRP dataset can be seen in Table \ref{fig:SDRP-normal-split-model-comparison}, with each model evaluated using top-1, top-5, and top-10 accuracies.
 Higher scores were achieved across the board on the SDRP dataset compared to the NDD AU SMRU dataset even without hyperparameter optimisation, however it is important to remember the smaller number of possible classes for the model to choose from which may inflate relative model performance.
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{ccccc}
+		\hline
+		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\ Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\ Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}}    \\ \cline{3-5} 
+		&                                                                                                & \textbf{Top-1}     & \textbf{Top-5}     & \textbf{Top-10}    \\ \hline
+		EmbeddingNet                                                                       & None                                                                                           & 72.50          & 91.25          & 95.00          \\
+		VarvaraNet                                                                         & None                                                                                           & 72.50          & 85.00          & 92.50          \\
+		\textbf{EmbeddingNet}                                                              & \textbf{Colour Jitter}                                                                         & \textbf{81.25} & \textbf{95.00} & \textbf{97.50} \\
+		VarvaraNet                                                                         & Colour Jitter                                                                                  & 70.00          & 91.25          & 96.25          \\
+		EmbeddingNet                                                                       & Perspective Shift                                                                              & 62.50          & 92.50          & 97.50          \\
+		VarvaraNet                                                                         & Perspective Shift                                                                              & 73.75          & 91.25          & 96.25          \\
+		EmbeddingNet                                                                       & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 71.25          & 92.50          & 96.25          \\
+		VarvaraNet                                                                         & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 63.75          & 88.75          & 97.50          \\ \hline
+	\end{tabular}
+	\caption[Results of SNN training for the task of most likely catalogue matching on the SDRP dataset.]{Results of SNN training for the task of most likely catalogue matching on the SDRP dataset. The best performing model is highlighted in bold.}
+	\label{fig:SDRP-normal-split-model-comparison}
+\end{table}
 
 Unlike the NDD AU SMRU data where best results were achieved without any augmentation, here the results are more mixed. Whilst the best top-10 accuracy, 97.50\%, is obtained using Colour Jitter and Perspective Shift augmentations (both together and separately), the best top-5 and top-1 accuracies were obtained using Colour Jitter only. These findings suggest that data augmentation strategy may be catalogue dependent and have a large impact on final model performance, and as such a search of possible data augmentation strategies should be performed each time an SNN model is trained using a new or updated photo-id catalogue. 
 
@@ -132,16 +146,27 @@ Based on the experimentation described previously, it can be seen that whilst un
 \subsection{Effect of Training Set Size on Model Backbone Selection}\label{ch:SNNEvaluation,sec:SDRP,sub:SDRPDataset,sub:reversedSDRP}
 
  As previously mentioned, the SDRP catalogue was provided pre-split which, once post-processed, produced a 35-65 train-test divide. As this training set is much smaller than what would normally be expected for developing a deep learning model, experimentation was undertaken to evaluate the hypothesis that a simpler model structure is best when low volumes of catalogue data are available during training. To this end, the dataset splits were reversed such that the test set was used for model training and the train set was used for evaluation. For consistency, the same model backbones and data augmentation strategies were utilised during training, as were the optimal NDD AU SMRU hyperparameters. 
+ 
+ \begin{table}[]
+ 	\centering
+ 	\begin{tabular}{ccccc}
+ 		\hline
+ 		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\ Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\ Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}}      \\ \cline{3-5} 
+ 		&                                                                                                & \textbf{Top-1}     & \textbf{Top-5}      & \textbf{Top-10}     \\ \hline
+ 		EmbeddingNet                                                                       & None                                                                                           & 67.44          & 90.70           & 90.70           \\
+ 		VarvaraNet                                                                         & None                                                                                           & 88.37          & 100.00          & 100.00          \\
+ 		EmbeddingNet                                                                       & Colour Jitter                                                                                  & 69.77          & 88.37           & 90.70           \\
+ 		VarvaraNet                                                                         & Colour Jitter                                                                                  & 72.09          & 88.37           & 97.67           \\
+ 		EmbeddingNet                                                                       & Perspective Shift                                                                              & 74.42          & 90.70           & 97.68           \\
+ 		VarvaraNet                                                                         & Perspective Shift                                                                              & 74.42          & 88.37           & 95.35           \\
+t 		EmbeddingNet                                                                       & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 60.47          & 88.37           & 90.70           \\
+ 		\textbf{VarvaraNet}                                                                & \textbf{\begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}}           & \textbf{90.70} & \textbf{100.00} & \textbf{100.00} \\ \hline
+ 	\end{tabular}
+\caption[Results of SNN training for the task of most likely catalogue matching on the reversed SDRP dataset.]{Results of SNN training for the task of most likely catalogue matching on the reversed SDRP dataset. The best performing model is highlighted in bold.}
+\label{fig:SDRP-reversed-split-model-comparison}
+\end{table}
 
- \begin{figure}[t]
- 	\begin{center}
- 		\includegraphics[scale=0.4]{Chapter6/figs/SDRP-reversed-split-model-comparison.png}
- 	\end{center}
- 	\caption{Results of SNN training for the task of most likely catalogue matching on the reversed SDRP dataset.}
- 	\label{fig:SDRP-reversed-split-model-comparison}
- \end{figure}
-
-The top-1, top-5, and top-10 accuracies for the trained models can be seen in Figure \ref{fig:SDRP-reversed-split-model-comparison}. By reversing the train-test split, a drop in performance is observed for all bar one of the models trained using an EmbeddingNet backbone. For the single model where performance improves, increases of 11.92\% top-1 and 0.18\%  top-10 accuracies are observed, however a drop of 1.80\% top-5 accuracy is also seen. For those models trained using a VarvaraNet backbone, increases in performance are observed for all models, with only two reporting slight drops in top-5 accuracy. 
+The top-1, top-5, and top-10 accuracies for the trained models can be seen in Table \ref{fig:SDRP-reversed-split-model-comparison}. By reversing the train-test split, a drop in performance is observed for all bar one of the models trained using an EmbeddingNet backbone. For the single model where performance improves, increases of 11.92\% top-1 and 0.18\%  top-10 accuracies are observed, however a drop of 1.80\% top-5 accuracy is also seen. For those models trained using a VarvaraNet backbone, increases in performance are observed for all models, with only two reporting slight drops in top-5 accuracy. 
 
 In general, it can be observed that the increase in training data has led to an overall performance boost for models trained using a VarvaraNet backbone whilst those with an EmbeddingNet backbone observe a performance drop. As such, the best performing model for the reversed split SDRP dataset now makes use of a VarvaraNet backbone alongside both Colour Jitter and Perspective Shift data augmentation strategies. This supports the hypothesis that backbone architecture selection is influenced by the size of the initial training set, a finding backed up by other works in the area \cite{dutta_evaluation_2018, sug_effect_2010}. Further, it seems to be the case that more complex models are required to fully capture the fine-grained nature of larger photo-id catalogues. These findings also provide further evidence to support the idea that data augmentation strategies are catalogue dependent. 
 
@@ -166,14 +191,14 @@ The top-1, top-5, and top-10 accuracies for the best performing models can be se
 	\centering
 	\small
 		\begin{tabular}{cccc}
-			\cline{2-4}
-			 & \multicolumn{3}{c}{\textbf{Accuracy (\%)}} \\ \hline
-			\textbf{Architecture}                    &  \textbf{Top-1} & \textbf{Top-5} & \textbf{Top-10} \\ \hline
-			ResNet50 \cite{he_deep_2015}   &  3.46                 & 11.79            & 27.03                  \\
-			ResNet101 \cite{he_deep_2015}   &  4.07                  &   14.43               &  27.85                     \\
-			VGG16 \cite{simonyan_very_2015} & 2.64                &    15.45              &   33.54     \\\bottomrule
-	\end{tabular}
-	\caption[Top-$N$ accuracies of the best performing image classification models on the NDD AU SMRU dataset.]{Top-$N$ accuracies of the best performing image classification models on the NDD AU SMRU dataset. Accuracies given to 2 decimal places.}
+			\hline
+			\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\ Architecture\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}} \\ \cline{2-4} 
+			& \textbf{Top-1}    & \textbf{Top-5}    & \textbf{Top-10}   \\ \hline
+			ResNet50 \cite{he_deep_2015}                                                           & 3.46          & 11.79         & 27.03         \\
+			ResNet101 \cite{he_deep_2015}                                                          & 4.07          & 14.43         & 27.85         \\
+			VGG16 \cite{simonyan_very_2015}                                                        & 2.64          & 15.45         & 33.54  \\ \hline     
+		\end{tabular}
+	\caption[Top-$N$ accuracies of the best performing image classification models on the NDD AU SMRU dataset.]{Top-$N$ accuracies of the best performing image classification models on the NDD AU SMRU dataset.}
 	\label{tab:optunaBestParamsStandard}
 \end{table}
 

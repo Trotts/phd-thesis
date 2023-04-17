@@ -266,60 +266,60 @@ The list of possible hyperparameter combinations and model name, determined by t
 			\toprule
 			Model Name & Weight Decay &        RPN Anchor Scales & Optimiser & Augmentation Strategy & Pre-trained on MSCOCO? \\
 			\midrule
-			20190829T1458 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  True \\
-			20190829T2020 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                  True \\
-			20190830T0145 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  True \\
-			20190830T0714 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   False \\
-			20190830T1443 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   False \\
-			20190830T2019 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   False \\
-			20190902T0946 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  True \\
-			20190904T2004 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  True \\
-			20190905T1813 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  True \\
-			20190905T1826 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  True \\
-			20190905T2202 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  True \\
-			20190905T2336 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  True \\
-			20190906T0332 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  True \\
-			20190906T0851 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  True \\
-			20190907T0932 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  True \\
-			20190907T0933 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   False \\
-			20190907T0934 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  False \\
-			20190907T1451 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  True \\
-			20190907T1500 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                   False \\
-			20190907T1545 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   False \\
-			20190907T2026 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  True \\
-			20190907T2126 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   False \\
-			20190907T2215 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  True \\
-			20190908T0202 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  True \\
-			20190908T0352 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  True \\
-			20190908T0417 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  True \\
-			20190908T0957 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                   False \\
-			20190908T1102 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  False \\
-			20190908T1204 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  True \\
-			20190908T1939 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   False \\
-			20190908T2043 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  True \\
-			20190908T2139 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   False \\
-			20190909T0723 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   False \\
-			20190911T1922 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   False \\
-			20190912T0045 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   False \\
-			20190912T0608 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  True \\
-			20191101T1633 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  True \\
-			20191101T2104 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  True \\
-			20191102T0140 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  True \\
-			20191102T0615 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  True \\
-			20191102T1051 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  False \\
-			20191102T1528 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  True \\
-			20191102T2006 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  True \\
-			20191103T0044 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  True \\
-			20191103T0520 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  True \\
-			20191103T0959 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  True \\
-			20191103T1441 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  True \\
-			20191103T1921 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  True \\
-			20191104T0011 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  True \\
-			20191104T0450 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  True \\
+			20190829T1458 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  \cmark \\
+			20190829T2020 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                  \cmark \\
+			20190830T0145 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  \cmark \\
+			20190830T0714 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   \xmark \\
+			20190830T1443 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   \xmark \\
+			20190830T2019 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   \xmark \\
+			\textbf{20190902T0946} &         \textbf{0.01} &  \textbf{ (16, 32, 64, 128, 256)} &      \textbf{SGDR} &                  \textbf{aug1} &                  \cmark \\
+			20190904T2004 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  \cmark \\
+			20190905T1813 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
+			20190905T1826 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark \\
+			20190905T2202 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  \cmark \\
+			20190905T2336 &        0.001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  \cmark \\
+			20190906T0332 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  \cmark \\
+			20190906T0851 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  None &                  \cmark \\
+			20190907T0932 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                  \cmark \\
+			20190907T0933 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   \xmark \\
+			20190907T0934 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  \xmark \\
+			20190907T1451 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  \cmark \\
+			20190907T1500 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                   \xmark \\
+			20190907T1545 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                   \xmark \\
+			20190907T2026 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  \cmark \\
+			20190907T2126 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   \xmark \\
+			20190907T2215 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark \\
+			20190908T0202 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                  \cmark \\
+			20190908T0352 &         0.01 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  \cmark \\
+			20190908T0417 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug1 &                  \cmark \\
+			20190908T0957 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  None &                   \xmark \\
+			20190908T1102 &       0.0001 &  (32, 64, 128, 256, 512) &      Adam &                  aug2 &                  \xmark \\
+			20190908T1204 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  \cmark \\
+			20190908T1939 &        0.001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   \xmark \\
+			20190908T2043 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
+			20190908T2139 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  None &                   \xmark \\
+			20190909T0723 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug1 &                   \xmark \\
+			20190911T1922 &         0.01 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   \xmark \\
+			20190912T0045 &       0.0001 &   (16, 32, 64, 128, 256) &      Adam &                  aug2 &                   \xmark \\
+			20190912T0608 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  \cmark \\
+			20191101T1633 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  \cmark \\
+			20191101T2104 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  \cmark \\
+			20191102T0140 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
+			20191102T0615 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  \cmark \\
+			20191102T1051 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  \xmark \\
+			20191102T1528 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  \cmark \\
+			20191102T2006 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug2 &                  \cmark \\
+			20191103T0044 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  \cmark \\
+			20191103T0520 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  \cmark \\
+			20191103T0959 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  \cmark \\
+			20191103T1441 &       0.0001 &     (8, 16, 32, 64, 128) &      SGDR &                  None &                  \cmark \\
+			20191103T1921 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark \\
+			20191104T0011 &        0.001 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  \cmark \\
+			20191104T0450 &         0.01 &     (8, 16, 32, 64, 128) &      SGDR &                  aug1 &                  \cmark \\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
-	\caption{Hyperparameter values used for each grid search run when training the Mask R-CNN model on the Zanzibar data.}\label{tab:MaskRCNNHyperparamTuningGridSearch}
+	\caption[Hyperparameter values used for each grid search run when training the Mask R-CNN model on the Zanzibar data.]{Hyperparameter values used for each grid search run when training the Mask R-CNN model on the Zanzibar data. The model chosen for use is highlighted in bold.}\label{tab:MaskRCNNHyperparamTuningGridSearch}
 \end{table}
 
 \subsection{Model Selection Based on Grid Search}\label{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch}
@@ -344,15 +344,29 @@ This effect is even greater when comparing map@IOU[0.85] scores, with the worst 
 
 Whilst Figure \ref{fig:mAP-graph} provides some indication of overall model training, using it to determine the most appropriate model for the task at hand is difficult given the number of models trained. To achieve this, the list of models was reduced to only those which achieved the best mAP@IOU[0.5, 0.75, 0.85] scores. The thresholds 0.5 and 0.75 were chosen to remain consistent with other segmentation literature \cite{bolya_190402689_2019, wang_solov2_2020, tian_fcos_2019}. The 0.85 threshold was chosen as some models trained still achieve impressive results here, allowing for more model filtering. Further, the pixel-wise detections of cetaceans is required to filter as much background noise as possible and so finding high performing models at top thresholds is important.
 
-When filtering, the top five performing models at each threshold were extracted. If a model  achieved top five ranking at multiple thresholds it was only included once, resulting in a list of the ten best performing models. The mAP@IOU[0.5, 0.75, 0.85] scores for these best performing models can be seen in Figure \ref{fig:mAP-best-models-bar-chart}.
+When filtering, the top five performing models at each threshold were extracted. If a model  achieved top five ranking at multiple thresholds it was only included once, resulting in a list of the ten best performing models. The mAP@IOU[0.5, 0.75, 0.85] scores for these best performing models can be seen in Table \ref{fig:mAP-best-models-bar-chart}.
 
-\begin{figure}[h]
-	\begin{center}
-		\includegraphics[scale=0.55]{Chapter3/figs/mask-RCNN-model-bar-chart.png}
-	\end{center}
-	\caption[mAP@IOU{[0.5, 0.75, 0.85]} scores for the best performing Mask R-CNN models trained on the Zanzibar dataset.]{mAP@IOU[0.5, 0.75, 0.85] scores for the best performing Mask R-CNN models trained on the Zanzibar dataset. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
+\begin{table}[!ht]
+	\centering
+		\begin{tabular}{cccc}
+			\toprule
+			\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Model Name}}} & \multicolumn{3}{c}{\textbf{mAP@IOU[$x$]}}       \\ \cline{2-4} 
+			\multicolumn{1}{c}{}                                     & \textbf{0.5}  & \textbf{0.75} & \textbf{0.85} \\ \midrule
+			\textbf{20190902T0946}                                   & \textbf{0.91} & \textbf{0.79} & \textbf{0.50} \\
+			20190905T1813                                            & 0.94          & 0.77          & 0.45          \\
+			20190907T0934                                            & 0.92          & 0.80          & 0.46          \\
+			20190907T2215                                            & 0.93          & 0.79          & 0.45          \\
+			20190908T2043                                            & 0.93          & 0.80          & 0.48          \\
+			20190912T0608                                            & 0.91          & 0.77          & 0.46          \\
+			20191102T0140                                            & 0.92          & 0.81          & 0.44          \\
+			20191102T1051                                            & 0.91          & 0.81          & 0.46          \\
+			20191103T0959                                            & 0.93          & 0.77          & 0.44          \\
+			20191103T1921                                            & 0.93          & 0.77          & 0.36          \\
+			\bottomrule
+		\end{tabular}
+	\caption[mAP@IOU{[0.5, 0.75, 0.85]} scores for the ten best performing Mask R-CNN models trained on the Zanzibar dataset.]{mAP@IOU[0.5, 0.75, 0.85] scores for the best performing Mask R-CNN models trained on the Zanzibar dataset. The model chosen for use is highlighted in bold. See Table \ref{tab:MaskRCNNHyperparamTuningGridSearch} for each model's hyperparameters.}
 	\label{fig:mAP-best-models-bar-chart}
-\end{figure}
+\end{table}
 
 When deciding on which model hyperparameters are best for the task of cetacean segmentation, it is important to find a model with a high mAP@IOU[0.85] score. As the model will be used to perform segmentation before fine-grained classification, it is important the model is capable of removing as much background from the input image as possible. Any background included in the segmentation may adversely effect the photo-id process. Using this as criteria, model 20190902T0946 was selected as the best performing model. The model achieves an mAP@IOU[0.85] score of 0.5, an excellent result given the difficulty of the segmentation task. The model also performs well at the other evaluation thresholds, achieving mAP@IOU[0.5, 0.75] scores of 0.91 and 0.79 respectively. These scores verify that the model is capable of segmenting cetaceans from background with as little noise being included in the segmentation mask as possible.
 
@@ -369,20 +383,20 @@ As discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBase
 			\toprule
 			Model Name & Weight Decay &        RPN Anchor Scales & Optimiser & Augmentation Strategy & Pre-trained on MSCOCO? \\
 			\midrule
-				20190902T0946 &         0.01 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  True \\
-				20190905T1813 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  True \\
-				20190907T0934 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  True \\
-				20190907T2215 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  True \\
-				20190908T2043 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  True \\
-				20190912T0608 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  True \\
-				20191102T0140 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  True \\
-				20191102T1051 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  True \\
-				20191103T0959 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  True \\
-				20191103T1921 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  True \\
+				\textbf{20190902T0946} &         \textbf{0.01} &  \textbf{ (16, 32, 64, 128, 256)} &      \textbf{SGDR} &                  \textbf{aug1} &                  \textbf{\cmark} \\
+				20190905T1813 &        0.001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
+				20190907T0934 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  \cmark \\
+				20190907T2215 &        0.001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark \\
+				20190908T2043 &       0.0001 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
+				20190912T0608 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  \cmark \\
+				20191102T0140 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
+				20191102T1051 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  \cmark \\
+				20191103T0959 &         0.01 &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  \cmark \\
+				20191103T1921 &       0.0001 &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark \\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
-	\caption[Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset.]{Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset. Subset of Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}.}
+	\caption[Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset.]{Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset. Subset of Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}. The model chosen for use is highlighted in bold.}
 	\label{tab:best-mask-rcnn-models}
 \end{table}
 
@@ -392,7 +406,7 @@ Half of the best models utilise the \textit{aug1} data augmentation strategy, de
 
 \subsection{Limitations of the Model}\label{ch:cetDet,sec:ModelSelection,sub:LimitationsOfBest}
 
-As with any network trained on real world data, the best performing model, 20190902T0946, is not perfect. As can be seen through the mAP scores in Figure \ref{fig:mAP-best-models-bar-chart}, the model still fails to correctly detect in some instances. This section examines under what conditions 20190902T0946 fails for the purposes of model transparency. 
+As with any network trained on real world data, the best performing model, 20190902T0946, is not perfect. As can be seen through the mAP scores in Table \ref{fig:mAP-best-models-bar-chart}, the model still fails to correctly detect in some instances. This section examines under what conditions 20190902T0946 fails for the purposes of model transparency. 
 
 Figure \ref{fig:model-fail-bad-detection-and-split-individual} provides a good example of environmental conditions which can cause the model to fail to correctly detect an individual. Due to wave movement covering a part of the animal's body, the model has split this individual into two separate detections.
 

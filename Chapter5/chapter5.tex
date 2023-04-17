@@ -228,19 +228,32 @@ Whilst the train and validation splits may feel unnatural (a 56-24 split is not 
 
 Once the final optimal hyperparameters had been located using Bayesian optimisation, the train and validation sets were recombined and used to train the selected architecture from scratch using the located hyperparameters, alongside the selected data augmentation strategy. Once trained, the model was then evaluated using the test set. 
 
-\begin{figure}[t]
-	\begin{center}
-		\includegraphics[scale=0.4]{Chapter5/figs/NDDAUSMRU-SNN-model-accuracies.png}
-	\end{center}
-	\caption{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset.}
+\begin{table}[h]
+	\centering
+	\begin{tabular}{ccccc}
+		\hline
+		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\ Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\ Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}}             \\ \cline{3-5} 
+		&                                                                                                & \textbf{Top-1}     & \textbf{Top-5}     & \textbf{Top-10}    \\ \hline
+		EmbeddingNet                                                                       & Greyscale                                                                                      & 30.69          & 58.13          & 75.00          \\
+		VarvaraNet                                                                         & Greyscale                                                                                      & 42.07          & 62.20          & 74.80          \\
+		EmbeddingNet                                                                       & \begin{tabular}[c]{@{}c@{}}Greyscale \&\\ Perspective Shift\end{tabular}                        & 35.57          & 51.02          & 68.30          \\
+		VarvaraNet                                                                         & \begin{tabular}[c]{@{}c@{}}Greyscale \&\\ Perspective Shift\end{tabular}                        & 38.82          & 62.60          & 77.64          \\
+		EmbeddingNet                                                                       & None                                                                                           & 39.63          & 66.46          & 79.06          \\
+		\textbf{VarvaraNet}                                                                & \textbf{None}                                                                                  & \textbf{40.85} & \textbf{68.90} & \textbf{83.13} \\
+		EmbeddingNet                                                                       & Colour Jitter                                                                                  & 28.05          & 50.00          & 66.67          \\
+		VarvaraNet                                                                         & Colour Jitter                                                                                  & 38.82          & 61.18          & 76.83          \\
+		EmbeddingNet                                                                       & Perspective Shift                                                                              & 22.36          & 47.15          & 65.24          \\
+		VarvaraNet                                                                         & Perspective Shift                                                                              & 23.17          & 51.22          & 73.58          \\
+		EmbeddingNet                                                                       & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 30.69          & 53.25          & 68.49          \\
+		VarvaraNet                                                                         & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 40.04          & 61.18          & 78.46          \\ \hline
+	\end{tabular}
+	\caption[Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset.]{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset. The model chosen for use is highlighted in bold.}
 	\label{fig:NDDAUSMRU-SNN-model-accuracies}
-\end{figure}
+\end{table}
 
-Figure \ref{fig:NDDAUSMRU-SNN-model-accuracies} shows the results of training an SNN to perform most likely catalogue matching on the NDD AU SMRU dataset. Each model trained is evaluated using top-1, top-5, and top-10 accuracies. As can be seen, the best performing model is a VarvaraNet trained without the use of any data augmentation. This model achieves the highest test set accuracy at all evaluated metric thresholds, achieving 40.85\% top-1, 68.90\% top-5, and 83.13\% top-10 accuracies. These results provide evidence that SNNs are capable of fine-grained, few-shot individual level identification. If the model was deployed into production and utilised by cetacean researchers, then these levels of accuracy would vastly reduce the search space required to perform most likely catalogue matching.
+Table \ref{fig:NDDAUSMRU-SNN-model-accuracies} shows the results of training an SNN to perform most likely catalogue matching on the NDD AU SMRU dataset. Each model trained is evaluated using top-1, top-5, and top-10 accuracies. As can be seen, the best performing model is a VarvaraNet trained without the use of any data augmentation. This model achieves the highest test set accuracy at all evaluated metric thresholds, achieving 40.85\% top-1, 68.90\% top-5, and 83.13\% top-10 accuracies. These results provide evidence that SNNs are capable of fine-grained, few-shot individual level identification. If the model was deployed into production and utilised by cetacean researchers, then these levels of accuracy would vastly reduce the search space required to perform most likely catalogue matching.
 
 On the whole, it is the case that models using an EmbeddingNet backbone perform worse than those using a VarvaraNet backbone, even when utilising the same data augmentation strategies. Furthermore it can be seen that, in general, the data augmentation strategy chosen for training has little effect on final model performance against the test set as evidenced by the lack of variation in accuracy metrics between models when trained using different strategies. This is especially interesting with regards to the greyscale augmentation as whilst there has been a drop in accuracy when compared to the best performing model this is only slight. However, this does suggest that a reduction in colour channel leads to some information loss. The fact that the best performing model is one which makes use of no data augmentations may suggest that even strategies which only perturb the input slightly still have a negative effect on the model's ability to extract identifying information. 
-
-% Confusion matrix for top-1 doesn't visualise well due to number of classes, high number of noise examples skews visualisation.
 
 \subsection{An Evaluation of Optimal Model Hyperparameters}\label{ch:ID,sec:ModelSelection,subsec:paramEval}
 
@@ -267,7 +280,7 @@ The optimal SNN hyperparameters chosen through Bayesian optimisation for each ar
 			VarvaraNet                                                         & \begin{tabular}[t]{@{}c@{}}Colour Jitter \& \\ Perspective Shift\end{tabular}    & 2                                                                 & 35                                                                                     & 5                                                                                             & 0.286            & $4.093\times10^{-4}$                                                          & SGD                & $5.352\times10^{-4}$                                                                             & 9                                                                                 & 0.068             & 28                                                                & 0.826                       \\
 			\bottomrule                                                      
 	\end{tabular}}
-	\caption[Optimal SNN hyperparameters for each architecture-augmentation combination located using Bayesian optimisation over 100 iterations.]{Optimal SNN hyperparameters for each architecture-augmentation combination located using Bayesian optimisation over 100 iterations. Results given to 3 decimal places where applicable. Best model parameters presented in bold.}
+	\caption[Optimal SNN hyperparameters for each architecture-augmentation combination located using Bayesian optimisation over 100 iterations.]{Optimal SNN hyperparameters for each architecture-augmentation combination located using Bayesian optimisation over 100 iterations. Results given to 3 decimal places where applicable. The model chosen for use is highlighted in bold.}
 	\label{tab:optunaBestParamsPerSNN}
 \end{table}
 
@@ -277,7 +290,7 @@ The optimal SNN hyperparameters chosen through Bayesian optimisation for each ar
  
  One important takeaway from the use of Bayesian optimisation techniques is that for some hyperparameters that require a continuous input, such as learning rate or weight decay, the optimal value may be one which would likely not be selected by a human when performing a Grid Search. This highlights the effectiveness of Bayesian optimisation over a Grid Search as, whilst the difference between a learning rate of $2\times10^{-6}$ selected during a Grid Search and $2.578\times10^{-6}$ selected by Bayesian optimisation, may only be a few percentage points increase in test set accuracy, this still results in an overall more generalisable model. 
  
-\subsection{ NDD AU SMRU Uncatalogued Individual Thresholding}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding}
+\subsection{NDD AU SMRU Uncatalogued Individual Thresholding}\label{ch:ID,sec:ModelSelection,subsec:UncataloguedIndividualThresholding}
 
 Further evaluation was performed to examine the best performing model's ability to flag uncatalogued individuals to the user. Before training, some classes from the NDD AU SMRU dataset were removed. As these are classes which have not yet been seen by the model, they can be utilised as if they were uncatalogued individuals.
 
@@ -333,25 +346,41 @@ When performing catalogue matching manually, cetacean researchers will often ide
 
 Once a baseline best model had been located, experimentation was undertaken to examine whether automated photo-id matching should, like its manual counterpart, split individual classes on a per-side basis. Where possible, each class in the NDD AU SMRU dataset was divided in two, with each new class containing only the left or right side examples of the individual. This increased the number of classes in the dataset from 24 to 47 (one original class only contained examples images of a single side). The number of example images per side was slightly skewed, with a median of 11.5 examples for left classes and 13 for right classes.
 
-Using this split dataset model training was performed, utilising the same architectures, data augmentations, and hyperparameter optimisation strategy as outlined in Section \ref{ch:ID,sec:SNNDevelopment}. Greyscaling was not performed here due to the results outlined in Section \ref{ch:ID,sec:ModelSelection} highlighting that information was lost when using this data augmentation. Resultant models were again evaluated using top-1, top-5, and top-10 accuracies. The results of this search can be seen in Figure \ref{fig:NDDAUSMRU-per-side-SNN-model-accuracies}.
-		
-\begin{figure}[t]
-	\begin{center}
-		\includegraphics[scale=0.5]{Chapter5/figs/NDDAUSMRU-per-side-SNN-model-accuracies.png}
-	\end{center}
-	\caption{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting.}
-	\label{fig:NDDAUSMRU-per-side-SNN-model-accuracies}
-\end{figure}
+Using this split dataset model training was performed, utilising the same architectures, data augmentations, and hyperparameter optimisation strategy as outlined in Section \ref{ch:ID,sec:SNNDevelopment}. Greyscaling was not performed here due to the results outlined in Section \ref{ch:ID,sec:ModelSelection} highlighting that information was lost when using this data augmentation. Resultant models were again evaluated using top-1, top-5, and top-10 accuracies, the results of which can be seen in Table \ref{fig:NDDAUSMRU-per-side-SNN-model-accuracies}.
 
- A comparison between the best performing combined-side and per-side models can be seen in Figure \ref{fig:NDDAUSMRU-combined-and-per-side-comparison}. Only a 5.30\% drop in top-10 accuracy is observed between the combined-side and per-side models, reduced to a 2.16\% drop when utilising top-5 accuracy. When evaluating with top-1 accuracy however, the per-side model outperforms the combined-side model by 3.08\%. Whilst model performance has dropped using some metrics when compared to training using the combined-side dataset, it is important to note that training using the per-side dataset nearly doubles the number of possible classes known by the model. As such, a drop in top-$N$ accuracy should be expected simply due to the increase in the number of possible classes. The fact that this drop is so small at top-10 and top-5 levels, and performance actually improves when measuring using top-1 accuracy, suggests that utilising a per-side approach to automated catalogue matching is better than utilising a single class for all example images of an individual.
+\begin{table}[]
+	\centering
+	\begin{tabular}{ccccc}
+		\hline
+		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\ Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\ Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}}             \\ \cline{3-5} 
+		&                                                                                                & \textbf{Top-1}     & \textbf{Top-5}     & \textbf{Top-10}    \\ \hline
+		\textbf{EmbeddingNet}                                                              & \textbf{None}                                                                                  & \textbf{43.93} & \textbf{66.74} & \textbf{77.83} \\
+		VarvaraNet                                                                         & None                                                                                           & 25.94          & 54.18          & 66.94          \\
+		EmbeddingNet                                                                       & Colour Jitter                                                                                  & 42.68          & 65.06          & 76.36          \\
+		VarvaraNet                                                                         & Colour Jitter                                                                                  & 31.17          & 51.46          & 64.22          \\
+		EmbeddingNet                                                                       & Perspective Shift                                                                              & 37.03          & 55.44          & 67.36          \\
+		VarvaraNet                                                                         & Perspective Shift                                                                              & 32.01          & 52.30          & 64.02          \\
+		EmbeddingNet                                                                       & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 17.36          & 52.51          & 67.36          \\
+		VarvaraNet                                                                         & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 28.45          & 56.69          & 71.96          \\ \hline
+	\end{tabular}
+\caption[Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting.]{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting (47 classes). The best performing model is highlighted in bold.}
+\label{fig:NDDAUSMRU-per-side-SNN-model-accuracies}
+\end{table}
 
-\begin{figure}[t]
-	\begin{center}
-		\includegraphics[scale=0.4]{Chapter5/figs/NDDAUSMRU-combined-and-per-side-comparison.png}
-	\end{center}
-	\caption{Comparison between the best performing SNN models for the task of most likely catalogue matching trained on the combined-side (Left) and per-side (Right) NDD AU SMRU datasets.}
-	\label{fig:NDDAUSMRU-combined-and-per-side-comparison}
-\end{figure}
+ A comparison between the best performing combined-side and per-side models can be seen in Table \ref{fig:NDDAUSMRU-combined-and-per-side-comparison}. Only a 5.30\% drop in top-10 accuracy is observed between the combined-side and per-side models, reduced to a 2.16\% drop when utilising top-5 accuracy. When evaluating with top-1 accuracy however, the per-side model outperforms the combined-side model by 3.08\%. Whilst model performance has dropped using some metrics when compared to training using the combined-side dataset, it is important to note that training using the per-side dataset nearly doubles the number of possible classes known by the model. As such, a drop in top-$N$ accuracy should be expected simply due to the increase in the number of possible classes. The fact that this drop is so small at top-10 and top-5 levels, and performance actually improves when measuring using top-1 accuracy, suggests that utilising a per-side approach to automated catalogue matching is better than utilising a single class for all example images of an individual.
+
+\begin{table}[]
+	\centering
+	\begin{tabular}{cccccc}
+		\hline
+		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}NDD AU SMRU\\Dataset Split\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}} \\ \cline{4-6} 
+		&                                                                                    &                                                                                                & \textbf{Top-1}    & \textbf{Top-5}    & \textbf{Top-10}   \\ \hline
+		\begin{tabular}[c]{@{}c@{}}Combined Side\\ (24 classes)\end{tabular}                          & VarvaraNet                                                                         & None                                                                                           & 40.85         & 68.90         & 83.13         \\
+		\begin{tabular}[c]{@{}c@{}}Per Side\\ (47 classes)\end{tabular}                               & EmbeddingNet                                                                       & None                                                                                           & 43.93         & 66.74         & 77.83         \\ \hline
+	\end{tabular}
+\caption{Comparison between the best performing SNN models for the task of most likely catalogue matching trained on the combined-side and per-side NDD AU SMRU datasets.}
+\label{fig:NDDAUSMRU-combined-and-per-side-comparison}
+\end{table}
 
 Interestingly the best performing per-side model utilises an EmbeddingNet backbone architecture, whilst the best performing combined-side model makes use of a VarvaraNet. Both models however did not make use of a data augmentation strategy. As the EmbeddingNet architecture is less complex than the VarvaraNet, this may suggest that the reduction in intra-class variation when utilising a per-side dataset reduces the complexity of the backbone architecture required for the model to perform well on the test dataset. This is also reflected in the optimal output embedding size located during hyperparameter optimisation. Whilst the combined-side model has an output size of 106 the per-side model has an output size of 36, suggesting that less dimensionality is required to capture the information needed to perform catalogue matching. A full list of model hyperparameters for the best performing per-side model can be found in Appendix \ref{app:NDDAUSMRUPerSideModelParams}.
 
@@ -363,25 +392,41 @@ When the model outputs a list of possible classifications, it may be the case th
 
 To rectify this, a modification was made to the top-$N$ accuracy metric such that it ignored the side classification. For example, both \texttt{10\_L} and \texttt{10\_R} would evaluate to \texttt{10}. Now, if the model provides a correct individual classification but an incorrect side classification, it is deemed to be correct during evaluation. Note that this change was only implemented at test time, so as to not hinder embedding generation through the training process. 
 
-Results of evaluating the models trained in Section \ref{ch:ID,sec:perSide} using this modified top-$N$ accuracy score can be seen in Figure \ref{fig:NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies}. On average, this truer-to-life modification improves a model's top-1 accuracy by 0.94\%, top-5 accuracy by 3.01\%, and top-10 accuracy by 4.34\%.
+Results of evaluating the models trained in Section \ref{ch:ID,sec:perSide} using this modified top-$N$ accuracy score can be seen in Table \ref{fig:NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies}. On average, this truer-to-life modification improves a model's top-1 accuracy by 0.94\%, top-5 accuracy by 3.01\%, and top-10 accuracy by 4.34\%.
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[scale=0.5]{Chapter5/figs/NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies.png}
-	\end{center}
-	\caption{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting, utilising the modified Top-$N$ accuracy measurement to only take into account the individual classification.}
-	\label{fig:NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies}
-\end{figure}
+\begin{table}[]
+	\centering
+	\begin{tabular}{ccccc}
+		\hline
+		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\ Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\ Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}}    \\ \cline{3-5} 
+		&                                                                                                & \textbf{Top-1}     & \textbf{Top-5}     & \textbf{Top-10}    \\ \hline
+		\textbf{EmbeddingNet}                                                              & \textbf{None}                                                                                  & \textbf{44.56} & \textbf{68.62} & \textbf{80.54} \\
+		VarvaraNet                                                                         & None                                                                                           & 27.62          & 58.37          & 73.01          \\
+		EmbeddingNet                                                                       & Colour Jitter                                                                                  & 43.72          & 67.15          & 78.87          \\
+		VarvaraNet                                                                         & Colour Jitter                                                                                  & 32.22          & 53.56          & 68.62          \\
+		EmbeddingNet                                                                       & Perspective Shift                                                                              & 37.45          & 59.00          & 73.44          \\
+		VarvaraNet                                                                         & Perspective Shift                                                                              & 32.64          & 54.40          & 67.16          \\
+		EmbeddingNet                                                                       & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 18.41          & 56.90          & 72.80          \\
+		VarvaraNet                                                                         & \begin{tabular}[t]{@{}c@{}}Perspective Shift \&\\ Colour Jitter\end{tabular}                    & 29.50          & 60.25          & 76.36          \\ \hline
+	\end{tabular}
+\caption[Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting, utilising the modified Top-$N$ accuracy measurement to only take into account the individual classification.]{Results of SNN training for the task of most likely catalogue matching on the NDD AU SMRU dataset after per-side splitting, utilising the modified Top-$N$ accuracy measurement to only take into account the individual classification. The best performing model is highlighted in bold.}
+\label{fig:NDDAUSMRU-per-side-individual-classification-only-SNN-model-accuracies}
+\end{table}
 
-Figure \ref{fig:NDDAUSMRU-combined-and-per-side-comparison-individual-classification-only} shows a comparison between the best performing combined-side model and the best performing per-side model evaluated against the modified top-$N$ accuracy. Using this metric the gap between top-10 and top-5 accuracy comparisons reduces further, with the gap between top-1 accuracy comparisons increasing. Given the difference in number of classes, evidence suggests that using a per-side dataset for training improves the overall performance of a most likely catalogue matching model. 
+Table \ref{fig:NDDAUSMRU-combined-and-per-side-comparison-individual-classification-only} shows a comparison between the best performing combined-side and per-side models evaluated against the modified top-$N$ accuracy. Using this metric, an increase in top-1, top-5, and top-10 accuracies are observed for the per-side model when compared to those reported in Table \ref{fig:NDDAUSMRU-combined-and-per-side-comparison}, which reports non-modified accuracies. Whilst these accuracies are lower than when the model is trained on the combined-side data, given the difference in number of classes between the datasets evidence suggests that using a per-side dataset for training improves the overall performance of a most likely catalogue matching model.
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[scale=0.4]{Chapter5/figs/NDDAUSMRU-combined-and-per-side-comparison.png}
-	\end{center}
-	\caption{Comparison between the best performing SNN models for the task of most likely catalogue matching trained on the combined-side (Left) and per-side (Right) NDD AU SMRU datasets.}
-	\label{fig:NDDAUSMRU-combined-and-per-side-comparison-individual-classification-only}
-\end{figure}
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cccccc}
+		\hline
+		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}NDD AU SMRU\\Dataset Split\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\Backbone\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Data Augmentation\\Strategy\end{tabular}}} & \multicolumn{3}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Accuracy (\%)\\Individual Classification Only\end{tabular}}} \\ \cline{4-6} 
+		&                                                                                    &                                                                                                & \textbf{Top-1}    & \textbf{Top-5}    & \textbf{Top-10}   \\ \hline
+		\begin{tabular}[c]{@{}c@{}}Combined Side\\ (24 classes)\end{tabular}                          & VarvaraNet                                                                         & None                                                                                           & 40.85         & 68.90         & 83.13         \\
+		\begin{tabular}[c]{@{}c@{}}Per Side\\ (47 classes)\end{tabular}                               & EmbeddingNet                                                                       & None                                                                                           & 44.56         & 68.62        & 80.54         \\ \hline
+	\end{tabular}
+\caption{Comparison between the best performing SNN models for the task of most likely catalogue matching trained on the combined-side and per-side NDD AU SMRU datasets, evaluated against the modified top-$N$ accuracy metric.}
+\label{fig:NDDAUSMRU-combined-and-per-side-comparison-individual-classification-only}
+\end{table}
 
 \section{Summary}\label{ch:ID,sec:Summary}
 
