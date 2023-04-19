@@ -125,7 +125,7 @@ For the SDRP dataset, whilst an uncertainty of 30\% was found to be sufficient f
 
 \begin{figure}[t]
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter6/figs/uncatalogued-individual-thresholding.png}
+		\includegraphics[width=0.9\linewidth]{Chapter6/figs/uncatalogued-individual-thresholding-updated.png}
 	\end{center}
 	\caption[Example uncatalogued individual thresholding for the SDRP dataset using an individual not present during training.]{Example uncatalogued individual thresholding for the SDRP dataset using an individual not present during training (image taken from the NDD AU SMRU dataset). The resultant Euclidean distances between the input image's embedding and the existing class prototypes are shown. No warning has been generated when the minimum distance threshold is set to 4.0, however one has been when the threshold is set to 0.15. Uncertainty scores generated using K-Nearest Neighbours clustering are also shown. Warnings have been displayed both when $K = 10$ and $K = 5$ using an uncertainty threshold of $>=30\%$.}
 	\label{fig:uncatalogued-individual-example-sdrp}
@@ -135,7 +135,7 @@ Example warning generation using both prototype distance measurement and KNN for
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter6/figs/catalogued-individual-thresholding.png}
+		\includegraphics[width=0.9\linewidth]{Chapter6/figs/catalogued-individual-thresholding-updated.png}
 	\end{center}
 	\caption[Example uncatalogued individual thresholding for the SDRP dataset using an individual present during training.]{Example uncatalogued individual thresholding for the SDRP dataset using an individual present during training. The resultant Euclidean distances between the input image's embedding and the existing class prototypes are shown. No warning has been generated when the minimum distance threshold is set to either 4.0 or 0.15. Uncertainty scores generated using K-Nearest Neighbours clustering are also shown. A warning is displayed when $K = 10$ but not when $K = 5$, with both using an uncertainty threshold of 30\%.}
 	\label{fig:catalogued-individual-example-sdrp}
@@ -176,7 +176,7 @@ It should be noted however that the best performing model achieves 100\% top-5 a
 
 In order to better understand the performance of SNNs for the task of most likely catalogue matching, an evaluation was undertaken whereby the task was approached as a standard image classification problem. Using the NDD AU SMRU dataset, standard architectures (ResNet50, ResNet101 \cite{he_deep_2015}, and VGG16 \cite{simonyan_very_2015}) were trained and evaluated against top-1, top-5, and top-10 accuracy metrics. This range was chosen to help identify whether model depth or setup has an effect on classification performance. 
 
-As these models only require a single example image per training step, rather than a triplet of images as required when training SNNs with Triplet Ranking Loss, Cross Entropy Loss was instead utilised. This function compares the predicted class probabilities outputted by the model to those of the ground truths. A loss, $L$, is computed using Equation \ref{eq:crossEntropyLoss} (where $n$ is the number of classes, $t$ is the ground truth label probability, and $p$ is the Softmax probability for the $i^{th}$ class) which in turn can be used to inform how the weights of the model should be changed. A model which performs perfectly would yield a Cross Entropy Loss of 0. 
+As these models only require a single example image per training step, rather than a triplet of images as required when training SNNs with Triplet Ranking Loss, Cross Entropy Loss was instead utilised. This function compares the predicted class probabilities outputted by the model to those of the ground truths. A loss, $L$, is computed using Equation \ref{eq:crossEntropyLoss} (where $n$ is the number of classes, $t_{i}$ is the ground truth label for the $i^{th}$ class, and $p_{i}$ is the Softmax probability for the $i^{th}$ class) which in turn can be used to inform how the weights of the model should be changed. A model which performs perfectly would yield a Cross Entropy Loss of 0. 
 
 \begin{equation}
 	\label{eq:crossEntropyLoss}

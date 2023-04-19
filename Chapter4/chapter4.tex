@@ -143,29 +143,42 @@ Once NDD20 had been created it could then be utilised to evaluate the effect of 
 
 As discussed in Chapter \ref{ch:cetDet}, a Mask R-CNN model capable of above water cetacean detection was trained on indo-pacific bottlenose dolphin data collected in Zanzibar, Tanzania. One important requirement of the detector created is that it must be robust enough to output detection masks with high mean average precision (mAP) when operating on data from a different geographic or temporal area without re-training. The creation of NDD20 provides a valuable opportunity to test this requirement. Not only was the data collected in a different location and time, but both species of data subject (bottlenose and white-beaked dolphin) are not present in the Zanzibar dataset.  
 
-To test this requirement the best performing model found on the Zanzibar data in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch}, 20190902T0946, was utilised to generate instance segmentation mask predictions for the above water set of NDD20. These model outputs were then evaluated against the labelled ground truth data to produce an mAP score over multiple IOU thresholds. The results of this evaluation can be seen in Figure \ref{fig:aw-mAP-IOU}.
+To test this requirement the best performing model found on the Zanzibar data in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch}, 20190902T0946, was utilised to generate instance segmentation mask predictions for the above water set of NDD20. These model outputs were then evaluated against the labelled ground truth data to produce an mAP score over multiple IOU thresholds.
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[scale=0.7]{Chapter4/figs/aw-mAP-IOU.png}
-	\end{center}
-	\caption{mAP@IOU[0.5:0.95] scores for NDD20 using model 20190902T0946 trained on the Zanzibar data.}
-	\label{fig:aw-mAP-IOU}
-\end{figure}
+Model 20190902T0946 still achieves a high mAP at multiple IOU thresholds without the need for re-training or fine-tuning on NDD20, as seen in Table \ref{tab:maskrcnn_results}. Utilising the same evaluation thresholds as during model selection in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch}, the model achieves mAP@IOU[0.5, 0.75] = [0.96, 0.83] on NDD20. This is in comparison to mAP@IOU[0.5, 0.75] = [0.91, 0.79] on the Zanzibar data.
 
-Model 20190902T0946 still achieves a high mAP at multiple IOU thresholds without the need for re-training or fine-tuning on NDD20. Utilising the same evaluation thresholds as during model selection in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch}, the model achieves mAP@IOU[0.5, 0.75] = [0.96, 0.83] on NDD20. This is in comparison to mAP@IOU[0.5, 0.75] = [0.91, 0.79] on the Zanzibar data. Interestingly, the model achieves a higher mAP at these IOU thresholds on NDD20. This is hypothesised to be due to the lack of other large objects in NDD20 in comparison to the Zanzibar data. For example, some images in the Zanzibar dataset contain other vessels as well as humans as a result of the data being captured in an area with high levels of eco-tourism \cite{christiansen_effects_2010}. This is not the case for data contained within NDD20. Whilst eco-tourism is present in and around the Coquet to St. Mary's MCZ, the levels are significantly lower than in Zanzibar. The evaluated model has been seen to struggle when presented with images containing tourist activity, shown in Figure \ref{fig:model-fail-boat}. As NDD20 lacks this, the model's false positive rate may be reduced. Regardless, this evaluation presents evidence that model 20190902T0946 is robust enough to deal with data from a different geographic area, time, and cetacean species without the need for re-training or fine-tuning. This suggests the model could be deployed to aid in the speed up of future photo-id fieldwork seasons undertaken by marine ecologists. 
+\begin{table}
+	\begin{adjustbox}{width=\linewidth, center}
+		\begin{tabular}{ccccccccccc}
+			\hline
+			\multirow{2}{*}{\textbf{Dataset}} & \multicolumn{10}{c}{\textbf{mAP@IOU[$x$]}}                                                                                                                  \\
+			& \textbf{0.50} & \textbf{0.55} & \textbf{0.60} & \textbf{0.65} & \textbf{0.70} & \textbf{0.75} & \textbf{0.80} & \textbf{0.85} & \textbf{0.90} & \textbf{0.95} \\ \hline
+			\textbf{\begin{tabular}[t]{@{}c@{}}Zanzibar\\ (Test Set)\end{tabular}}                 & 0.91          & 0.91          & 0.89          & 0.86          & 0.85          & 0.79          & 0.69          & 0.50          & 0.15          & 0.00           \\
+			\textbf{\begin{tabular}[t]{@{}c@{}}NDD20\\ (Above Water)\end{tabular}}                      & 0.96          & 0.95          & 0.93          & 0.91          & 0.88          & 0.83          & 0.71          & 0.51          & 0.16          & 0.00          \\ \hline
+		\end{tabular}
+	\end{adjustbox}
+	\caption[mAP@IOU{[}0.5:0.95{]} scores for model 20190902T0946, the best performing Mask R-CNN dorsal fin detector.]{mAP@IOU{[}0.5:0.95{]} scores for model 20190902T0946, the best performing Mask R-CNN dorsal fin detector. The model has been trained using the Zanzibar training set, and evaluated using both the Zanzibar test set and the full NDD20 above water set. Hyperparameters for this model can be seen in Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}.}
+	\label{tab:maskrcnn_results}
+\end{table}
+
+Interestingly, the model achieves a higher mAP at these IOU thresholds on NDD20. This is hypothesised to be due to the lack of other large objects in NDD20 in comparison to the Zanzibar data. For example, some images in the Zanzibar dataset contain other vessels as well as humans as a result of the data being captured in an area with high levels of eco-tourism \cite{christiansen_effects_2010}. This is not the case for data contained within NDD20. Whilst eco-tourism is present in and around the Coquet to St. Mary's MCZ, the levels are significantly lower than in Zanzibar. The evaluated model has been seen to struggle when presented with images containing tourist activity, shown in Figure \ref{fig:model-fail-boat}. As NDD20 lacks this, the model's false positive rate may be reduced. Regardless, this evaluation presents evidence that model 20190902T0946 is robust enough to deal with data from a different geographic area, time, and cetacean species without the need for re-training or fine-tuning. This suggests the model could be deployed to aid in the speed up of future photo-id fieldwork seasons undertaken by marine ecologists. 
 
 \subsection{Below Water Detection Baseline}\label{ch:NDD,sec:EvalUsingNDD20,subsec:belowWaterDetectionBasleine}
 
-Though the below water set of NDD20 is not utilised within this thesis further, work was also undertaken to produce a baseline instance segmentation score for this data. Here, a second Mask R-CNN model was trained using the optimal hyperparameters located in Section \ref{ch:cetDet,sec:ModelSelection} on the below water data divided into an 80:20 train-test split, with the \texttt{out of focus} flag ignored. This model achieved mAP@IOU[0.5, 0.75] = [0.97, 0.91], indicating that a Mask R-CNN model is capable of accurate instance segmentation regardless of larger variation in the shape of masks in the below water data as a result of the underwater cameras being able to capture the individual cetaceans in a wider range of movement, as well as there being less differentiation between the background and the individual due to water conditions. The full range of mAP@IOU values can be seen in Figure \ref{fig:bw-mAP-IOU}. 
+Though the below water set of NDD20 is not utilised within this thesis further, work was also undertaken to produce a baseline instance segmentation score for this data. Here, a second Mask R-CNN model was trained using the optimal hyperparameters located in Section \ref{ch:cetDet,sec:ModelSelection} on the below water data divided randomly into an 80:20 train-test split, with the \texttt{out of focus} flag ignored. Results for this model can be seen in Table \ref{tab:bw_results}, and indicate that a Mask R-CNN model is capable of accurate instance segmentation on this data -- in spite of the large variation in mask shape and a lack of clarity between the background and the dolphin due to water condition. 
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[scale=0.7]{Chapter4/figs/bw-mAP-IOU.png}
-	\end{center}
-	\caption{Differing mAP@IOU values for the best performing instance segmentation model using the below water data.}
-	\label{fig:bw-mAP-IOU}
-\end{figure}
+\begin{table}[!h]
+	\begin{adjustbox}{width=\linewidth, center}
+		\begin{tabular}{ccccccccccc}
+			\hline
+			\multirow{2}{*}{\textbf{Dataset}} & \multicolumn{10}{c}{\textbf{mAP@IOU[$x$]}}                                                                                                                  \\
+			& \textbf{0.50} & \textbf{0.55} & \textbf{0.60} & \textbf{0.65} & \textbf{0.70} & \textbf{0.75} & \textbf{0.80} & \textbf{0.85} & \textbf{0.90} & \textbf{0.95} \\ \hline
+			\textbf{\begin{tabular}[t]{@{}c@{}}NDD20\\ (Below Water)\end{tabular}}                      & 0.986          & 0.982          & 0.979          & 0.974          & 0.964          & 0.938          & 0.871          & 0.654          & 0.202          & 0.00          \\ \hline
+		\end{tabular}
+	\end{adjustbox}
+	\caption{mAP@IOU{[}0.5:0.95{]} scores for the best performing Mask R-CNN model trained using the below water set of NDD20.}
+	\label{tab:bw_results}
+\end{table}
 
 \section{Post-Processing NDD20}\label{ch:NDD,sec:postProcessingNDD20}
 

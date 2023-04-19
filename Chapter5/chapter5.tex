@@ -76,9 +76,9 @@ SNNs which make use of two branches can be optimised using a Pairwise Ranking Lo
 
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter5/figs/pairwise_ranking_loss_faces.png}
+		\includegraphics[scale=0.5]{Chapter5/figs/pairwise_ranking_loss_faces-updated.png}
 	\end{center}
-	\caption[SNN optimisation using Pairwise Ranking Loss.]{SNN optimisation using Pairwise Ranking Loss. Image from \cite{gomez_understanding_2019}.}
+	\caption[SNN optimisation using Pairwise Ranking Loss.]{SNN optimisation using Pairwise Ranking Loss. Each input is passed to a branch of the SNN and an embedding is produced. These embeddings are used to optimise future embedding generation, aiming to either pull the Anchor and Positive together or push the Anchor and Negative apart.}
 	\label{fig:pairwise_ranking_loss_faces}
 \end{figure}
 
@@ -103,9 +103,9 @@ Triplet Ranking Loss aims to avoid this issue by training on triplets of data po
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter5/figs/triplet-loss-eg.png}
+		\includegraphics[scale=0.5]{Chapter5/figs/triplet-loss-eg-updated.png}
 	\end{center}
-	\caption[SNN optimisation using Triplet Ranking Loss.]{SNN optimisation using Triplet Ranking Loss. Each input is passed to a branch of the SNN and an embedding is produced. These embeddings are used to optimise future embedding generation, aiming to pull the Anchor and Positive together whilst pushing the Positive and Negative apart. Example Anchor, Positive, and Negative images from the MNIST dataset \cite{lecun_gradient-based_1998}.}
+	\caption[SNN optimisation using Triplet Ranking Loss.]{SNN optimisation using Triplet Ranking Loss. Each input is passed to a branch of the SNN and an embedding is produced. These embeddings are used to optimise future embedding generation, aiming to both pull the Anchor and Positive together whilst pushing the Anchor and Negative apart.}
 	\label{fig:triplet-loss-eg}
 \end{figure}
 
@@ -304,7 +304,7 @@ To decide on a threshold value for the NDD AU SMRU dataset, each image not utili
 
 \begin{figure}[t]
 	\begin{center}
-		\includegraphics[scale=0.6]{Chapter5/figs/uncatalogued-individual-example-ndd-au-smru.png}
+		\includegraphics[width=\linewidth]{Chapter5/figs/uncatalogued-individual-example-ndd-au-smru-updated.png}
 	\end{center}
 	\caption[Example uncatalogued individual thresholding.]{Example uncatalogued individual thresholding. Left: the input image seen by the model, of class \texttt{3}. The model has not been trained using this class. Top Right: the resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the distance to the closest prototype is above the threshold, the fin has been flagged for manual review. Bottom Right: uncertainty scores generated using K-Nearest Neighbours clustering. The model's most confident class is below the threshold, and thus the fin has been flagged for manual review.}
 	\label{fig:uncatalogued-individual-example-ndd-au-smru}
@@ -314,7 +314,7 @@ The use of class prototypes proved especially useful for determining noise. Thro
 
 \begin{figure}[t]
 	\begin{center}
-		\includegraphics[scale=0.5]{Chapter5/figs/noise-example-ndd-au-smru.png}
+		\includegraphics[width=\linewidth]{Chapter5/figs/noise-example-ndd-au-smru-updated.png}
 	\end{center}
 	\caption[Example noise thresholding.]{Example noise thresholding. Left: the input image seen by the model, of class \texttt{noise}. Top Right: the resultant Euclidean distances between the input image's embedding and the existing class prototypes. As the closest prototype is \texttt{noise}, the input has been flagged. Bottom Right: uncertainty scores generated using K-Nearest Neighbours clustering. The model's \texttt{noise} confidence is above the threshold, and thus the input has been flagged.}
 	\label{fig:noise-individual-example-ndd-au-smru}
