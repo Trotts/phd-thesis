@@ -6,7 +6,7 @@ When building any large-scale project, it is important to break the task down in
 
 Before a system for automatic cetacean detection can be developed, it is important to first define the problem and understand the requirements of the system. The overall aim of the detector is to be able to take large-scale images as input, fed in one at a time, and process them in order to locate RoIs. This detector will only be required to identify one object class, dolphins. These detected regions can then be passed further down the system pipeline for photo-identification. 
 
- As such this detector can be considered a coarse-grained task, and at first glance may seem somewhat trivial. However due to both the nature of the environment in which the RoIs must be detected, and the technical requirements the system must perform under, this is actually a complex problem. 
+ As such, this detector can be considered a coarse-grained task, and at first glance may seem somewhat trivial. However due to both the nature of the environment in which the RoIs must be detected, and the technical requirements the system must perform under, this is actually a complex problem. 
  
  \subsection{Environmental Requirements}\label{ch:cetDet,sec:requirements,sub:environmental}
  
@@ -42,7 +42,7 @@ Before a system for automatic cetacean detection can be developed, it is importa
  
 On top of being able to handle a variety of environmental factors, there are also some technical requirements that the detector must meet. As outlined in Chapter \ref{ch:Background}, this thesis makes use of deep computer vision approaches. When using these types of tools, there is often a trade off that must be made between speed and accuracy. In most cases, these are inversely proportional to each other; the faster a system is required to perform, the lower an accuracy you must be willing to tolerate -- Huang \textit{et al.} discuss this in greater detail \cite{huang_speedaccuracy_2017}.
  
- Because this trade off must be made, it is important to decide where a deep learning model will be utilised before it is deployed. As photo-id surveys are performed on small vessels such as Rigid Inflatable Boats (RIBs), space is severely limited on board. As such, it is not appropriate to add additional hardware to the vessel to perform this analysis during the survey. Furthermore, the current methodology of cetacean researchers is to perform identification once back on land, even when utilising photo-id aids. As the system proposed in this thesis is intended to fit into existing procedures rather than replace them, it is appropriate for the system to be land based rather than on the vessel. Thinking about the current procedure further, this thesis' proposed system could be, for example, left running overnight performing identifications whilst the researchers are asleep or during the day whilst they are on another survey. As such, there is no need for the system to operate in real-time to fit in with the current workflow of cetacean researchers provided the system completes its task within a reasonable time frame. Further to this, as the output of the detection model will be passed to an identification model, it is imperative that as much noise is removed as possible during the detection. In order to do this, the accuracy of the detection must be as high as possible, furthering the case for an accurate system over a fast one.
+ Because this trade off must be made, it is important to decide where a deep learning model will be utilised before it is deployed. As photo-id surveys are performed on small vessels such as Rigid Inflatable Boats (RIBs), space is severely limited on board. As such, it is not appropriate to add additional hardware to the vessel to perform this analysis during the survey. Furthermore, the current methodology of cetacean researchers is to perform identification once back on land, even when utilising photo-id aids. As the system proposed in this thesis is intended to fit into existing procedures rather than replace them, it is appropriate for the system to be land based rather than on the vessel. Thinking about the current procedure further, this thesis' proposed system could be, for example, left running overnight performing identifications whilst the researchers are asleep or during the day whilst they are on another survey. As such, there is no need for the system to operate in real-time to fit in with the current workflow of cetacean researchers provided the system completes its task within a reasonable time frame. Further to this, as the output of the detection model will be passed to an identification model, it is imperative that as much noise, defined as any non-animal related nuisance such as splash, waves, and other vessels, is removed as possible during the detection. In order to do this, the accuracy of the detection must be as high as possible, furthering the case for an accurate system over a fast one.
  
  This idea of reducing as much noise as possible can be used to further narrow down the requirements of the detection system. As discussed in Section \ref{ch:Background,sec:DLforCV}, the output of detection systems can be provided in different formats. In bounding box detection systems the detected objects are described by a set of at least two pixel coordinates denoting the top-left and bottom-right extremes of the object. These detections are often more cost-effective, both from a labelling perspective requiring less person-hours to complete, and to perform computationally. Bounding box-based detections are limited in their ability to remove background noise however, with only the background outside of the box removed.
  
@@ -335,28 +335,30 @@ This effect is even greater when comparing map@IOU[0.85] scores, with the worst 
 
 To determine the most appropriate model trained, filtering based on the highest mAP@IOU[0.5, 0.75, 0.85] scores was performed. The thresholds 0.5 and 0.75 were chosen to remain consistent with other segmentation literature \cite{bolya_190402689_2019, wang_solov2_2020, tian_fcos_2019}, with the 0.85 threshold chosen as some models trained still achieve impressive results here, allowing for more in-depth model filtering. Further, the pixel-wise detections of cetaceans is required to filter as much background noise as possible and so finding high performing models at top thresholds is important.
 
-When filtering, the top five performing models at each threshold were extracted. If a model achieved top five ranking at multiple thresholds it was only included once, resulting in a list of the ten best performing models. The mAP@IOU[0.5, 0.75, 0.85] scores for these best performing models can be seen in Table \ref{fig:mAP-best-models-bar-chart}.
+When filtering, the top five performing models at each threshold were extracted. If a model achieved top five ranking at multiple thresholds it was only included once, resulting in a list of the ten best performing models. The hyperparameters and mAP@IOU[0.5, 0.75, 0.85] scores for these best performing models can be seen in Table \ref{tab:best-mask-rcnn-models}.
 
 \begin{table}[!ht]
-	\centering
-		\begin{tabular}{cccc}
-			\toprule
-			\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Model Name}}} & \multicolumn{3}{c}{\textbf{mAP@IOU[$x$]}}       \\ \cline{2-4} 
-			\multicolumn{1}{c}{}                                     & \textbf{0.50}  & \textbf{0.75} & \textbf{0.85} \\ \midrule
-			\textbf{20190902T0946}                                   & \textbf{0.914} & \textbf{0.793} & \textbf{0.497} \\
-			20190905T1813                                            & 0.937          & 0.775          & 0.452          \\
-			20190907T0934                                            & 0.921          & 0.796          & 0.457          \\
-			20190907T2215                                            & 0.928          & 0.789          & 0.452          \\
-			20190908T2043                                            & 0.929          & 0.804          & 0.482          \\
-			20190912T0608                                            & 0.910          & 0.771          & 0.463          \\
-			20191102T0140                                            & 0.916          & 0.813          & 0.442          \\
-			20191102T1051                                            & 0.914          & 0.812          & 0.461          \\
-			20191103T0959                                            & 0.929          & 0.766          & 0.437          \\
-			20191103T1921                                            & 0.926          & 0.768          & 0.360          \\
+	\tiny
+	\begin{adjustbox}{width=\columnwidth, center}
+		\begin{tabular}{ccccccccc}
+			\hline
+			\multirow{2}{*}{\textbf{Model Name}} & \multirow{2}{*}{\textbf{\textbf{\begin{tabular}[c]{@{}c@{}}Weight\\Decay\end{tabular}}}} & \multirow{2}{*}{\textbf{\textbf{\begin{tabular}[c]{@{}c@{}}RPN\\Anchor Scales\end{tabular}}}} & \multirow{2}{*}{\textbf{Optimiser}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Augmentation\\Strategy\end{tabular}}} & \multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Pre-trained on\\ MSCOCO?\end{tabular}}} & \multicolumn{3}{c}{\textbf{mAP@IOU[$x$]}}        \\ \cline{7-9} 
+			&                                        &                                             &                                     &                                                                                           &                                                                                            & \textbf{0.50}   & \textbf{0.75}  & \textbf{0.85}  \\ \hline
+			\textbf{20190902T0946} &         $\mathbf{1\times10^{-2}}$ &  \textbf{ (16, 32, 64, 128, 256)} &      \textbf{SGDR} &                  \textbf{aug1} &                  \textbf{\cmark} & 0.914 & 0.793 & 0.497\\
+			20190905T1813 &        $1\times10^{-3}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark & 0.937 & 0.775 & 0.452\\
+			20190907T0934 &         $1\times10^{-2}$ &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  \cmark & 0.921 & 0.796 & 0.452\\
+			20190907T2215 &        $1\times10^{-3}$ &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark & 0.928 & 0.796 & 0.457\\
+			20190908T2043 &       $1\times10^{-4}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark & 0.929 & 0.804 & 0.482\\
+			20190912T0608 &       $1\times10^{-4}$ &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  \cmark & 0.910 & 0.771 & 0.463 \\
+			20191102T0140 &         $1\times10^{-2}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark & 0.916 & 0.813 & 0.442\\
+			20191102T1051 &       $1\times10^{-4}$ &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  \cmark & 0.914 & 0.812 & 0.461\\
+			20191103T0959 &         $1\times10^{-2}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  \cmark & 0.929 & 0.766 & 0.437\\
+			20191103T1921 &       $1\times10^{-4}$ &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark & 0.926 & 0.768 & 0.360\\
 			\bottomrule
 		\end{tabular}
-	\caption[mAP@IOU{[}0.5, 0.75, 0.85{]} scores for the ten best performing Mask R-CNN models trained on the Zanzibar dataset.]{mAP@IOU{[}0.5, 0.75, 0.85{]} scores for the best performing Mask R-CNN models trained on the Zanzibar dataset. The model chosen for use is highlighted in bold. Subset of Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}.}
-	\label{fig:mAP-best-models-bar-chart}
+	\end{adjustbox}
+	\caption[Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset.]{Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset. Subset of Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}. All models were trained for 50 epochs with an initial learning rate of $1\times10^{-3}$. The model chosen for use is highlighted in bold. The mAP@IOU{[}0.5:0.95{]} scores for all models can be seen in Appendix \ref{app:mAPScoresGridSearch}.}
+	\label{tab:best-mask-rcnn-models}
 \end{table}
 
 When deciding on which model hyperparameters are best for the task of cetacean segmentation, it is important to find a model with a high mAP@IOU[0.85] score. As the model will be used to perform segmentation before fine-grained classification, it is important the model is capable of removing as much background from the input image as possible. Any background included in the segmentation may adversely effect the photo-id process. Using this as criteria, model 20190902T0946 was selected as the best performing model. The model achieves an mAP@IOU[0.85] score of 0.5, an excellent result given the difficulty of the segmentation task. The model also performs well at the other evaluation thresholds, achieving mAP@IOU[0.5, 0.75] scores of 0.91 and 0.79 respectively. These scores verify that the model is capable of segmenting cetaceans from background with as little noise being included in the segmentation mask as possible.
@@ -365,31 +367,7 @@ An interesting point to note here is that 20190902T0946 did not achieve the high
 
 \subsection{An Evaluation of Optimal Model Hyperparameters}\label{ch:cetDet,sec:ModelSelection,sub:OptimalHyperparameters}
 
-As discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch} a filtering of the trained Mask R-CNN models was performed to determine the best model hyperparameters for the task of cetacean instance segmentation, with model 20190902T0946 ultimately being selected for future use. This model's hyperparameters, along with those of the other nine best performing models, can be seen in Table \ref{tab:best-mask-rcnn-models}.
-
-\begin{table}[!ht]
-	\tiny
-	\begin{adjustbox}{width=\columnwidth, center}
-		\begin{tabular}{cccccc}
-			\toprule
-			Model Name & Weight Decay &        RPN Anchor Scales & Optimiser & Augmentation Strategy & Pre-trained on MSCOCO? \\
-			\midrule
-				\textbf{20190902T0946} &         $\mathbf{1\times10^{-2}}$ &  \textbf{ (16, 32, 64, 128, 256)} &      \textbf{SGDR} &                  \textbf{aug1} &                  \textbf{\cmark} \\
-				20190905T1813 &        $1\times10^{-3}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
-				20190907T0934 &         $1\times10^{-2}$ &  (32, 64, 128, 256, 512) &      SGDR &                  None &                  \cmark \\
-				20190907T2215 &        $1\times10^{-3}$ &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark \\
-				20190908T2043 &       $1\times10^{-4}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
-				20190912T0608 &       $1\times10^{-4}$ &   (16, 32, 64, 128, 256) &      SGDR &                  aug1 &                  \cmark \\
-				20191102T0140 &         $1\times10^{-2}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug1 &                  \cmark \\
-				20191102T1051 &       $1\times10^{-4}$ &   (16, 32, 64, 128, 256) &      SGDR &                  None &                  \cmark \\
-				20191103T0959 &         $1\times10^{-2}$ &  (32, 64, 128, 256, 512) &      SGDR &                  aug2 &                  \cmark \\
-				20191103T1921 &       $1\times10^{-4}$ &   (16, 32, 64, 128, 256) &      SGDR &                  aug2 &                  \cmark \\
-			\bottomrule
-		\end{tabular}
-	\end{adjustbox}
-	\caption[Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset.]{Hyperparameters of the best performing Mask R-CNN models on the Zanzibar dataset. Subset of Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}. The model chosen for use is highlighted in bold.}
-	\label{tab:best-mask-rcnn-models}
-\end{table}
+As discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:ModelSelectionBasedOnGridSearch} a filtering of the trained Mask R-CNN models was performed to determine the best model hyperparameters for the task of cetacean instance segmentation, with model 20190902T0946 ultimately being selected for future use. Model hyperparameters and mAP@IOU[0.5, 0.75, 0.85] scores can be seen in Table \ref{tab:best-mask-rcnn-models}.
 
 The hyperparameters of the best performing models provide an interesting insight into the training process. All ten of the models were trained using SGDR. This is interesting, as the current trend in deep learning network training is to utilise Adam \cite{karpathy_peek_2017}. Furthermore each model trained utilised transfer learning, with each model's parameters being initialised from a trained MSCOCO model provided by the model zoo. This highlights the need to utilise pre-trained models, especially in cases where relativity small amounts of data are available to train a model from scratch. 
 
@@ -397,7 +375,7 @@ Half of the best models utilise the \textit{aug1} data augmentation strategy, de
 
 \subsection{Limitations of the Model}\label{ch:cetDet,sec:ModelSelection,sub:LimitationsOfBest}
 
-As with any network trained on real world data, the best performing model, 20190902T0946, is not perfect. As can be seen through the mAP scores in Table \ref{fig:mAP-best-models-bar-chart}, the model still fails to correctly detect in some instances. This section examines under what conditions 20190902T0946 fails for the purposes of model transparency. 
+As with any network trained on real world data, the best performing model, 20190902T0946, is not perfect. As highlighted by the mAP scores in Table \ref{tab:MaskRCNNHyperparamTuningGridSearch}, the model still fails to correctly detect in some instances. This section examines under what conditions 20190902T0946 fails for the purposes of model transparency. 
 
 Figure \ref{fig:model-fail-bad-detection-and-split-individual} provides a good example of environmental conditions which can cause the model to fail to correctly detect an individual. Due to wave movement covering a part of the animal's body, the model has split this individual into two separate detections.
 
@@ -470,9 +448,9 @@ In some situations a detected mask may contain an area of background inside the 
 	\label{fig:before-and-after-morphing-masks-only}
 \end{figure}
 
-This is achieved using morphological transformations, a set of operations which allow for the automated manipulation of the internal structure of binary images such as masks. The two fundamental morphological transformations are \textit{erosion}, which erodes away the boundaries of the masked object, and \textit{dilation}, which increases the size of the object by pushing the boundary out into the background space. These two operations can be utilised in various combinations to perform more complex transformations.
+This is achieved using morphological transformations, a set of operations which allow for the automated manipulation of the internal structure of binary images such as masks. The two fundamental morphological transformations are erosion, which erodes away the boundaries of the masked object, and dilation, which increases the size of the object by pushing the boundary out into the background space. These two operations can be utilised in various combinations to perform more complex transformations.
 
-In order to remove a cluster of background pixels inside of a detection, each mask is \textit{closed} -- dilated then eroded. This has the effect of removing any holes present inside the mask, as can be seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Right). If no holes exist, the operation is still performed, however the mask remains unchanged. By performing closing, the system ensures that no potentially identifiable information is lost as a result of an incomplete detection. 
+In order to remove a cluster of background pixels inside of a detection, each mask is closed -- dilated then eroded. This has the effect of removing any holes present inside the mask, as can be seen in Figure \ref{fig:before-and-after-morphing-masks-only} (Right). If no holes exist, the operation is still performed, however the mask remains unchanged. By performing closing, the system ensures that no potentially identifiable information is lost as a result of an incomplete detection. 
 
 \subsection{Background Subtraction}\label{ch:cetDet,sec:postProcessing,sub:bgExtraction}
 
