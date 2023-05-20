@@ -1,6 +1,6 @@
-\chapter{Evaluating Siamese Neural Network Catalogue Matching Robustness}\label{ch:SNNEvaluation}
+\chapter{Evaluating Automatic Most Likely Catalogue Matching}\label{ch:SNNEvaluation}
 
-In this chapter the robustness of Siamese Neural Networks (SNNs) for the task of automatic most likely catalogue matching is explored. Beginning by examining the effects of NDD AU SMRU dataset variation on model performance, the generalisability of the approach is then examined through the use of a second photo-id catalogue. 
+In this chapter, the automated most likely catalogue matching system developed in this thesis is evaluated. Beginning by examining the effects of NDD AU SMRU dataset variation on SNN top-$N$ performance, the generalisability of the approach is then examined through the use of a second photo-id catalogue. The task of most likely catalogue matching is then framed as a standard image classification task, comparing against the approach taken throughout this thesis. Finally, the developed system is then compared against an existing photo-id aid found in the literature. 
 
 \section{Effect of AU SMRU Data on Model Performance}\label{ch:SNNEvaluation,sec:EffectOfAUSMRU}
 
@@ -217,7 +217,6 @@ The top-1, top-5, and top-10 accuracies for the best performing models can be se
 
 \begin{table}[]
 	\centering
-	\small
 		\begin{tabular}{cccc}
 			\hline
 			\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Model\\ Architecture\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}} \\ \cline{2-4} 
@@ -254,14 +253,67 @@ When training the VGG16 model however, the optimal model found did not require p
 
 These findings suggest that the use of triplets when training SNNs may allow for more meaningful features to be extracted, leading to more accurate most likely catalogue matching and top-1 accuracy. As such, this indicates that the use of an SNN to generate embeddings, plotting these into a latent space, and utilising clusters to provide most likely matches is a superior approach to training a standard image classifier, notwithstanding the difficulties which would arise if individuals not seen at train time were required to be classified.
 
+\section{Comparison Against Related Work}\label{ch:SNNEvaluation,sec:FinFindRComparison}
+
+Multiple photo-id aids have been proposed in recent years, each with varying degrees of autonomy as highlighted in Section \ref{ch:Background,sec:conTech,sub:photoIDAides}. According to a survey by Tyson Moore \textit{et al.} \cite{tyson_moore_rise_2022}, the most commonly utilised photo-id aid by cetacean researchers is finFindR \cite{thompson_finfindr_2022}. As such, an evaluation between finFindR and the system proposed in this thesis was undertaken. The latest full release of finFindR, version 0.1.10\footnote{\label{footnote:finFindR}finFindR version 0.1.10: \href{https://github.com/haimeh/finFindR/releases/tag/0.1.10}{github.com/haimeh/finFindR/releases/tag/0.1.10}}, was utilised during this evaluation. 
+
+Like the methodology outlined in this thesis, finFindR detects dorsal fins in unedited field imagery before passing these to an identification model. However, unlike the Mask R-CNN used in this thesis which outputs masked detections like those seen in Figure \ref{fig:bboxvsmask} (Centre), dorsal fin detection in finFindR is performed using a ResNet \cite{he_deep_2015} model to produce bounding box outputs like those seen in Figure \ref{fig:bboxvsmask} (Left). Identification of individuals in both finFindR and this thesis is performed through embedding generation and comparison -- though whilst embeddings in this thesis are generated using all available identifying information, finFindR creates embeddings using the trailing edge of the dorsal fin only.
+
+Evaluation was performed using the unedited images which make up the NDD AU SMRU dataset (outlined in Section \ref{ch:postProcessing,sec:NDD_AU_SMRU}). Whilst finFindR does not provide the ability to fine-tune its models using a user-provided photo-id catalogue, it does require both a query and reference set in order to perform matching. To facilitate a fair comparison, the unedited field images used to generate the query and reference sets for finFindR respectively were the same as those used to generate the test and train sets for SNN evaluation (outlined in Sections \ref{ch:ID,sec:SNNDevelopment} and \ref{ch:ID,sec:ModelSelection}). 
+
+Images in the query and reference sets were first passed through finFindR's detection model to crop out any dorsal fins present. The default options for crop threshold (0.4) and crop type (Body \& Fin) were utilised. Each set's dorsal fins were then manually labelled with their individual ID number. As finFindR does not require the use of a \texttt{noise} class, any false-positive detections were removed. During this stage it was noted that finFindR failed to detect dorsal fins which were close to the camera, surrounded by large amounts of water splash, or where most of the dolphin's body had breached the waterline. In comparison, the Mask R-CNN model developed in this thesis was able to accurately detect fins in these conditions. Example images containing dorsal fins which finFindR failed to detect, alongside the crop produced by the Mask R-CNN, can be seen in Figure \ref{fig:finFindR-missed-fins-caught-by-mask-r-cnn}. As a result of this, and the lack of \texttt{noise} class, the reference set used to evaluate finFindR's identification ability is smaller than the test set used for SNN evaluation, with finFindR missing 19.03\% of dorsal fins present.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.8]{Chapter7/figs/finFindR-missed-fins-caught-by-mask-r-cnn.png}
+	\end{center}
+	\caption[Example dorsal fins which were not detected by finFindR, but were detected by the Mask R-CNN model developed in this thesis.]{Example dorsal fins which were not detected by finFindR, but were detected by the Mask R-CNN model developed in this thesis. Left: the original image provided to both finFindR and the Mask R-CNN. Right: the outputted dorsal fin from the Mask R-CNN after post-processing. A border has been added, and images resized, for clarity.}
+	\label{fig:finFindR-missed-fins-caught-by-mask-r-cnn}
+\end{figure}
+
+Once the images in both the query and reference sets had been cropped, they were then passed through finFindR's identification model which aims to trace around the dorsal fin and generate an embedding of the trailing edge. Whilst this generally worked well, there were some instances where the model failed to produce an accurate trace. This often occurred when areas of swell were near the fin; examples of this can be seen in Figure \ref{fig:finFindR-bad-traces}. Though finFindR allows for users to edit the traces produced, this was not performed during this evaluation so as not to influence the program's output.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[scale=0.5]{Chapter7/figs/ffr-bad-traces.png}
+	\end{center}
+	\caption[Examples of swell interfering with the finFindR tracing algorithm.]{Examples of swell interfering with the finFindR tracing algorithm. Traces are highlighted in red.}
+	\label{fig:finFindR-bad-traces}
+\end{figure} 
+
+As the photo-id aid developed in this thesis makes use of a Mask R-CNN rather than a bounding box detector, the need to trace around the fin is not required, reducing the potential for error and interference from retained background noise during the matching process. Further, as each fin is segmented during the developed post-processing methodology, the chance that a crop contains multiple fins is reduced, increasing the likelihood that all fins in the original input image are either identified or flagged as potentially previously uncatalogued. As finFindR works with bounding boxes, there is a chance that multiple fins could be present in a crop, allowing for the possibility that the wrong fin if traced, or that multiple fins are traced as one. 
+
+Once the dorsal fins present in both sets were traced and embedded, top-$N$ accuracy metrics for finFindR could be obtained. Here, the reference set acts as the catalogue which has been previously embedded, analogous to the SNN's training set, whilst the query set acts as the test set. The top-1, top-5, and top-10 accuracies obtained for both finFindR and the automated photo-id aid outlined in this thesis are shown in Table \ref{tab:ffr-vs-snn}.
+
+\begin{table}[]
+	\centering
+	\begin{tabular}{cccc}
+		\hline
+		\multirow{2}{*}{\textbf{\begin{tabular}[c]{@{}c@{}}Photo-id Aid\end{tabular}}} & \multicolumn{3}{c}{\textbf{Accuracy (\%)}} \\ \cline{2-4} 
+		& \textbf{Top-1}    & \textbf{Top-5}    & \textbf{Top-10}   \\ \hline
+		FinFindR \cite{thompson_finfindr_2022}  & 8.00          & 45.78         & 68.00         \\
+		This Thesis & 40.85 & 68.90 & 83.13 \\\hline     
+	\end{tabular}
+	\caption[Top-$N$ accuracies obtained on the images which make up the NDD AU SMRU dataset for both finFindR and the automated photo-id aid outlined in this thesis.]{Top-$N$ accuracies obtained on the images which make up the NDD AU SMRU dataset for both finFindR and the automated photo-id aid outlined in this thesis (see Table \ref{fig:NDDAUSMRU-SNN-model-accuracies}).}
+	\label{tab:ffr-vs-snn}
+\end{table}
+
+For all measured accuracies the photo-id system outlined in this thesis outperforms finFindR, reporting 32.85\%, 23.12\%, and 15.13\% higher top-1, top-5, and top-10 accuracies respectively. These results, alongside finFindR failing to detect 19.03\% of all dorsal fins in the images provided, highlight the strengths of the approach outlined in this thesis over the leading photo-id aid currently in use \cite{tyson_moore_rise_2022}. These improvements in re-identification likely arise from the ability of this thesis' developed photo-id aid to remove all background and individually segment fins into their own images, reducing the likelihood of embedding generation being adversely affected by noise. 
+
+It should also be noted that finFindR currently does not have the ability to explicitly flag to users when a fin may be potentially previously uncatalogued, as in this thesis. Instead finFindR alerts uses implicitly stating that ``when matches are not found using finFindR (not present in the top 50 ranked images), researchers can either choose to manually search the entire catalog for a match or call the image a previously unseen individual. If researchers do the latter, and assuming photograph quality and fin distinctiveness are comparable to those of our test images, they can be \textasciitilde 97\% confident that the query image does not actually occur in the catalog and that the associated image is of a new individual'' \cite{thompson_finfindr_2022}. 
+
+Whilst one advantage of finFindR is that it does not require non-technical users to train an identification model on their own catalogues, which is the case for the SNN component of the system outlined in this thesis, this may also lead to degraded performance where the user's catalogue is sufficiently different from that used to train finFindR. If the ability to re-train or fine-tune was provided, it may be the case that the top-$N$ accuracy obtained by finFindR on the given data would improve.
+
 \section{Summary}\label{ch:SNNEvaluation,sec:Summary}
 
-This chapter examines the robustness of SNNs for the task of automatic most likely catalogue matching. To begin, the effect on model performance of additional photo-id data is examined. This work shows that while the additional data improves overall generalisability, a model capable of vastly reducing the search space can be obtained utilising only the data collected in a single fieldwork study, even when running inference on data from a different spatio-temporal environment.
+This chapter evaluates the approach to most likely catalogue matching developed in this thesis. To begin, the effect on model performance of additional photo-id data is examined. This work shows that while the additional data improves overall generalisability, a model capable of vastly reducing the search space can be obtained utilising only the data collected in a single fieldwork study, even when running inference on data from a different spatio-temporal environment.
 
 Next, the effect of background retention on embedding generation is examined. By training a model using bounding box imagery rather than masks and examining the embeddings generated for various inputs, it can be seen that embeddings can be influenced more by feature heavy background surrounding a dorsal fin than the fin itself, at least when the model is trained on data collected over a small spatio-temporal scale. This emphasises the importance of detection masks over bounding boxes, further reinforcing the decision made in Section \ref{ch:cetDet,sec:deciding,sub:boundingBoxInvestigation}.
 
 The generalisability of utilising SNNs for the task of automatic most likely catalogue matching is then examined through the use of a second smaller photo-id catalogue provided by the Chicago Zoological Society's Sarasota Dolphin Research Program. Training an SNN on this data yields a model which is highly accurate, achieving 81.25\% top-1, 95.00\% top-5, and 97.50\% top-10 accuracies. This provides evidence to suggest that SNNs are a viable approach to automatic most likely matching, regardless of catalogue size, species, or environment.
 
-Finally, the task of most likely catalogue matching is framed as a standard image classification problem in order to provide a baseline with which to compare the previously developed SNN approach. Experiments show that the model architectures trained are incapable of classifying images in the NDD AU SMRU dataset with high accuracy. This is hypothesised to be a result of the extreme fine-grained nature and high intra-class variability rendering the models incapable of identifying meaningful features for classification, which could be negated thanks to the use of triplets during training and clustering generated embeddings into a latent space.
+The task of most likely catalogue matching is then framed as a standard image classification problem in order to provide a baseline with which to compare the previously developed SNN approach. Experiments show that the model architectures trained are incapable of classifying images in the NDD AU SMRU dataset with high accuracy. This is hypothesised to be a result of the extreme fine-grained nature and high intra-class variability rendering the models incapable of identifying meaningful features for classification, which could be negated thanks to the use of triplets during training and clustering generated embeddings into a latent space.
+
+Finally, a comparison between the system developed in this thesis and finFindR \cite{thompson_finfindr_2022}, the current most commonly used photo-id aid \cite{tyson_moore_rise_2022} is presented. Evaluation of both systems using images which make up the NDD AU SMRU dataset shows that finFindR has a high likelihood of missing dorsal fins present in images under certain conditions and has a lower top-$N$ accuracy compared to the system developed in this thesis.
 
 Experimentation throughout this chapter has shown that SNNs are an accurate and generalisable approach to the task of catalogue matching. When accompanied by a dorsal fin detector and post-processing methodology, a fully automatic photo-id aid can be created which is robust to changes in species of interest, geography, and time. A summary of the work undertaken throughout this thesis to develop an automatic photo-id aid is provided in Chapter \ref{ch:Conclusion}. Possible avenues for further work are also explored in detail.
