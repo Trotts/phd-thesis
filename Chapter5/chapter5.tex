@@ -12,7 +12,7 @@ As shown in Chapter \ref{ch:cetDet}, at this stage the Mask R-CNN model is capab
 
 \section{Handling Multiple Detections}\label{ch:postProcessing,sec:handlingMultipleDetections}
 
-When an image is run through the Mask R-CNN detector, the number of outputs can vary depending on how many detected objects have a confidence score higher than 90\% (as discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:DetectionHyperparameters}). If no detections reach this threshold the image is discarded from further processing. This can occur if, for example, an image is taken by accident capturing the vessel's floor. If a single detection reaches the threshold, the resultant mask is passed downstream. 
+When an image is passed through the Mask R-CNN detector, the number of outputs can vary depending on how many detected objects have a confidence score higher than 90\% (as discussed in Section \ref{ch:cetDet,sec:ModelSelection,sub:DetectionHyperparameters}). If no detections reach this threshold the image is discarded from further processing. This can occur if, for example, an image is taken by accident capturing the vessel's floor. If a single detection reaches the threshold, the resultant mask is passed downstream. 
 
 Thanks to the tendency for cetaceans to travel in pods however, it is unlikely an image will contain only a single \texttt{dolphin} detection. In these situations the Mask R-CNN will output multiple detection masks, one per object. To handle this, the first stage of the post-processing methodology is to separate multiple detections for a single image. This ensures each \texttt{dolphin} detection is handled independently, mitigating the potential for an identification to be influenced by the others. An example of this behaviour can be seen in Figure \ref{fig:190730-001-MOLS0360_-detections}. Here, an image inputted to the Mask R-CNN detector has produced three detections which are above the threshold. As such, they have been split into three output masks for individual processing. Note that the first detected mask, visualised with a blue overlay on the input image, has been incorrectly detected as \texttt{dolphin} with a high confidence resulting in a binary mask. Further post-processing must be capable of handling background which has been incorrectly labelled, removing it before individual identification occurs.
 
@@ -105,7 +105,7 @@ It may be the case that multiple components in an image meet the conditions set 
 
 \section{Cropping}\label{ch:cetDet,sec:postProcessing,su:cropping}
 
-At this point outputs from the Mask R-CNN detector have been post-processed to remove as much noise from the detected masks as possible, and these have been utilised to perform background subtraction. This results in an output image containing mostly white pixels surrounding a detected \texttt{dolphin} object. This image is the same size as the one inputted to the detector, which can often be many thousands of pixels, although the vast majority of these are now un-needed.
+At this point outputs from the Mask R-CNN detector have been post-processed to remove as much noise from the detected masks as possible, and these have been utilised to perform background subtraction. This results in an output image containing mostly white pixels surrounding a detected \texttt{dolphin} object. This image is the same size as the one inputted to the detector, which can often be many thousands of pixels, although the vast majority of these are now no longer required.
 
 \begin{figure}
 	\begin{center}
