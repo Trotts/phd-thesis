@@ -416,7 +416,7 @@ Interestingly, the model achieves a higher mAP at these IOU thresholds on NDD20.
 
 \subsection{Below Water Detection Baseline}\label{ch:cetDet,sec:EvalUsingNDD20,subsec:belowWaterDetectionBasleine}
 
-Though the below water set of NDD20 is not utilised within this thesis further, work was also undertaken to produce a baseline instance segmentation score for this data. Here, a second Mask R-CNN model was trained using the optimal hyperparameters located in Section \ref{ch:cetDet,sec:ModelSelection} on the below water data divided randomly into an 80:20 train-test split, with the \texttt{out of focus} flag ignored. Results for this model can be seen in Table \ref{tab:bw_results}, and indicate that a Mask R-CNN model is capable of accurate instance segmentation on this data -- in spite of the large variation in mask shape and a lack of clarity between the background and the dolphin due to water condition. 
+Though the below water set of NDD20 is not utilised within this thesis further, work was also undertaken to produce a baseline instance segmentation score for this data. Here, a second Mask R-CNN model was trained using the optimal hyperparameters located in Section \ref{ch:cetDet,sec:ModelSelection} on the below water data divided randomly into an 80-20 train-test split, with the \texttt{out of focus} flag ignored. Results for this model can be seen in Table \ref{tab:bw_results}, and indicate that a Mask R-CNN model is capable of accurate instance segmentation on this data -- in spite of the large variation in mask shape and a lack of clarity between the background and the dolphin due to water condition. 
 
 \begin{table}[!h]
 	\begin{adjustbox}{width=\linewidth, center}
