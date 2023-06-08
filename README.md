@@ -2,6 +2,8 @@
 
 My PhD thesis submitted to the Department of Electrical and Electronic Engineering, Newcastle University. Awarded June 2023.
 
+This repo is based heavily on the PhD thesis template from [kks32](https://github.com/kks32/phd-thesis-template).
+
 ## Abstract:
 
 Understanding the health of Earth's ecosystems is imperative for the future safeguarding of our planet and its inhabitants. One of the most common tools utilised by researchers to develop their understanding of an area's health is indicator species, organisms whose abundance or absence in a system reflects overall environmental health. Cetaceans such as dolphins, porpoises, and odontocetes (toothed whales) are excellent indicator species given their status as top predators, allowing for the monitoring of risks to marine environments, such as offshore wind farm development or commercial fishing activity.
